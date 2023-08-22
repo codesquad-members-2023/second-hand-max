@@ -1,6 +1,30 @@
 # 중고거래 서비스
 > `코드스쿼드 팀 프로젝트 #4`
 
+## 멤버
+<table>
+  <colgroup>
+    <col />
+    <col />
+  </colgroup>
+  <tr>
+    <td align="center">
+      <img src="https://avatars.githubusercontent.com/u/57666791?s=96&v=4" width="120"  alt="쿤디"/>
+    </td>
+    <td align="center">
+      <img src="https://avatars.githubusercontent.com/u/54755633?s=96&v=4" width="120" alt="제패토"/>
+    </td>
+  </tr>
+  <tr>
+    <td align="center">
+      <code><a href="https://github.com/jsh3418"><strong>쿤디</strong></a></code>
+    </td>
+    <td align="center">
+      <code><a href="https://github.com/saejinpark"><strong>제패토</strong></a></code>
+    </td>
+  </tr>
+</table>
+
 ## 기술 스택
 `React`: 사용자 인터페이스 구축  
 `Vite`: 웹 개발 빌드 도구  
