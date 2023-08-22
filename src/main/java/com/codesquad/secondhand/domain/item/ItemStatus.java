@@ -4,10 +4,10 @@ public enum ItemStatus {
 
 	ON_SALE("판매중"), RESERVED("예약중"), SOLD_OUT("판매완료");
 
-	private String name;
+	private String title;
 
-	ItemStatus(String name) {
-		this.name = name;
+	ItemStatus(String title) {
+		this.title = title;
 	}
 
 }
