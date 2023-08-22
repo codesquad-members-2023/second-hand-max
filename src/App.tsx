@@ -1,6 +1,14 @@
+import GlobalStyle from '@styles/GlobalStyle';
 import { theme } from '@styles/designSystem';
 import { ThemeProvider } from 'styled-components';
 
-export const App: React.FC = () => {
-  return <ThemeProvider theme={theme}></ThemeProvider>;
+const App: React.FC = () => {
+  return (
+    <>
+      <GlobalStyle />
+      <ThemeProvider theme={theme}></ThemeProvider>
+    </>
+  );
 };
+
+export default App;

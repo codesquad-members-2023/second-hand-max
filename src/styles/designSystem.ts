@@ -1,20 +1,68 @@
-import { decToHex } from '@utils/decToHex';
+import { css } from 'styled-components';
 
 const typographyDefaultValue = {
   $regular: {
-    '24': '400 24px/32px Noto Sans KR',
-    '20': '400 20px/32px Noto Sans KR',
-    '16': '400 16px/24px Noto Sans KR',
-    '12': '400 12px/16px Noto Sans KR',
-    '10': '400 10px/16px Noto Sans KR',
+    24: css`
+      font-weight: 400;
+      font-size: 24px;
+      line-height: 32px;
+    `,
+
+    20: css`
+      font-weight: 400;
+      font-size: 20px;
+      line-height: 32px;
+    `,
+
+    16: css`
+      font-weight: 400;
+      font-size: 16px;
+      line-height: 24px;
+    `,
+
+    12: css`
+      font-weight: 400;
+      font-size: 12px;
+      line-height: 16px;
+    `,
+
+    10: css`
+      font-weight: 400;
+      font-size: 10px;
+      line-height: 16px;
+    `,
   },
 
   $bold: {
-    '24': '700 24px/32px Noto Sans KR',
-    '20': '700 20px/32px Noto Sans KR',
-    '16': '700 16px/24px Noto Sans KR',
-    '12': '700 12px/16px Noto Sans KR',
-    '10': '700 10px/16px Noto Sans KR',
+    24: css`
+      font-weight: 700;
+      font-size: 24px;
+      line-height: 32px;
+    `,
+
+    20: css`
+      font-weight: 700;
+      font-size: 20px;
+      line-height: 32px;
+    `,
+
+    16: css`
+      font-weight: 700;
+      font-size: 16px;
+      line-height: 24px;
+    `,
+
+    12: css`
+      font-weight: 700;
+      font-size: 12px;
+      line-height: 16px;
+    `,
+
+    10: css`
+      font-weight: 700;
+      font-size: 10px;
+      line-height: 16px;
+    `,
   },
 };
 
@@ -25,6 +73,7 @@ const typographySystem = {
     default16: typographyDefaultValue.$regular[16],
     default12: typographyDefaultValue.$regular[12],
   },
+
   available: {
     strong16: typographyDefaultValue.$bold[16],
     strong12: typographyDefaultValue.$bold[12],
@@ -32,6 +81,7 @@ const typographySystem = {
     default16: typographyDefaultValue.$regular[16],
     default12: typographyDefaultValue.$regular[12],
   },
+
   enabled: {
     strong16: typographyDefaultValue.$bold[16],
     strong10: typographyDefaultValue.$bold[10],
@@ -39,21 +89,21 @@ const typographySystem = {
 };
 
 const colorDefaultValue = {
-  $white: '#FFFFFF',
-  $gray50: '#FAFAFA',
-  $gray100: `#F9F9F9${decToHex(0.8)}`,
-  $gray200: `#F5F5F5${decToHex(0.7)}`,
-  $gray300: `#B3B3B3${decToHex(0.12)}`,
-  $gray400: '#EFEFF0',
-  $gray500: `#B3B3B3${decToHex(0.39)}`,
-  $gray600: `#000000${decToHex(0.2)}`,
-  $gray700: `#3C3C43${decToHex(0.36)}`,
-  $gray800: `#3C3C43${decToHex(0.6)}`,
-  $gray900: '#3C3C43',
-  $black: '#000000',
-  $mint: '#00C7BE',
-  $orange: '#FF9500',
-  $red: '#FF3B30',
+  $white: 'rgba(255, 255, 255, 1)',
+  $gray50: 'rgba(250, 250, 250, 1)',
+  $gray100: 'rgba(249, 249, 249, 0.8)',
+  $gray200: 'rgba(245, 245, 245, 0.7)',
+  $gray300: 'rgba(179, 179, 179, 0.12)',
+  $gray400: 'rgba(239, 239, 240, 1)',
+  $gray500: 'rgba(179, 179, 179, 0.39)',
+  $gray600: 'rgba(0, 0, 0, 0.2)',
+  $gray700: 'rgba(60, 60, 67, 0.36)',
+  $gray800: 'rgba(60, 60, 67, 0.6)',
+  $gray900: 'rgba(60, 60, 67, 1)',
+  $black: 'rgba(0, 0, 0, 1)',
+  $mint: 'rgba(0, 199, 190, 1)',
+  $orange: 'rgba(255, 149, 0, 1)',
+  $red: 'rgba(255, 59, 48, 1)',
 };
 
 const lightModeColorPalette = {
@@ -69,12 +119,14 @@ const lightModeColorPalette = {
     borderStrong: colorDefaultValue.$gray700,
     overlay: colorDefaultValue.$gray600,
   },
+
   accent: {
     text: colorDefaultValue.$white,
     textWeak: colorDefaultValue.$black,
     primary: colorDefaultValue.$orange,
     secondary: colorDefaultValue.$mint,
   },
+
   system: {
     warning: colorDefaultValue.$red,
     background: colorDefaultValue.$white,
