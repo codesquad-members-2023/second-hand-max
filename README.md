@@ -1,7 +1,7 @@
-# 중고거래 서비스
+# 중고거래 서비스[위키](https://github.com/masters2023-project-03-second-hand/second-hand-max-fe/wiki)
 > `코드스쿼드 팀 프로젝트 #4`
 
-## 멤버
+## 멤버[위키](https://github.com/masters2023-project-03-second-hand/second-hand-max-fe/wiki/멤버)
 <table>
   <colgroup>
     <col />
