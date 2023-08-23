@@ -2,6 +2,10 @@ import { createGlobalStyle } from 'styled-components';
 import Wallpaper from '@assets/wallpaper.jpeg';
 
 const GlobalStyle = createGlobalStyle`
+  * {
+    font-family: 'Noto Sans KR', sans-serif;
+  }
+
   #root {
     width: 100vw;
     height: 100vh;
@@ -12,8 +16,13 @@ const GlobalStyle = createGlobalStyle`
     justify-content: center;
   }
 
-  * {
-    font-family: 'Noto Sans KR', sans-serif;
+  .blind {
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    position: absolute;
+    overflow: hidden;
+    clip-path: polygon(0 0, 0 0, 0 0, 0 0);
   }
 `;
 

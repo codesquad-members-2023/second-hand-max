@@ -1,12 +1,16 @@
 import { Outlet } from 'react-router-dom';
 import { css, styled } from 'styled-components';
+import TopBar from './TopBar';
 
 const SecondHand: React.FC = () => {
   return (
     <Container>
       <Inner>
-        <header></header>
+        <TopBar>
+          <div>TopBar 내용</div>
+        </TopBar>
         <main>
+          <h2 className="blind">메인</h2>
           <Outlet />
           <nav>
             <ul>
@@ -37,6 +41,7 @@ const Container = styled.div`
 `;
 
 const Inner = styled.div`
+  position: relative;
   background-color: white;
   height: 100%;
 `;
