@@ -134,7 +134,14 @@ const lightModeColorPalette = {
   },
 };
 
+const radius = {
+  half: '50%',
+  medium: '12px',
+  large: '16px',
+};
+
 export const theme = {
   fonts: typographySystem,
   colors: lightModeColorPalette,
+  radius,
 };
