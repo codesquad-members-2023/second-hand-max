@@ -12,8 +12,9 @@ _Team 4 Backend A_
 
 ## ERD
 
-<img width="800" alt="ERD" src=""/>
+<img width="800" alt="ERD" src="https://github.com/second-hand-team-04/second-hand-max-be-a/assets/105152276/c149a55b-6b25-42bc-ba58-2ae7c254fbfc"/>
 
+<br/>
 <br/>
 
 ## Environment
