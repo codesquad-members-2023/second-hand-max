@@ -16,7 +16,7 @@ public class RegionService {
 
 	private final RegionRepository regionRepository;
 
-	public List<RegionResponse> listRegions() {
+	public List<RegionResponse> listAllRegions() {
 		return regionRepository.findAll().stream().map(RegionResponse::from).collect(Collectors.toUnmodifiableList());
 	}
 
