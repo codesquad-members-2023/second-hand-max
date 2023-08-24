@@ -13,6 +13,11 @@ const GlobalStyle = createGlobalStyle`
     background: inherit;
   }
 
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
+
   #root {
     width: 100vw;
     height: 100vh;
