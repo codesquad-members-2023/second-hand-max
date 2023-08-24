@@ -1,29 +1,19 @@
 import { css, styled } from 'styled-components';
 
-const TopBar: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  return (
-    <Container>
-      <h1 className="blind">헤더</h1>
-      <Wrapper>{children}</Wrapper>
-    </Container>
-  );
-};
-
-const Container = styled.header`
+const TopBar = styled.h1`
   ${({ theme: { colors } }) => css`
+    display: flex;
+    align-items: center;
+    box-sizing: border-box;
+    height: 56px;
     width: 100%;
-    position: absolute;
     border-bottom: 0.8px solid ${colors.neutral.border};
     background: ${colors.neutral.backgroundBlur};
-    backdrop-filter: blur(8px);
-  `};
-`;
 
-const Wrapper = styled.div`
-  display: flex;
-  align-items: center;
-  padding: 8px 0px;
-  height: 40px;
+    backdrop-filter: blur(8px);
+    position: absolute;
+    top: 0;
+  `};
 `;
 
 export default TopBar;

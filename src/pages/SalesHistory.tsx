@@ -1,5 +1,12 @@
+import TopBar from "@components/TopBar";
+
 const SalesHistory: React.FC = () => {
-  return <p>판매내역</p>;
+  return (
+    <>
+      <TopBar aria-label="판매내역">
+      </TopBar>
+    </>
+  );
 };
 
 export default SalesHistory;

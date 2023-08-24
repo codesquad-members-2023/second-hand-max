@@ -1,5 +1,12 @@
+import TopBar from "@components/TopBar";
+
 const MyAccount: React.FC = () => {
-  return <p>내 계정</p>;
+  return (
+    <>
+      <TopBar aria-label="내 계정">
+      </TopBar>
+    </>
+  );
 };
 
 export default MyAccount;
