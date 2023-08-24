@@ -3,10 +3,6 @@ package com.codesquad.secondhand.api.service.region;
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 
-import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -15,9 +11,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
+import com.codesquad.secondhand.FixtureFactory;
 import com.codesquad.secondhand.IntegrationTestSupport;
 import com.codesquad.secondhand.api.service.region.response.RegionSliceResponse;
-import com.codesquad.secondhand.domain.region.Region;
 import com.codesquad.secondhand.domain.region.RegionRepository;
 
 class RegionServiceTest extends IntegrationTestSupport {
@@ -38,7 +34,7 @@ class RegionServiceTest extends IntegrationTestSupport {
 	@ParameterizedTest
 	void listAllRegions(int cursor, int size, boolean hasNext) {
 		// given
-		createRegionFixture(40);
+		regionRepository.saveAll(FixtureFactory.createRegionFixture(40));
 		Pageable pageable = PageRequest.of(cursor, size);
 
 		// when
@@ -49,13 +45,6 @@ class RegionServiceTest extends IntegrationTestSupport {
 			() -> assertThat(regions.isHasMore()).isEqualTo(hasNext),
 			() -> assertThat(regions.getRegions()).hasSize(size)
 		);
-	}
-
-	private void createRegionFixture(int size) {
-		List<Region> regions = IntStream.rangeClosed(1, size)
-			.mapToObj(i -> new Region(null, "test region" + i))
-			.collect(Collectors.toList());
-		regionRepository.saveAll(regions);
 	}
 
 }
