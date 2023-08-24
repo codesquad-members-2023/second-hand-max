@@ -5,16 +5,14 @@ const Home: React.FC = () => {
   return (
     <>
       <TopBar aria-label="홈">홈</TopBar>
-      <Container>
-
-      </Container>
+      <Container></Container>
     </>
   );
 };
 
 const Container = styled.div`
   box-sizing: border-box;
-  padding-top: 56px;
+  padding-top: ${({ theme: { dimensions } }) => dimensions.topBarHeight}
   height: 100%;
   overflow: scroll;
 
