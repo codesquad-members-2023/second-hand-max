@@ -6,7 +6,8 @@ import lombok.Getter;
 public enum ResponseMessage {
 
 	CATEGORY_FETCH_SUCCESS("카테고리 목록 조회를 성공하였습니다."),
-	REGION_FETCH_SUCCESS("동네 목록 조회를 성공하였습니다.");
+	REGION_FETCH_SUCCESS("동네 목록 조회를 성공하였습니다."),
+	USER_REGION_FETCH_SUCCESS("나의 동네 목록 조회를 성공하였습니다.");
 
 	private final String message;
 
