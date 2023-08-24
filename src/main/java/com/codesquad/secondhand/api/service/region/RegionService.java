@@ -6,6 +6,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.codesquad.secondhand.api.service.region.response.RegionResponse;
 import com.codesquad.secondhand.api.service.region.response.RegionSliceResponse;
@@ -22,6 +23,7 @@ public class RegionService {
 
 	private final RegionRepository regionRepository;
 
+	@Transactional(readOnly = true)
 	public RegionSliceResponse listAllRegions(final int cursor) {
 		final Pageable pageable = PageRequest.of(cursor, REGION_PER_PAGE);
 		final Slice<Region> regions = regionRepository.findSliceBy(pageable);
