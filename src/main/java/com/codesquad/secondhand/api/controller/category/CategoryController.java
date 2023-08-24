@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.codesquad.secondhand.api.ApiResponse;
+import com.codesquad.secondhand.api.ResponseMessage;
 import com.codesquad.secondhand.api.service.category.CategoryService;
 import com.codesquad.secondhand.api.service.category.response.CategoryResponse;
 
@@ -22,6 +23,8 @@ public class CategoryController {
 
 	@GetMapping
 	public ApiResponse<List<CategoryResponse>> show() {
-		return ApiResponse.of(HttpStatus.OK, "카테고리 목록 조회를 성공하였습니다.", categoryService.getCategories());
+		return ApiResponse.of(HttpStatus.OK, ResponseMessage.CATEGORY_FETCH_SUCCESS.getMessage(),
+			categoryService.getCategories());
 	}
+
 }
