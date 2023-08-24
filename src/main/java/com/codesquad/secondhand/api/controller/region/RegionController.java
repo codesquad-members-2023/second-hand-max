@@ -13,7 +13,7 @@ import com.codesquad.secondhand.api.service.region.response.RegionSliceResponse;
 
 import lombok.RequiredArgsConstructor;
 
-@RequestMapping(path = "/api/regions")
+@RequestMapping("/api/regions")
 @RequiredArgsConstructor
 @RestController
 public class RegionController {
