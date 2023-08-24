@@ -6,8 +6,8 @@ import { ThemeProvider } from 'styled-components';
 const App: React.FC = () => {
   return (
     <>
-      <GlobalStyle />
       <ThemeProvider theme={theme}>
+        <GlobalStyle />
         <AppRoutes />
       </ThemeProvider>
     </>
