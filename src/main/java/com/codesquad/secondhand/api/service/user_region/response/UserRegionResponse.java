@@ -15,7 +15,7 @@ public class UserRegionResponse {
 	private String title;
 
 	public static UserRegionResponse from(UserRegion userRegion) {
-		return new UserRegionResponse(userRegion.getRegionId(), userRegion.getRegionTitle());
+		return new UserRegionResponse(userRegion.findRegionId(), userRegion.findRegionTitle());
 	}
 
 }
