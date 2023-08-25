@@ -12,7 +12,7 @@ const Home: React.FC = () => {
 
 const Container = styled.div`
   box-sizing: border-box;
-  padding-top: ${({ theme: { dimensions } }) => dimensions.topBarHeight}
+  padding-top: ${({ theme: { dimensions } }) => dimensions.topBarHeight};
   height: 100%;
   overflow: scroll;
 
