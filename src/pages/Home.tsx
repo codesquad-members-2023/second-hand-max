@@ -4,11 +4,16 @@ import { styled } from 'styled-components';
 const Home: React.FC = () => {
   return (
     <>
-      <TopBar aria-label="홈">홈</TopBar>
+      <Title aria-label="홈">홈</Title>
       <Container></Container>
     </>
   );
 };
+
+const Title = styled(TopBar)`
+  justify-content: center;
+  ${({ theme: { fonts } }) => fonts.display.strong16};
+`;
 
 const Container = styled.div`
   box-sizing: border-box;
