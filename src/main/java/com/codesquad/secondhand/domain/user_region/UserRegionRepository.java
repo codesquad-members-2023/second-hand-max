@@ -8,4 +8,6 @@ public interface UserRegionRepository extends JpaRepository<UserRegion, Long> {
 
 	List<UserRegion> findByUserId(Long userId);
 
+	void deleteByUserIdAndRegionId(Long userId, Long regionId);
+
 }
