@@ -25,4 +25,9 @@ public class UserRegionService {
 			.collect(Collectors.toUnmodifiableList());
 	}
 
+	@Transactional
+	public void deleteUserRegion(Long userId, Long regionId) {
+		userRegionRepository.deleteByUserIdAndRegionId(userId, regionId);
+	}
+
 }
