@@ -1,8 +1,7 @@
 import { css, styled } from 'styled-components';
-import Tabs from './tabs/Tabs';
+import Tabs from './Tabs/index';
 
 const SecondHand: React.FC = () => {
-
   return (
     <Container>
       <Inner>

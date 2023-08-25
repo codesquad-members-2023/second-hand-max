@@ -140,8 +140,14 @@ const radius = {
   large: '16px',
 };
 
+const dimensions = {
+  topBarHeight: '56px',
+  bottomBarHeight: '64px',
+};
+
 export const theme = {
   fonts: typographySystem,
   colors: lightModeColorPalette,
   radius,
+  dimensions,
 };
