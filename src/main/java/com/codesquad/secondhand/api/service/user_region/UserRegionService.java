@@ -6,7 +6,15 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.codesquad.secondhand.api.exception.NoSuchRegionException;
+import com.codesquad.secondhand.api.exception.NoSuchUserException;
+import com.codesquad.secondhand.api.service.user_region.request.UserRegionCreateServiceRequest;
 import com.codesquad.secondhand.api.service.user_region.response.UserRegionResponse;
+import com.codesquad.secondhand.domain.region.Region;
+import com.codesquad.secondhand.domain.region.RegionRepository;
+import com.codesquad.secondhand.domain.user.User;
+import com.codesquad.secondhand.domain.user.UserRepository;
+import com.codesquad.secondhand.domain.user_region.UserRegion;
 import com.codesquad.secondhand.domain.user_region.UserRegionRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -15,6 +23,8 @@ import lombok.RequiredArgsConstructor;
 @Service
 public class UserRegionService {
 
+	private final UserRepository userRepository;
+	private final RegionRepository regionRepository;
 	private final UserRegionRepository userRegionRepository;
 
 	@Transactional(readOnly = true)
@@ -23,6 +33,14 @@ public class UserRegionService {
 			.stream()
 			.map(UserRegionResponse::from)
 			.collect(Collectors.toUnmodifiableList());
+	}
+
+	@Transactional
+	public void createUserRegion(UserRegionCreateServiceRequest serviceRequest) {
+		final User user = userRepository.findById(serviceRequest.getUserId()).orElseThrow(NoSuchUserException::new);
+		final Region region = regionRepository.findById(serviceRequest.getRegionId())
+			.orElseThrow(NoSuchRegionException::new);
+		userRegionRepository.save(new UserRegion(null, user, region));
 	}
 
 	@Transactional
