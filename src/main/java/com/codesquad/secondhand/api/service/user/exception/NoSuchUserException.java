@@ -1,4 +1,4 @@
-package com.codesquad.secondhand.api.service.user_region.exception;
+package com.codesquad.secondhand.api.service.user.exception;
 
 public class NoSuchUserException extends RuntimeException {
 
