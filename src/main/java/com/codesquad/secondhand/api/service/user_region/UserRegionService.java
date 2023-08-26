@@ -6,8 +6,10 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.codesquad.secondhand.api.exception.NoSuchRegionException;
-import com.codesquad.secondhand.api.exception.NoSuchUserException;
+import com.codesquad.secondhand.api.service.user_region.exception.ExceedUserRegionLimitException;
+import com.codesquad.secondhand.api.service.user_region.exception.MinimumUserRegionViolationException;
+import com.codesquad.secondhand.api.service.user_region.exception.NoSuchRegionException;
+import com.codesquad.secondhand.api.service.user_region.exception.NoSuchUserException;
 import com.codesquad.secondhand.api.service.user_region.request.UserRegionCreateServiceRequest;
 import com.codesquad.secondhand.api.service.user_region.response.UserRegionResponse;
 import com.codesquad.secondhand.domain.region.Region;
@@ -22,6 +24,9 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @Service
 public class UserRegionService {
+
+	private static final Long MINIMUM_USER_REGION_COUNT = 1L;
+	private static final Long MAXIMUM_USER_REGION_COUNT = 2L;
 
 	private final UserRepository userRepository;
 	private final RegionRepository regionRepository;
@@ -40,12 +45,26 @@ public class UserRegionService {
 		final User user = userRepository.findById(serviceRequest.getUserId()).orElseThrow(NoSuchUserException::new);
 		final Region region = regionRepository.findById(serviceRequest.getRegionId())
 			.orElseThrow(NoSuchRegionException::new);
+		validateUserRegionLimit(serviceRequest.getUserId());
 		userRegionRepository.save(new UserRegion(null, user, region));
 	}
 
 	@Transactional
 	public void deleteUserRegion(Long userId, Long regionId) {
+		validateMinimumUserRegion(userId);
 		userRegionRepository.deleteByUserIdAndRegionId(userId, regionId);
+	}
+
+	private void validateUserRegionLimit(Long userId) {
+		if (userRegionRepository.countByUserId(userId).equals(MAXIMUM_USER_REGION_COUNT)) {
+			throw new ExceedUserRegionLimitException();
+		}
+	}
+
+	private void validateMinimumUserRegion(Long userId) {
+		if (userRegionRepository.countByUserId(userId).equals(MINIMUM_USER_REGION_COUNT)) {
+			throw new MinimumUserRegionViolationException();
+		}
 	}
 
 }
