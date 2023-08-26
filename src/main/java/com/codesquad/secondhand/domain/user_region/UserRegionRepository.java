@@ -10,6 +10,8 @@ public interface UserRegionRepository extends JpaRepository<UserRegion, Long> {
 
 	Long countByUserId(Long userId);
 
+	boolean existsByUserIdAndRegionId(Long userId, Long regionId);
+
 	void deleteByUserIdAndRegionId(Long userId, Long regionId);
 
 }

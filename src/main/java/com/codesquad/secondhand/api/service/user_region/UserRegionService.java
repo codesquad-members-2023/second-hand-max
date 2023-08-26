@@ -6,10 +6,11 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.codesquad.secondhand.api.service.region.exception.NoSuchRegionException;
+import com.codesquad.secondhand.api.service.user.exception.NoSuchUserException;
+import com.codesquad.secondhand.api.service.user_region.exception.DuplicatedUserRegionException;
 import com.codesquad.secondhand.api.service.user_region.exception.ExceedUserRegionLimitException;
 import com.codesquad.secondhand.api.service.user_region.exception.MinimumUserRegionViolationException;
-import com.codesquad.secondhand.api.service.user_region.exception.NoSuchRegionException;
-import com.codesquad.secondhand.api.service.user_region.exception.NoSuchUserException;
 import com.codesquad.secondhand.api.service.user_region.request.UserRegionCreateServiceRequest;
 import com.codesquad.secondhand.api.service.user_region.response.UserRegionResponse;
 import com.codesquad.secondhand.domain.region.Region;
@@ -46,6 +47,7 @@ public class UserRegionService {
 		final Region region = regionRepository.findById(serviceRequest.getRegionId())
 			.orElseThrow(NoSuchRegionException::new);
 		validateUserRegionLimit(serviceRequest.getUserId());
+		validateDuplicateUserRegion(serviceRequest);
 		userRegionRepository.save(new UserRegion(null, user, region));
 	}
 
@@ -55,9 +57,16 @@ public class UserRegionService {
 		userRegionRepository.deleteByUserIdAndRegionId(userId, regionId);
 	}
 
+	// --- Validation ---
 	private void validateUserRegionLimit(Long userId) {
 		if (userRegionRepository.countByUserId(userId).equals(MAXIMUM_USER_REGION_COUNT)) {
 			throw new ExceedUserRegionLimitException();
+		}
+	}
+
+	private void validateDuplicateUserRegion(UserRegionCreateServiceRequest serviceRequest) {
+		if (userRegionRepository.existsByUserIdAndRegionId(serviceRequest.getUserId(), serviceRequest.getRegionId())) {
+			throw new DuplicatedUserRegionException();
 		}
 	}
 
