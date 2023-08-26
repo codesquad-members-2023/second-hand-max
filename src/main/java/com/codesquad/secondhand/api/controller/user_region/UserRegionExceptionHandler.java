@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import com.codesquad.secondhand.api.ApiResponse;
+import com.codesquad.secondhand.api.service.user_region.exception.DuplicatedUserRegionException;
 import com.codesquad.secondhand.api.service.user_region.exception.ExceedUserRegionLimitException;
 import com.codesquad.secondhand.api.service.user_region.exception.MinimumUserRegionViolationException;
 
@@ -13,7 +14,8 @@ import com.codesquad.secondhand.api.service.user_region.exception.MinimumUserReg
 public class UserRegionExceptionHandler {
 
 	@ResponseStatus(HttpStatus.BAD_REQUEST)
-	@ExceptionHandler({ExceedUserRegionLimitException.class, MinimumUserRegionViolationException.class})
+	@ExceptionHandler({ExceedUserRegionLimitException.class, MinimumUserRegionViolationException.class,
+		DuplicatedUserRegionException.class})
 	public ApiResponse<Void> handleUserRegionException(RuntimeException exception) {
 		return ApiResponse.of(HttpStatus.BAD_REQUEST, exception.getMessage(), null);
 	}
