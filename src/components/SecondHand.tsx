@@ -1,11 +1,25 @@
 import { css, styled } from 'styled-components';
 import Tabs from './Tabs/index';
+import ProductDetail from './ProductDetail';
+import { useContext } from 'react';
+import { AppStateContext } from 'contexts/AppContext';
 
 const SecondHand: React.FC = () => {
+  const state = useContext(AppStateContext);
+
+  if (!state) {
+    return null;
+  }
+
+  const product = state.detail !== null && state.products[state.detail];
+
   return (
     <Container>
       <Inner>
         <Tabs />
+        {product && (
+          <ProductDetail {...product} />
+        )}
       </Inner>
     </Container>
   );
@@ -29,6 +43,7 @@ const Inner = styled.div`
   position: relative;
   background-color: white;
   height: 100%;
+  overflow: hidden;
 `;
 
 export default SecondHand;
