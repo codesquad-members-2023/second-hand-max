@@ -10,6 +10,8 @@ import javax.persistence.OneToMany;
 import com.codesquad.secondhand.api.service.user_region.exception.DuplicatedUserRegionException;
 import com.codesquad.secondhand.api.service.user_region.exception.ExceedUserRegionLimitException;
 import com.codesquad.secondhand.api.service.user_region.exception.MinimumUserRegionViolationException;
+import com.codesquad.secondhand.api.service.user_region.exception.NoSuchUserRegionException;
+import com.codesquad.secondhand.domain.region.Region;
 import com.codesquad.secondhand.domain.user_region.UserRegion;
 
 import lombok.NoArgsConstructor;
@@ -35,9 +37,9 @@ public class MyRegion {
 		userRegions.add(userRegion);
 	}
 
-	public void removeRegion(UserRegion userRegion) {
+	public void removeRegion(Region region) {
 		validateMinimumUserRegion();
-		userRegions.remove(userRegion);
+		userRegions.remove(validateUserRegion(region));
 	}
 
 	private void validateUserRegionLimit() {
@@ -56,6 +58,13 @@ public class MyRegion {
 		if (this.userRegions.size() == MINIMUM_USER_REGION_COUNT) {
 			throw new MinimumUserRegionViolationException();
 		}
+	}
+
+	private UserRegion validateUserRegion(Region region) {
+		return userRegions.stream()
+			.filter(r -> r.findRegionId().equals(region.getId()))
+			.findFirst()
+			.orElseThrow(NoSuchUserRegionException::new);
 	}
 
 }

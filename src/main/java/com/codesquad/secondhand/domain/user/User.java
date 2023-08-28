@@ -29,8 +29,6 @@ public class User {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	private String loginId;
-
 	private String nickname;
 
 	private String email;
@@ -52,8 +50,8 @@ public class User {
 		myRegion.addRegion(new UserRegion(null, this, region));
 	}
 
-	public void removeUserRegion(UserRegion userRegion) {
-		myRegion.removeRegion(userRegion);
+	public void removeUserRegion(Region region) {
+		myRegion.removeRegion(region);
 	}
 
 }
