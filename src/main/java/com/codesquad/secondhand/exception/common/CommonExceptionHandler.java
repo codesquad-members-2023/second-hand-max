@@ -1,4 +1,4 @@
-package com.codesquad.secondhand.api.controller.user;
+package com.codesquad.secondhand.exception.common;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -6,14 +6,13 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import com.codesquad.secondhand.api.ApiResponse;
-import com.codesquad.secondhand.api.service.user.exception.NoSuchUserException;
 
 @RestControllerAdvice
-public class UserExceptionHandler {
+public class CommonExceptionHandler {
 
 	@ResponseStatus(HttpStatus.BAD_REQUEST)
-	@ExceptionHandler(NoSuchUserException.class)
-	public ApiResponse<Void> handleNoSuchUserException(NoSuchUserException exception) {
+	@ExceptionHandler(InvalidCursorException.class)
+	public ApiResponse<Void> handleUserRegionException(InvalidCursorException exception) {
 		return ApiResponse.of(HttpStatus.BAD_REQUEST, exception.getMessage(), null);
 	}
 
