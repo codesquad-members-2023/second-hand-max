@@ -15,6 +15,7 @@ import com.codesquad.secondhand.FixtureFactory;
 import com.codesquad.secondhand.IntegrationTestSupport;
 import com.codesquad.secondhand.api.service.region.response.RegionSliceResponse;
 import com.codesquad.secondhand.domain.region.RegionRepository;
+import com.codesquad.secondhand.domain.user_region.UserRegionRepository;
 
 class RegionServiceTest extends IntegrationTestSupport {
 
@@ -24,8 +25,12 @@ class RegionServiceTest extends IntegrationTestSupport {
 	@Autowired
 	private RegionRepository regionRepository;
 
+	@Autowired
+	private UserRegionRepository userRegionRepository;
+
 	@BeforeEach
 	private void init() {
+		userRegionRepository.deleteAllInBatch();
 		regionRepository.deleteAllInBatch();
 	}
 
@@ -34,7 +39,7 @@ class RegionServiceTest extends IntegrationTestSupport {
 	@ParameterizedTest
 	void listAllRegions(int cursor, int size, boolean hasNext) {
 		// given
-		regionRepository.saveAll(FixtureFactory.createRegionFixture(40));
+		regionRepository.saveAll(FixtureFactory.createRegionFixtures(40));
 		Pageable pageable = PageRequest.of(cursor, size);
 
 		// when

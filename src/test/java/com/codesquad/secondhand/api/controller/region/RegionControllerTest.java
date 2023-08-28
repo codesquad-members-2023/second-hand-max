@@ -25,7 +25,7 @@ class RegionControllerTest extends ControllerTestSupport {
 			.andDo(print())
 			.andExpect(status().isOk())
 			.andExpect(jsonPath("$.code").value(HttpStatus.OK.value()))
-			.andExpect(jsonPath("$.status").value(HttpStatus.OK.getReasonPhrase()))
+			.andExpect(jsonPath("$.status").value(HttpStatus.OK.name()))
 			.andExpect(jsonPath("$.message").value(ResponseMessage.REGION_FETCH_SUCCESS.getMessage()));
 	}
 
