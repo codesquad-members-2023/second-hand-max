@@ -6,14 +6,14 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.codesquad.secondhand.api.service.region.exception.NoSuchRegionException;
-import com.codesquad.secondhand.api.service.user.exception.NoSuchUserException;
 import com.codesquad.secondhand.api.service.user_region.request.UserRegionCreateServiceRequest;
 import com.codesquad.secondhand.api.service.user_region.response.UserRegionResponse;
 import com.codesquad.secondhand.domain.region.Region;
 import com.codesquad.secondhand.domain.region.RegionRepository;
 import com.codesquad.secondhand.domain.user.User;
 import com.codesquad.secondhand.domain.user.UserRepository;
+import com.codesquad.secondhand.exception.region.NoSuchRegionException;
+import com.codesquad.secondhand.exception.user.NoSuchUserException;
 
 import lombok.RequiredArgsConstructor;
 
