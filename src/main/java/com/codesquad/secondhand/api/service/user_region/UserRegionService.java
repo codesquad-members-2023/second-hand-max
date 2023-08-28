@@ -29,7 +29,7 @@ public class UserRegionService {
 	@Transactional(readOnly = true)
 	public List<UserRegionResponse> listUserRegions(Long userId) {
 		User user = userRepository.findById(userId).orElseThrow(NoSuchUserException::new);
-		return user.getUserRegions()
+		return user.listUserRegion()
 			.stream()
 			.map(UserRegionResponse::from)
 			.collect(Collectors.toUnmodifiableList());
@@ -47,7 +47,7 @@ public class UserRegionService {
 	public void deleteUserRegion(Long userId, Long regionId) {
 		User user = userRepository.findById(userId).orElseThrow(NoSuchUserException::new);
 		regionRepository.findById(regionId).orElseThrow(NoSuchRegionException::new);
-		UserRegion userRegion = user.getUserRegions()
+		UserRegion userRegion = user.listUserRegion()
 			.stream()
 			.filter(r -> r.findRegionId().equals(regionId))
 			.findFirst()
