@@ -28,7 +28,7 @@ public class UserRegionService {
 
 	@Transactional(readOnly = true)
 	public List<UserRegionResponse> listUserRegions(Long userId) {
-		User user = userRepository.findById(userId).orElseThrow(NoSuchUserException::new);
+		User user = userRepository.findCompleteUserById(userId).orElseThrow(NoSuchUserException::new);
 		return user.listUserRegion()
 			.stream()
 			.map(UserRegionResponse::from)
@@ -37,7 +37,8 @@ public class UserRegionService {
 
 	@Transactional
 	public void createUserRegion(UserRegionCreateServiceRequest serviceRequest) {
-		User user = userRepository.findById(serviceRequest.getUserId()).orElseThrow(NoSuchUserException::new);
+		User user = userRepository.findCompleteUserById(serviceRequest.getUserId())
+			.orElseThrow(NoSuchUserException::new);
 		Region region = regionRepository.findById(serviceRequest.getRegionId())
 			.orElseThrow(NoSuchRegionException::new);
 		user.addUserRegion(region);
@@ -45,7 +46,7 @@ public class UserRegionService {
 
 	@Transactional
 	public void deleteUserRegion(Long userId, Long regionId) {
-		User user = userRepository.findById(userId).orElseThrow(NoSuchUserException::new);
+		User user = userRepository.findCompleteUserById(userId).orElseThrow(NoSuchUserException::new);
 		regionRepository.findById(regionId).orElseThrow(NoSuchRegionException::new);
 		UserRegion userRegion = user.listUserRegion()
 			.stream()
