@@ -10,6 +10,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import com.codesquad.secondhand.domain.region.Region;
 import com.codesquad.secondhand.domain.user_region.UserRegion;
 
 import lombok.AccessLevel;
@@ -47,9 +48,8 @@ public class User {
 		return myRegion.listAll();
 	}
 
-	public void addUserRegion(UserRegion userRegion) {
-		userRegion.setUser(this);
-		myRegion.addRegion(userRegion);
+	public void addUserRegion(Region region) {
+		myRegion.addRegion(new UserRegion(null, this, region));
 	}
 
 	public void removeUserRegion(UserRegion userRegion) {
