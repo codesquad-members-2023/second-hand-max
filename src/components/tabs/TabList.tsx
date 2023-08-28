@@ -1,51 +1,55 @@
-import { css, styled } from 'styled-components';
-import { NavLink } from 'react-router-dom';
+import { styled } from 'styled-components';
 
-import { ReactComponent as Home } from '@assets/icons/home.svg';
-import { ReactComponent as News } from '@assets/icons/news.svg';
-import { ReactComponent as Heart } from '@assets/icons/heart.svg';
-import { ReactComponent as Message } from '@assets/icons/message.svg';
-import { ReactComponent as UserCircle } from '@assets/icons/user-circle.svg';
 import PATH from '@constants/PATH';
+import Icon from '@design/Icon';
+import Tab from './Tab';
 
 const TabList: React.FC = () => {
   return (
     <Container>
       <ul>
-        <li>
-          <NavLink to={PATH.BASE}>
-            <Home />
-            <span>홈화면</span>
-          </NavLink>
-        </li>
-        <li>
-          <NavLink to={PATH.SALES_HISTORY}>
-            <News />
-            <span>판매내역</span>
-          </NavLink>
-        </li>
-        <li>
-          <NavLink to={PATH.WISHLIST}>
-            <Heart />
-            <span>관심상품</span>
-          </NavLink>
-        </li>
-        <li>
-          <NavLink to={PATH.CHATTING}>
-            <Message />
-            <span>채팅</span>
-          </NavLink>
-        </li>
-        <li>
-          <NavLink to={PATH.MY_ACCOUNT}>
-            <UserCircle />
-            <span>내 계정</span>
-          </NavLink>
-        </li>
+        {tabs.map(({ id, ...tabProps }) => (
+          <li key={id}>
+            <Tab {...tabProps} />
+          </li>
+        ))}
       </ul>
     </Container>
   );
 };
+
+const tabs = [
+  {
+    id: 1,
+    path: PATH.BASE,
+    icon: Icon.Home,
+    text: '홈화면',
+  },
+  {
+    id: 2,
+    path: PATH.SALES_HISTORY,
+    icon: Icon.News,
+    text: '판매내역',
+  },
+  {
+    id: 3,
+    path: PATH.WISHLIST,
+    icon: Icon.Heart,
+    text: '관심상품',
+  },
+  {
+    id: 4,
+    path: PATH.CHATTING,
+    icon: Icon.Message,
+    text: '채팅',
+  },
+  {
+    id: 5,
+    path: PATH.MY_ACCOUNT,
+    icon: Icon.UserCircle,
+    text: '내계정',
+  },
+];
 
 const Container = styled.nav`
   width: 100%;
@@ -59,27 +63,6 @@ const Container = styled.nav`
     & > li {
       width: 48px;
       height: 48px;
-
-      & > a {
-        width: 100%;
-        height: 100%;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        ${({ theme: { fonts, colors } }) => css`
-          ${fonts.available.strong10}
-
-          color:  ${colors.neutral.textWeak};
-          stroke: ${colors.neutral.textWeak};
-
-          &.active {
-            pointer-events: none;
-            color: ${colors.neutral.textStrong};
-            stroke: ${colors.neutral.textStrong};
-          }
-        `}
-      }
     }
   }
 `;
