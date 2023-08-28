@@ -40,7 +40,7 @@ public class UserRegionService {
 		User user = userRepository.findById(serviceRequest.getUserId()).orElseThrow(NoSuchUserException::new);
 		Region region = regionRepository.findById(serviceRequest.getRegionId())
 			.orElseThrow(NoSuchRegionException::new);
-		user.addUserRegion(new UserRegion(null, null, region));
+		user.addUserRegion(region);
 	}
 
 	@Transactional

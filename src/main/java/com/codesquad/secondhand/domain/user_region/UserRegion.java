@@ -44,8 +44,4 @@ public class UserRegion {
 		return this.region.getTitle();
 	}
 
-	public void setUser(User user) {
-		this.user = user;
-	}
-
 }
