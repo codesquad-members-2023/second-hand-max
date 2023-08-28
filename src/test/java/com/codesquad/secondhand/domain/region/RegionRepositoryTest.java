@@ -29,7 +29,7 @@ class RegionRepositoryTest extends IntegrationTestSupport {
 	@ParameterizedTest
 	void listAllRegions(int page, int size) {
 		// given
-		regionRepository.saveAll(FixtureFactory.createRegionFixture(40));
+		regionRepository.saveAll(FixtureFactory.createRegionFixtures(40));
 		Pageable pageable = PageRequest.of(page, size);
 
 		// when
@@ -44,7 +44,7 @@ class RegionRepositoryTest extends IntegrationTestSupport {
 	@ParameterizedTest
 	void hasNext(int page, int size, boolean hasNext) {
 		// given
-		regionRepository.saveAll(FixtureFactory.createRegionFixture(40));
+		regionRepository.saveAll(FixtureFactory.createRegionFixtures(40));
 		Pageable pageable = PageRequest.of(page, size);
 
 		// when
