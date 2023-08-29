@@ -89,7 +89,7 @@ jobs:
           key: ${{ secrets.EC2_PRIVATE_KEY }}
           port: 22 # SSSh 포트번호
           source: "./nginx/nginx.conf"
-          target: Server_Target_Folder_Path
+          target: /home/ubuntu
 
       # 10) docker-compose.yml 파일을 EC2에 업로드
       - name: Copy docker-compose.yml file via ssh password
@@ -100,7 +100,7 @@ jobs:
           key: ${{ secrets.EC2_PRIVATE_KEY }}
           port: 22
           source: "docker-compose.yml"
-          target: Server_Target_Folder_Path
+          target: /home/ubuntu
 
       # 11) docker-compose 실행
       - name: Deploy to dev
