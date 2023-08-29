@@ -2,13 +2,13 @@ version: "3.8"
 services:
   app: # 서비스 이름
     container_name: app_server
-    image: ${ APP_IMAGE_NAME } #cicd.yml에서 설정한 이미지 이름 (변수?)
+    image: ojeegu/second-hand-04-a #cicd.yml에서 설정한 이미지 이름 (변수?)
     ports:
       - 8080:8080
 
   nginx: # 서비스 이름
     container_name: proxy_server
-    image: ${ NGINX_IMAGE_NAME } # 최신 버전
+    image: nginx:latest # 최신 버전
     ports:
       - 443:443
     volumes:
