@@ -1,3 +1,4 @@
+import ActionType from '@constants/ActionType';
 import { createContext, useReducer } from 'react';
 import Product from 'types/Product';
 
@@ -6,12 +7,8 @@ type AppState = {
   detail: number | null;
 };
 
-export enum ActionType {
-  DETAIL,
-  CLOSE,
-}
-
-type Action = {
+type Action =
+  | {
       type: ActionType.DETAIL;
       payload: number;
     }
@@ -34,7 +31,7 @@ const reducer = (state: AppState, action: Action): AppState => {
         ...state,
         detail: action.payload,
       };
-    
+
     case ActionType.CLOSE:
       return {
         ...state,
@@ -73,4 +70,3 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
     </AppStateContext.Provider>
   );
 };
-
