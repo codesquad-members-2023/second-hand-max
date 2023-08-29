@@ -20,7 +20,7 @@ jobs:
 
     steps:
       # 1) 리파지토리의 가장 최신 소스 코드를 가져온다.
-      - name: checkout
+      - name: Checkout
         uses: actions/checkout@v3
 
       # 2) JDK 11 세팅
@@ -30,12 +30,17 @@ jobs:
           java-version: '11'
           distribution: 'temurin'
 
-      # 📌 만약 jwt, oauth, s3 등 application-*.yml 각각 두면 추가 생성 필요
+      # 📌만약 jwt, oauth, s3 등 application-*.yml 각각 두면 추가 생성 필요
       # 3) yml 파일 생성 - application.yml
-      - name: make application.yml
+      - name: Make application.yml
         run: |
           touch ./src/main/resources/application.yml
           echo "${{ secrets.APPLICATION }}" > ./application.yml
+
+      - name: Make .env
+        run: |
+          touch ./.env
+          echo "${{ secrets.ENV }}" > ./.env
 
       # 4) gradlew 실행을 위해서 실행 권한을 부여
       - name: Grant execute permission for gradlew
