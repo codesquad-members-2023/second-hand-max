@@ -39,8 +39,8 @@ jobs:
 
       - name: Make .env
         run: |
-          touch ./.env
-          echo "${{ secrets.ENV }}" > ./.env
+          touch .env
+          echo "${{ secrets.ENV }}" > .env
 
       # 4) gradlew 실행을 위해서 실행 권한을 부여
       - name: Grant execute permission for gradlew
@@ -87,7 +87,7 @@ jobs:
           username: ${{ secrets.EC2_USERNAME }}
           key: ${{ secrets.EC2_PRIVATE_KEY }}
           port: 22 # SSSh 포트번호
-          source: "./.env"
+          source: ".env"
           target: /home/ubuntu
 
       # 9) nginx.conf 파일을 EC2에 업로드
