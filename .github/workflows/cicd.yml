@@ -41,6 +41,7 @@ jobs:
         run: |
           touch .env
           echo "${{ secrets.ENV }}" > .env
+          ls -l
 
       # 4) gradlew 실행을 위해서 실행 권한을 부여
       - name: Grant execute permission for gradlew
