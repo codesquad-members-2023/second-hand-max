@@ -1,13 +1,20 @@
 package com.codesquad.secondhand.domain.item;
 
-public enum ItemStatus {
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
 
-	ON_SALE("판매중"), RESERVED("예약중"), SOLD_OUT("판매완료");
+import lombok.Getter;
 
-	private String title;
+@Table(name = "status")
+@Getter
+@Entity
+public class ItemStatus {
 
-	ItemStatus(String title) {
-		this.title = title;
-	}
-
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long id;
+	private String type;
 }
