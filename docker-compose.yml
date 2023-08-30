@@ -10,7 +10,8 @@ services:
     container_name: proxy_server
     image: nginx:latest # 최신 버전
     ports:
-      - 443:443
+      - '80:80'
+    #      - '443:443'
     volumes:
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf # 호스트 경로:컨테이너 경로 연결
     depends_on:
