@@ -19,6 +19,7 @@ services:
       - ./data/cerbot/www:/var/www/cerbot
     depends_on:
       - app # app 서비스가 실행되어야 nginx 서비스가 실행
+    command: "/bin/sh -c 'while :; do sleep 6h & wait $${!}; nginx -s reload; done & nginx -g \\"daemon off;\\"'"
 
   certbot:
     image: certbot/certbot
@@ -26,6 +27,7 @@ services:
     volumes:
       - ./data/certbot/conf:/etc/letsencrypt
       - ./data/certbot/www:/var/www/certbot
+    entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
 
 volumes:
   shared-data: #로컬 또는 서버에 생성되는 폴더 (컨테이너 폴더와 연결)
