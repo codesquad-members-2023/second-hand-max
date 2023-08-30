@@ -15,8 +15,8 @@ services:
       - 443:443
     volumes:
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf # 호스트 경로:컨테이너 경로 연결
-      - ./data/cerbot/conf:/etc/letsencrypt
-      - ./data/cerbot/www:/var/www/cerbot
+      - ./data/certbot/data:/var/www/certbot:ro
+      - ./data/cerbot/conf:/etc/nginx/ssl:ro
     depends_on:
       - app # app 서비스가 실행되어야 nginx 서비스가 실행
 
@@ -25,8 +25,9 @@ services:
     image: certbot/certbot:latest
     command: certonly --webroot --webroot-path=/var/www/certbot --email myemail@google.com --agree-tos --no-eff-email -d fishprincess.site
     volumes:
-      - ./data/certbot/conf:/etc/letsencrypt
-      - ./data/certbot/www:/var/www/certbot
+      - ./data/certbot/conf:/etc/letsencrypt:rw
+      - ./data/certbot/logs:/var/log/letsencrypt:rw
+      - ./data/certbot/data:/var/www/certbot:rw
 
 volumes:
   shared-data: #로컬 또는 서버에 생성되는 폴더 (컨테이너 폴더와 연결)
