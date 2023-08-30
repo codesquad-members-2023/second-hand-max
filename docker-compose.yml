@@ -9,13 +9,23 @@ services:
   nginx: # 서비스 이름
     container_name: proxy_server
     image: nginx:latest # 최신 버전
+    restart: unless-stopped
     ports:
-      - '80:80'
-    #      - '443:443'
+      - 80:80
+      - 443:443
     volumes:
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf # 호스트 경로:컨테이너 경로 연결
+      - ./data/cerbot/conf:/etc/letsencrypt
+      - ./data/cerbot/www:/var/www/cerbot
     depends_on:
       - app # app 서비스가 실행되어야 nginx 서비스가 실행
+
+  certbot:
+    image: certbot/certbot
+    restart: unless-stopped
+    volumes:
+      - ./data/certbot/conf:/etc/letsencrypt
+      - ./data/certbot/www:/var/www/certbot
 
 volumes:
   shared-data: #로컬 또는 서버에 생성되는 폴더 (컨테이너 폴더와 연결)
