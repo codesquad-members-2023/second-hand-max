@@ -2,7 +2,8 @@ import { styled } from 'styled-components';
 import Product from 'types/Product';
 import ListItem from './ProductList/ListItem';
 import { useContext } from 'react';
-import { ActionType, AppStateDispatchContext } from 'contexts/AppContext';
+import { AppStateDispatchContext } from 'contexts/AppContext';
+import ActionType from '@constants/ActionType';
 
 const ProductDetail: React.FC<Product> = (product) => {
   const dispatch = useContext(AppStateDispatchContext);
@@ -10,7 +11,7 @@ const ProductDetail: React.FC<Product> = (product) => {
   if (!dispatch) {
     return null;
   }
-  
+
   return (
     <Container>
       <ListItem {...product} />

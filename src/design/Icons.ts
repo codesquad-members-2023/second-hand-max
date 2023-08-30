@@ -4,7 +4,7 @@ import { ReactComponent as Heart } from '@assets/icons/heart.svg';
 import { ReactComponent as Message } from '@assets/icons/message.svg';
 import { ReactComponent as UserCircle } from '@assets/icons/user-circle.svg';
 
-const Icon = {
+const Icons = {
   Home,
   News,
   Heart,
@@ -12,4 +12,4 @@ const Icon = {
   UserCircle,
 };
 
-export default Icon;
+export default Icons;

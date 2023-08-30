@@ -17,7 +17,7 @@ const AppRoutes: React.FC = () => {
           <Route path={PATH.SALES_HISTORY} element={<SalesHistory />} />
           <Route path={PATH.WISHLIST} element={<Wishlist />} />
           <Route path={PATH.CHATTING} element={<Chatting />} />
-          <Route path={PATH.MY_ACCOUNT} element={<MyAccount />} />
+          <Route path={`${PATH.MY_ACCOUNT}/*`} element={<MyAccount />} />
         </Route>
       </Routes>
     </Router>

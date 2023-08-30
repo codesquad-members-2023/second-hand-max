@@ -1,7 +1,7 @@
 import { styled } from 'styled-components';
 
 import PATH from '@constants/PATH';
-import Icon from '@design/Icon';
+import Icons from '@design/Icons';
 import Tab from './Tab';
 
 const TabList: React.FC = () => {
@@ -22,31 +22,31 @@ const tabs = [
   {
     id: 1,
     path: PATH.BASE,
-    icon: Icon.Home,
+    icon: Icons.Home,
     text: '홈화면',
   },
   {
     id: 2,
     path: PATH.SALES_HISTORY,
-    icon: Icon.News,
+    icon: Icons.News,
     text: '판매내역',
   },
   {
     id: 3,
     path: PATH.WISHLIST,
-    icon: Icon.Heart,
+    icon: Icons.Heart,
     text: '관심상품',
   },
   {
     id: 4,
     path: PATH.CHATTING,
-    icon: Icon.Message,
+    icon: Icons.Message,
     text: '채팅',
   },
   {
     id: 5,
     path: PATH.MY_ACCOUNT,
-    icon: Icon.UserCircle,
+    icon: Icons.UserCircle,
     text: '내계정',
   },
 ];

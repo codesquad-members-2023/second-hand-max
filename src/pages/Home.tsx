@@ -1,10 +1,7 @@
 import ProductList from '@components/ProductList';
 import TopBar from '@components/TopBar';
-import {
-  ActionType,
-  AppStateContext,
-  AppStateDispatchContext,
-} from 'contexts/AppContext';
+import ActionType from '@constants/ActionType';
+import { AppStateContext, AppStateDispatchContext } from 'contexts/AppContext';
 import { useContext } from 'react';
 import { styled } from 'styled-components';
 
