@@ -23,7 +23,7 @@ services:
   certbot:
     container_name: certbot
     image: certbot/certbot:latest
-    command: certonly --webroot --webroot-path=/var/www/certbot --email myemail@google.com --agree-tos --no-eff-email -d domain.com
+    command: certonly --webroot --webroot-path=/var/www/certbot --email myemail@google.com --agree-tos --no-eff-email -d fishprincess.site
     volumes:
       - ./data/certbot/conf:/etc/letsencrypt
       - ./data/certbot/www:/var/www/certbot
