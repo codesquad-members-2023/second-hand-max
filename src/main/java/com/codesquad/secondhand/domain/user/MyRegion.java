@@ -43,7 +43,7 @@ public class MyRegion {
 	}
 
 	private void validateUserRegionLimit() {
-		if (this.userRegions.size() == MAXIMUM_USER_REGION_COUNT) {
+		if (this.userRegions.size() >= MAXIMUM_USER_REGION_COUNT) {
 			throw new ExceedUserRegionLimitException();
 		}
 	}
@@ -55,7 +55,7 @@ public class MyRegion {
 	}
 
 	private void validateMinimumUserRegion() {
-		if (this.userRegions.size() == MINIMUM_USER_REGION_COUNT) {
+		if (this.userRegions.size() <= MINIMUM_USER_REGION_COUNT) {
 			throw new MinimumUserRegionViolationException();
 		}
 	}
