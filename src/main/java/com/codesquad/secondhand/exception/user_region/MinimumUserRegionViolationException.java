@@ -1,4 +1,4 @@
-package com.codesquad.secondhand.api.service.user_region.exception;
+package com.codesquad.secondhand.exception.user_region;
 
 public class MinimumUserRegionViolationException extends RuntimeException {
 

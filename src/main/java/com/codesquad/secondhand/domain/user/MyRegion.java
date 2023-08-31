@@ -7,12 +7,12 @@ import javax.persistence.CascadeType;
 import javax.persistence.Embeddable;
 import javax.persistence.OneToMany;
 
-import com.codesquad.secondhand.api.service.user_region.exception.DuplicatedUserRegionException;
-import com.codesquad.secondhand.api.service.user_region.exception.ExceedUserRegionLimitException;
-import com.codesquad.secondhand.api.service.user_region.exception.MinimumUserRegionViolationException;
-import com.codesquad.secondhand.api.service.user_region.exception.NoSuchUserRegionException;
 import com.codesquad.secondhand.domain.region.Region;
 import com.codesquad.secondhand.domain.user_region.UserRegion;
+import com.codesquad.secondhand.exception.user_region.DuplicatedUserRegionException;
+import com.codesquad.secondhand.exception.user_region.ExceedUserRegionLimitException;
+import com.codesquad.secondhand.exception.user_region.MinimumUserRegionViolationException;
+import com.codesquad.secondhand.exception.user_region.NoSuchUserRegionException;
 
 import lombok.NoArgsConstructor;
 

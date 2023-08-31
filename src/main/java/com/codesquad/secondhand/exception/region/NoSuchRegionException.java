@@ -1,4 +1,4 @@
-package com.codesquad.secondhand.api.service.region.exception;
+package com.codesquad.secondhand.exception.region;
 
 public class NoSuchRegionException extends RuntimeException {
 

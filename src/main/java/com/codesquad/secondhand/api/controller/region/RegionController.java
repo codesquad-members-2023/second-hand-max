@@ -10,6 +10,7 @@ import com.codesquad.secondhand.api.ApiResponse;
 import com.codesquad.secondhand.api.ResponseMessage;
 import com.codesquad.secondhand.api.service.region.RegionService;
 import com.codesquad.secondhand.api.service.region.response.RegionSliceResponse;
+import com.codesquad.secondhand.domain.common.Cursor;
 
 import lombok.RequiredArgsConstructor;
 
@@ -21,9 +22,8 @@ public class RegionController {
 	private final RegionService regionService;
 
 	@GetMapping
-	public ApiResponse<RegionSliceResponse> listAllRegions(@RequestParam int cursor) {
+	public ApiResponse<RegionSliceResponse> listAllRegions(@RequestParam Cursor cursor) {
 		return ApiResponse.of(HttpStatus.OK, ResponseMessage.REGION_FETCH_SUCCESS.getMessage(),
-			regionService.listAllRegions(cursor));
+			regionService.listAllRegions(cursor.getCursor()));
 	}
-
 }
