@@ -4,13 +4,13 @@ import Product from 'types/Product';
 
 type AppState = {
   products: Product[];
-  detail: number | null;
+  detail: Product | null;
 };
 
 type Action =
   | {
       type: ActionType.DETAIL;
-      payload: number;
+      payload: Product;
     }
   | {
       type: ActionType.CLOSE;
@@ -43,7 +43,7 @@ const reducer = (state: AppState, action: Action): AppState => {
 const initialState = {
   products: [
     {
-      itemId: 2,
+      itemId: 0,
       thumbnailUrl: 'http:~~',
       title: '잎사귀 포스터',
       tradingRegion: '역삼 1동',

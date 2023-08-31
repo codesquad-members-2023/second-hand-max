@@ -1,8 +1,8 @@
 import { css, styled } from 'styled-components';
 import Tabs from './Tabs/index';
-import ProductDetail from './ProductDetail';
 import { useContext } from 'react';
 import { AppStateContext } from 'contexts/AppContext';
+import Detail from './Detail';
 
 const SecondHand: React.FC = () => {
   const state = useContext(AppStateContext);
@@ -11,15 +11,11 @@ const SecondHand: React.FC = () => {
     return null;
   }
 
-  const product = state.detail !== null && state.products[state.detail];
-
   return (
     <Container>
       <Inner>
         <Tabs />
-        {product && (
-          <ProductDetail {...product} />
-        )}
+          <Detail />
       </Inner>
     </Container>
   );
