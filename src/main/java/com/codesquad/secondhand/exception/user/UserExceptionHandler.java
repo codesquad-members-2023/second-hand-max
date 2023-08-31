@@ -13,7 +13,7 @@ public class UserExceptionHandler {
 	@ResponseStatus(HttpStatus.BAD_REQUEST)
 	@ExceptionHandler(NoSuchUserException.class)
 	public ApiResponse<Void> handleNoSuchUserException(NoSuchUserException exception) {
-		return ApiResponse.of(HttpStatus.BAD_REQUEST, exception.getMessage(), null);
+		return ApiResponse.noData(HttpStatus.BAD_REQUEST, exception.getMessage());
 	}
 
 }

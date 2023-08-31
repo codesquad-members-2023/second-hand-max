@@ -14,7 +14,7 @@ public class UserRegionExceptionHandler {
 	@ExceptionHandler({ExceedUserRegionLimitException.class, MinimumUserRegionViolationException.class,
 		DuplicatedUserRegionException.class, NoSuchUserRegionException.class})
 	public ApiResponse<Void> handleUserRegionException(RuntimeException exception) {
-		return ApiResponse.of(HttpStatus.BAD_REQUEST, exception.getMessage(), null);
+		return ApiResponse.noData(HttpStatus.BAD_REQUEST, exception.getMessage());
 	}
 
 }

@@ -13,7 +13,7 @@ public class CommonExceptionHandler {
 	@ResponseStatus(HttpStatus.BAD_REQUEST)
 	@ExceptionHandler(InvalidCursorException.class)
 	public ApiResponse<Void> handleUserRegionException(InvalidCursorException exception) {
-		return ApiResponse.of(HttpStatus.BAD_REQUEST, exception.getMessage(), null);
+		return ApiResponse.noData(HttpStatus.BAD_REQUEST, exception.getMessage());
 	}
 
 }
