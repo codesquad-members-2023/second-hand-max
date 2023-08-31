@@ -1,17 +1,46 @@
+import { useState } from 'react';
 import { css, styled } from 'styled-components';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 import Button from '@components/Button';
 import Field from '@components/Field';
 import PATH from '@constants/PATH';
+import { signInUser } from 'apis/fetchApi';
 
 const SignInForm: React.FC = () => {
+  const [id, setId] = useState('');
+  const navigate = useNavigate();
+
+  const onChangeId = (id: string) => {
+    setId(id);
+  };
+
+  const onSignIn = async () => {
+    const data = await signInUser(id, 'token');
+
+    alert(data.message);
+    navigate(PATH.BASE);
+  };
+
   return (
     <ColumnLayout>
-      <LoginForm>
+      <LoginForm
+        onSubmit={(event) => {
+          event.preventDefault();
+
+          onSignIn();
+        }}
+      >
         <Field>
           <Field.Label id="id" text="아이디" />
-          <Field.Input id="id" name="id" placeholder="내용을 입력하세요" />
+          <Field.Input
+            id="id"
+            name="id"
+            placeholder="내용을 입력하세요"
+            onChange={({ target }) => {
+              onChangeId(target.value);
+            }}
+          />
         </Field>
 
         <Button className="login-button" $flexible="Fixed" $type="Contained">

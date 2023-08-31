@@ -5,15 +5,15 @@ import Button from './Button';
 
 const ProfileImageButton: React.FC<{ image?: string }> = ({ image }) => {
   return (
-    <CircularProfileImage hasImage={Boolean(image)}>
+    <CircularProfileImage $hasImage={Boolean(image)}>
       <Icons.Camera />
       {image && <Image src={image} alt="프로필 이미지" />}
     </CircularProfileImage>
   );
 };
 
-const CircularProfileImage = styled(Button)<{ hasImage: boolean }>`
-  ${({ theme: { colors, radius }, hasImage }) => css`
+const CircularProfileImage = styled(Button)<{ $hasImage: boolean }>`
+  ${({ theme: { colors, radius }, $hasImage }) => css`
     position: relative;
     width: 80px;
     height: 80px;
@@ -24,7 +24,7 @@ const CircularProfileImage = styled(Button)<{ hasImage: boolean }>`
     z-index: 1;
     stroke: ${colors.accent.text};
 
-    ${hasImage &&
+    ${$hasImage &&
     css`
       &::before {
         content: '';
