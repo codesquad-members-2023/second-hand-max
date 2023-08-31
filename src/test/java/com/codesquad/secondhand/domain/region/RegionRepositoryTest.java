@@ -13,14 +13,19 @@ import org.springframework.data.domain.Slice;
 
 import com.codesquad.secondhand.FixtureFactory;
 import com.codesquad.secondhand.IntegrationTestSupport;
+import com.codesquad.secondhand.domain.user_region.UserRegionRepository;
 
 class RegionRepositoryTest extends IntegrationTestSupport {
 
 	@Autowired
 	private RegionRepository regionRepository;
 
+	@Autowired
+	private UserRegionRepository userRegionRepository;
+
 	@BeforeEach
 	private void init() {
+		userRegionRepository.deleteAllInBatch();
 		regionRepository.deleteAllInBatch();
 	}
 
@@ -33,7 +38,7 @@ class RegionRepositoryTest extends IntegrationTestSupport {
 		Pageable pageable = PageRequest.of(page, size);
 
 		// when
-		Slice<Region> regions = regionRepository.findSliceBy(pageable);
+		Slice<Region> regions = regionRepository.findSliceByTitleContaining(pageable, "");
 
 		// then
 		assertThat(regions).hasSize(size);
@@ -48,7 +53,7 @@ class RegionRepositoryTest extends IntegrationTestSupport {
 		Pageable pageable = PageRequest.of(page, size);
 
 		// when
-		Slice<Region> regions = regionRepository.findSliceBy(pageable);
+		Slice<Region> regions = regionRepository.findSliceByTitleContaining(pageable, "");
 
 		// then
 		assertThat(regions.hasNext()).isEqualTo(hasNext);

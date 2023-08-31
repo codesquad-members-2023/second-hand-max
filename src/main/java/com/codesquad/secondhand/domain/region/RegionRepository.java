@@ -6,6 +6,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface RegionRepository extends JpaRepository<Region, Long> {
 
-	Slice<Region> findSliceBy(Pageable pageable);
+	Slice<Region> findSliceByTitleContaining(Pageable pageable, String title);
 
 }
