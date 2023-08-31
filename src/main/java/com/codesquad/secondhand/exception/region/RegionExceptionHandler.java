@@ -13,7 +13,7 @@ public class RegionExceptionHandler {
 	@ResponseStatus(HttpStatus.BAD_REQUEST)
 	@ExceptionHandler(NoSuchRegionException.class)
 	public ApiResponse<Void> handleNoSuchRegionException(NoSuchRegionException exception) {
-		return ApiResponse.of(HttpStatus.BAD_REQUEST, exception.getMessage(), null);
+		return ApiResponse.noData(HttpStatus.BAD_REQUEST, exception.getMessage());
 	}
 
 }
