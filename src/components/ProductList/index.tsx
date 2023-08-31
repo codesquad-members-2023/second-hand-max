@@ -1,18 +1,20 @@
 import { styled } from 'styled-components';
 import ListItem from './ListItem';
-import Product from 'types/Product';
+import { useContext } from 'react';
+import { AppStateContext } from 'contexts/AppContext';
 
-const ProductList: React.FC<{products: Product[]}> = ({products}) => {
+const ProductList: React.FC = () => {
+  const state = useContext(AppStateContext);
+
+  if(!state) return null;
   return (
     <Container>
-      {products.map((product) => (
+      {state.products.map((product) => (
         <ListItem key={product.itemId} {...product} />
       ))}
     </Container>
   );
 };
-
-
 
 const Container = styled.ul``;
 
