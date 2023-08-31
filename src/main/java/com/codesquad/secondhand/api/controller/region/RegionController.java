@@ -22,8 +22,11 @@ public class RegionController {
 	private final RegionService regionService;
 
 	@GetMapping
-	public ApiResponse<RegionSliceResponse> listAllRegions(@RequestParam Cursor cursor) {
+	public ApiResponse<RegionSliceResponse> listAllRegions(
+		@RequestParam(required = false, defaultValue = "") String title,
+		@RequestParam Cursor cursor) {
 		return ApiResponse.of(HttpStatus.OK, ResponseMessage.REGION_FETCH_SUCCESS.getMessage(),
-			regionService.listAllRegions(cursor.getCursor()));
+			regionService.listAllRegions(title, cursor.getCursor()));
 	}
+
 }
