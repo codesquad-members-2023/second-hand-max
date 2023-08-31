@@ -5,6 +5,7 @@ import Product from 'types/Product';
 type AppState = {
   products: Product[];
   detail: Product | null;
+  modal: null | 'LOCATION';
 };
 
 type Action =
@@ -36,11 +37,12 @@ const reducer = (state: AppState, action: Action): AppState => {
       return {
         ...state,
         detail: null,
+        modal: null,
       };
   }
 };
 
-const initialState = {
+const initialState: AppState = {
   products: [
     {
       itemId: 0,
@@ -55,6 +57,7 @@ const initialState = {
     },
   ],
   detail: null,
+  modal: 'LOCATION',
 };
 
 export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
