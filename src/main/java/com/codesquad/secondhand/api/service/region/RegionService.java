@@ -24,9 +24,9 @@ public class RegionService {
 	private final RegionRepository regionRepository;
 
 	@Transactional(readOnly = true)
-	public RegionSliceResponse listAllRegions(final int cursor) {
+	public RegionSliceResponse listAllRegions(String title, int cursor) {
 		final Pageable pageable = PageRequest.of(cursor, REGION_PER_PAGE);
-		final Slice<Region> regions = regionRepository.findSliceBy(pageable);
+		final Slice<Region> regions = regionRepository.findSliceByTitleContaining(pageable, title);
 
 		return new RegionSliceResponse(regions.hasNext(), regions
 			.stream()

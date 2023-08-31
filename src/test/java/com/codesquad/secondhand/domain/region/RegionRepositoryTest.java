@@ -13,14 +13,21 @@ import org.springframework.data.domain.Slice;
 
 import com.codesquad.secondhand.FixtureFactory;
 import com.codesquad.secondhand.IntegrationTestSupport;
+import com.codesquad.secondhand.domain.user_region.UserRegionRepository;
 
 class RegionRepositoryTest extends IntegrationTestSupport {
+
+	private static final String EMPTY = "";
 
 	@Autowired
 	private RegionRepository regionRepository;
 
+	@Autowired
+	private UserRegionRepository userRegionRepository;
+
 	@BeforeEach
 	private void init() {
+		userRegionRepository.deleteAllInBatch();
 		regionRepository.deleteAllInBatch();
 	}
 
@@ -33,7 +40,7 @@ class RegionRepositoryTest extends IntegrationTestSupport {
 		Pageable pageable = PageRequest.of(page, size);
 
 		// when
-		Slice<Region> regions = regionRepository.findSliceBy(pageable);
+		Slice<Region> regions = regionRepository.findSliceByTitleContaining(pageable, EMPTY);
 
 		// then
 		assertThat(regions).hasSize(size);
@@ -48,7 +55,23 @@ class RegionRepositoryTest extends IntegrationTestSupport {
 		Pageable pageable = PageRequest.of(page, size);
 
 		// when
-		Slice<Region> regions = regionRepository.findSliceBy(pageable);
+		Slice<Region> regions = regionRepository.findSliceByTitleContaining(pageable, EMPTY);
+
+		// then
+		assertThat(regions.hasNext()).isEqualTo(hasNext);
+	}
+
+	@DisplayName("검색 키워드를 포함하는 동네 목록을 응답합니다.")
+	@CsvSource(value = {"0,20,ten,false", "0,20,thirty,true"})
+	@ParameterizedTest
+	void hasNext(int page, int size, String title, boolean hasNext) {
+		// given
+		regionRepository.saveAll(FixtureFactory.createRegionFixtures(10, "size ten"));
+		regionRepository.saveAll(FixtureFactory.createRegionFixtures(30, "size thirty"));
+		Pageable pageable = PageRequest.of(page, size);
+
+		// when
+		Slice<Region> regions = regionRepository.findSliceByTitleContaining(pageable, title);
 
 		// then
 		assertThat(regions.hasNext()).isEqualTo(hasNext);
