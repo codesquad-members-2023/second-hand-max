@@ -39,7 +39,7 @@ public class UserRegionController {
 	public ApiResponse<Void> createUserRegion(@RequestBody UserRegionCreateRequest request) {
 		final Long userId = 1L;
 		userRegionService.createUserRegion(request.toService(userId));
-		return ApiResponse.of(HttpStatus.CREATED, ResponseMessage.USER_REGION_CREATE_SUCCESS.getMessage(), null);
+		return ApiResponse.noData(HttpStatus.CREATED, ResponseMessage.USER_REGION_CREATE_SUCCESS.getMessage());
 	}
 
 	@ResponseStatus(HttpStatus.NO_CONTENT)
@@ -47,7 +47,7 @@ public class UserRegionController {
 	public ApiResponse<Void> deleteUserRegion(@PathVariable Long id) {
 		final Long userId = 1L;
 		userRegionService.deleteUserRegion(userId, id);
-		return ApiResponse.of(HttpStatus.NO_CONTENT, ResponseMessage.USER_REGION_DELETE_SUCCESS.getMessage(), null);
+		return ApiResponse.noData(HttpStatus.NO_CONTENT, ResponseMessage.USER_REGION_DELETE_SUCCESS.getMessage());
 	}
 
 }
