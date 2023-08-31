@@ -18,6 +18,12 @@ public abstract class FixtureFactory {
 			.collect(Collectors.toList());
 	}
 
+	public static List<Region> createRegionFixtures(int size, String title) {
+		return IntStream.rangeClosed(1, size)
+			.mapToObj(i -> new Region(null, title + i))
+			.collect(Collectors.toList());
+	}
+
 	public static List<Category> createCategoryFixture(int size) {
 		return IntStream.rangeClosed(1, size)
 			.mapToObj(i -> new Category((long)i, "category" + i, "http://url" + i + ".com"))
