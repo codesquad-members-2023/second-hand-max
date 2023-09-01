@@ -1,16 +1,9 @@
 import Icons from '@design/Icons';
-import { AppStateDispatchContext } from 'contexts/AppContext';
-import { MouseEvent, useContext } from 'react';
+import { MouseEvent } from 'react';
 import { css, styled } from 'styled-components';
 
 // 예약어인것은 알지만 기획서에 영역이름이 이렇게 되어있었습니다.
 const Header: React.FC = () => {
-  const dispatch = useContext(AppStateDispatchContext);
-
-  if (!dispatch) {
-    return null;
-  }
-
   function onCloseButton(e:MouseEvent) {
     const btn = e.target as HTMLElement;
     const dialog = btn.closest('dialog');
