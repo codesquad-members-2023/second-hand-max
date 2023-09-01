@@ -2,13 +2,10 @@ package com.codesquad.secondhand.api.service.item.response;
 
 import java.time.LocalDateTime;
 
-import com.codesquad.secondhand.domain.item.Item;
+import com.querydsl.core.annotations.QueryProjection;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 
-// todo : numChat, numLike 추가
-@AllArgsConstructor
 @Getter
 public class ItemResponse {
 	private Long id;
@@ -19,11 +16,22 @@ public class ItemResponse {
 	private LocalDateTime createdAt;
 	private LocalDateTime updatedAt;
 	private Integer price;
+	private Long numChat;
+	private Long numLike;
 
-	public static ItemResponse from(Item item) {
-		return new ItemResponse(item.getId(), item.getTitle(), item.getRegion().getTitle(),
-			item.getItemStatus().getType(), item.getItemImages().get(0).getImageUrl(), item.getCreatedAt(),
-			item.getUpdatedAt(), item.getPrice());
+	@QueryProjection
+	public ItemResponse(Long id, String title, String region, String status, String thumbnail, LocalDateTime createdAt,
+		LocalDateTime updatedAt, Integer price, Long numChat, Long numLike) {
+		this.id = id;
+		this.title = title;
+		this.region = region;
+		this.status = status;
+		this.thumbnail = thumbnail;
+		this.createdAt = createdAt;
+		this.updatedAt = updatedAt;
+		this.price = price;
+		this.numChat = numChat;
+		this.numLike = numLike;
 	}
 
 }

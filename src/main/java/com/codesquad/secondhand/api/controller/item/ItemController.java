@@ -23,9 +23,10 @@ public class ItemController {
 	public ApiResponse<ItemSliceResponse> listFilteredItems(
 		@RequestParam Long category,
 		@RequestParam Long region,
-		@RequestParam int cursor
+		@RequestParam int page,
+		@RequestParam int size
 	) {
-		return ApiResponse.of(HttpStatus.OK, "상품 목록 조회를 성공하였습니다.", itemService.listOfItems(category, region, cursor));
+		return ApiResponse.of(HttpStatus.OK, "상품 목록 조회를 성공하였습니다.", itemService.listOfItems(category, region, page, size));
 	}
 
 }
