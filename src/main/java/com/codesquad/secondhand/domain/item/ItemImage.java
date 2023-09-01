@@ -27,6 +27,7 @@ public class ItemImage extends BaseTimeEntity {
 	private Item item;
 
 	private String imageUrl;
+	private boolean isThumbnail;
 	private boolean isDeleted;
 
 }
