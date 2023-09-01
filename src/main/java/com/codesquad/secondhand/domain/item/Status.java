@@ -11,7 +11,7 @@ import lombok.Getter;
 @Table(name = "status")
 @Getter
 @Entity
-public class ItemStatus {
+public class Status {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
