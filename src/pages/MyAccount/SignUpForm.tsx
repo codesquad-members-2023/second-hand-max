@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { css, styled } from 'styled-components';
 
@@ -8,46 +8,16 @@ import Icons from '@design/Icons';
 import TopBar from '@components/TopBar';
 import ProfileImageButton from '@components/ProfileImageButton';
 import PATH from '@constants/PATH';
-import { signUpUser } from 'apis/fetchApi';
+import useOAuth from '@hooks/useOAuth';
 
 const SignUpForm: React.FC = () => {
   const [id, setId] = useState('');
   const navigate = useNavigate();
+  const { initOAuth } = useOAuth('sign-up', id);
 
   const onIdChange = (id: string) => {
     setId(id);
   };
-
-  const onSignUpSubmit = async () => {
-    const type = 'sign-up';
-    const oauthUrl = `${import.meta.env.VITE_APP_OAUTH_URL}&state=${type}`;
-
-    window.open(oauthUrl, '_blank', 'popup');
-    window.addEventListener('message', onMessageReceive);
-  };
-
-  const onMessageReceive = async ({ origin, data }: MessageEvent) => {
-    const isSameOrigin = origin === window.location.origin;
-    const { status } = data;
-
-    if (!isSameOrigin || status === 'error') {
-      throw new Error('비정상적인 접근입니다.');
-    }
-
-    const { type, code } = data;
-
-    if (type === 'sign-up') {
-      const data = await signUpUser(code, id);
-      alert(data.message);
-      navigate(`/${PATH.MY_ACCOUNT}`);
-    }
-  };
-
-  useEffect(() => {
-    return () => {
-      window.removeEventListener('message', onMessageReceive);
-    };
-  }, []);
 
   return (
     <ColumnLayout>
@@ -63,7 +33,7 @@ const SignUpForm: React.FC = () => {
           닫기
         </Button>
         <span>회원가입</span>
-        <Button $flexible="Flexible" $type="Ghost" onClick={onSignUpSubmit}>
+        <Button $flexible="Flexible" $type="Ghost" onClick={initOAuth}>
           완료
         </Button>
       </Title>

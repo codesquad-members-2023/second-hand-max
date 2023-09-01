@@ -1,25 +1,18 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { css, styled } from 'styled-components';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 import Button from '@components/Button';
 import Field from '@components/Field';
 import PATH from '@constants/PATH';
-import { signInUser } from 'apis/fetchApi';
+import useOAuth from '@hooks/useOAuth';
 
 const SignInForm: React.FC = () => {
   const [id, setId] = useState('');
-  const navigate = useNavigate();
+  const { initOAuth } = useOAuth('sign-in', id);
 
   const onChangeId = (id: string) => {
     setId(id);
-  };
-
-  const onSignIn = async () => {
-    const data = await signInUser(id, 'token');
-
-    alert(data.message);
-    navigate(PATH.BASE);
   };
 
   return (
@@ -28,7 +21,7 @@ const SignInForm: React.FC = () => {
         onSubmit={(event) => {
           event.preventDefault();
 
-          onSignIn();
+          initOAuth();
         }}
       >
         <Field>

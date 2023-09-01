@@ -16,12 +16,12 @@ const OAuthLoadingPage: React.FC = () => {
   }
 
   const code = search.get('code');
-  const type = search.get('state');
+  const action = search.get('state');
 
   window.opener.postMessage(
     {
       status: 'success',
-      type,
+      action,
       code,
     },
     window.location.origin,

@@ -16,15 +16,14 @@ const fetchData = async (path: string, options?: RequestInit) => {
 };
 
 export const signUpUser = (code: string, id: string) => {
+  const formData = new FormData();
+  const data = JSON.stringify({ loginId: id, addrName: '가락 1동' });
+
+  formData.append('signupData', new Blob([data], { type: 'application/json' }));
+
   return fetchData(`/auth/naver/signup?code=${code}`, {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      loginId: id,
-      addrName: '가락 1동',
-    }),
+    body: formData,
   });
 };
 
