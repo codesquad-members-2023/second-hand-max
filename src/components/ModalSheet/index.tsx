@@ -5,7 +5,7 @@ import LocationForm from './LocationModal';
 import ActionType from '@constants/ActionType';
 
 const ModalSheet: React.FC = () => {
-  const dialogRef = useRef<HTMLDialogElement | null>(null);
+  const dialogRef = useRef<HTMLDialogElement>(null);
   const state = useContext(AppStateContext);
   const dispatch = useContext(AppStateDispatchContext);
 
