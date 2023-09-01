@@ -18,8 +18,10 @@ import javax.persistence.Table;
 import org.springframework.data.annotation.LastModifiedDate;
 
 import com.codesquad.secondhand.domain.category.Category;
+import com.codesquad.secondhand.domain.chat.Chat;
 import com.codesquad.secondhand.domain.region.Region;
 import com.codesquad.secondhand.domain.user.User;
+import com.codesquad.secondhand.domain.wishlist.WishList;
 import com.codesquad.secondhand.util.BaseTimeEntity;
 
 import lombok.AccessLevel;
@@ -31,7 +33,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Getter
 @Entity
-@Table(name = "user")
+@Table(name = "item")
 public class Item extends BaseTimeEntity {
 
 	@Id
@@ -52,10 +54,16 @@ public class Item extends BaseTimeEntity {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "status_id")
-	private ItemStatus itemStatus;
+	private Status status;
 
 	@OneToMany(mappedBy = "item", cascade = CascadeType.ALL)
 	private List<ItemImage> itemImages = new ArrayList<>();
+
+	@OneToMany(mappedBy = "item", cascade = CascadeType.ALL)
+	private List<WishList> wishLists = new ArrayList<>();
+
+	@OneToMany(mappedBy = "item")
+	private List<Chat> chats = new ArrayList<>();
 
 	@LastModifiedDate
 	private LocalDateTime updatedAt;
