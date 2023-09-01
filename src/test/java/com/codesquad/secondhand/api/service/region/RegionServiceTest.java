@@ -8,6 +8,8 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
 import com.codesquad.secondhand.FixtureFactory;
 import com.codesquad.secondhand.IntegrationTestSupport;
@@ -41,8 +43,10 @@ class RegionServiceTest extends IntegrationTestSupport {
 		// given
 		regionRepository.saveAll(FixtureFactory.createRegionFixtures(40));
 
+		Pageable pageable = PageRequest.of(cursor, size);
+
 		// when
-		RegionSliceResponse regions = regionService.listAllRegions(EMPTY, cursor);
+		RegionSliceResponse regions = regionService.listAllRegions(EMPTY, pageable);
 
 		// then
 		assertAll(
@@ -59,8 +63,10 @@ class RegionServiceTest extends IntegrationTestSupport {
 		regionRepository.saveAll(FixtureFactory.createRegionFixtures(10, "size ten"));
 		regionRepository.saveAll(FixtureFactory.createRegionFixtures(30, "size thirty"));
 
+		Pageable pageable = PageRequest.of(cursor, size);
+
 		// when
-		RegionSliceResponse regions = regionService.listAllRegions(title, cursor);
+		RegionSliceResponse regions = regionService.listAllRegions(title, pageable);
 
 		// then
 		assertAll(
