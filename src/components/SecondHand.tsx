@@ -3,6 +3,7 @@ import Tabs from './Tabs/index';
 import { useContext } from 'react';
 import { AppStateContext } from 'contexts/AppContext';
 import Detail from './Detail';
+import ModalSheet from './ModalSheet';
 
 const SecondHand: React.FC = () => {
   const state = useContext(AppStateContext);
@@ -15,7 +16,8 @@ const SecondHand: React.FC = () => {
     <Container>
       <Inner>
         <Tabs />
-          <Detail />
+        <Detail />
+        <ModalSheet />
       </Inner>
     </Container>
   );
