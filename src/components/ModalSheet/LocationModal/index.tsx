@@ -47,7 +47,7 @@ const LocationList = styled.ul`
 `;
 
 const ListItem = styled.li`
-  width: 288px;
+  width: 100%;
   height: 56px;
   display: flex;
 `;
