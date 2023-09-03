@@ -1,0 +1,17 @@
+spring:
+  profiles:
+    active:
+      - prod
+      - oauth
+---
+server:
+  servlet:
+    encoding:
+      charset: utf-8
+      force: true
+  port: 8080
+---
+spring:
+  config:
+    activate:
+      on-profile: test
