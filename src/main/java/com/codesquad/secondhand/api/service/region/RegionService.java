@@ -2,7 +2,6 @@ package com.codesquad.secondhand.api.service.region;
 
 import java.util.stream.Collectors;
 
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
@@ -24,9 +23,8 @@ public class RegionService {
 	private final RegionRepository regionRepository;
 
 	@Transactional(readOnly = true)
-	public RegionSliceResponse listAllRegions(final int cursor) {
-		final Pageable pageable = PageRequest.of(cursor, REGION_PER_PAGE);
-		final Slice<Region> regions = regionRepository.findSliceBy(pageable);
+	public RegionSliceResponse listAllRegions(String title, Pageable pageable) {
+		final Slice<Region> regions = regionRepository.findSliceByTitleContaining(pageable, title);
 
 		return new RegionSliceResponse(regions.hasNext(), regions
 			.stream()

@@ -1,0 +1,114 @@
+name: Java CI with Gradle & Deploy with Docker to EC2
+
+# dev 브랜치에 push 될 때 실행
+on:
+  push:
+    branches: [ "dev" ]
+
+# workflows에서 사용하는 변수 지정
+env:
+  docker-container-name: second-hand-04-a
+  docker-image-name: ${{ secrets.DOCKER_USERNAME }}/second-hand-04-a
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    environment: production # 배포 환경에서 실행되는 작업임을 명시
+
+    steps:
+      # 1) 리파지토리의 가장 최신 소스 코드를 가져온다.
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      # 2) JDK 11 세팅
+      - name: Set up JDK 11 # 2
+        uses: actions/setup-java@v3
+        with:
+          java-version: '11'
+          distribution: 'temurin'
+
+      # 📌만약 jwt, oauth, s3 등 application-*.yml 각각 두면 추가 생성 필요
+      # 3) yml 파일 생성 - application.yml
+      - name: Make application.yml
+        run: |
+          touch ./src/main/resources/application.yml
+          echo "${{ secrets.APPLICATION }}" > ./src/main/resources/application.yml
+          ls -al
+
+      # 4) gradlew 실행을 위해서 실행 권한을 부여
+      - name: Grant execute permission for gradlew
+        run: chmod +x ./gradlew
+
+      # 5) Gradle을 이용하여 빌드 수행 (테스트 포함)
+      - name: Build with Gradle
+        run: ./gradlew build -x test
+
+      # 6) Docker 로그인
+      - name: Login to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_TOKEN }}
+
+      # 7) 빌드 전 Docker Buildx CLI에 BuildX 설정 (멀티 플랫폼 지원)
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      # 8) Docker Buildx를 이용하여 이미지 빌드 및 푸시
+      - name: Build and push
+        uses: docker/build-push-action@v4
+        with:
+          context: . # Docker 빌드 컨텍스트 경로
+          file: ./Dockerfile # 빌드 시 사용할 DockerFile의 경로
+          push: true # 빌드 후 배포 여부
+          tags: ${{ env.docker-image-name }} # Docker 이미지 식별자
+
+  cd-pipeline:
+    needs:
+      - build
+    name: Continuous deploy
+    runs-on: ubuntu-latest
+    environment: production
+
+    steps:
+      - uses: actions/checkout@master
+
+      # 9) nginx.conf 파일을 EC2에 업로드
+      - name: Copy nginx.conf file via ssh password
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USERNAME }}
+          key: ${{ secrets.EC2_PRIVATE_KEY }}
+          port: 22 # SSSh 포트번호
+          source: "./nginx/nginx.conf"
+          target: /home/ubuntu/
+
+      # 10) docker-compose.yml 파일을 EC2에 업로드
+      - name: Copy docker-compose.yml file via ssh password
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USERNAME }}
+          key: ${{ secrets.EC2_PRIVATE_KEY }}
+          port: 22
+          source: "docker-compose.yml"
+          target: /home/ubuntu/
+
+      # 11) docker-compose 실행
+      - name: Deploy to dev
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USERNAME }}
+          key: ${{ secrets.EC2_PRIVATE_KEY }}
+          port: 22
+          script: |
+            sudo chmod 666 /var/run/docker.sock # 보안상 수정 필요
+            docker-compose -f docker-compose.yml down -v
+            docker-compose -f docker-compose.yml pull
+            docker-compose -f docker-compose.yml up -d
+            docker image prune -f
