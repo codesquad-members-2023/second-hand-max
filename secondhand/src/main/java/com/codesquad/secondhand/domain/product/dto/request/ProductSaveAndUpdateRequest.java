@@ -2,6 +2,8 @@ package com.codesquad.secondhand.domain.product.dto.request;
 
 import java.util.List;
 
+import javax.validation.constraints.NotBlank;
+
 import com.codesquad.secondhand.domain.category.entity.Category;
 import com.codesquad.secondhand.domain.member.entity.Member;
 import com.codesquad.secondhand.domain.product.entity.Product;
@@ -14,8 +16,8 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class ProductSaveRequestDto {
-
+public class ProductSaveAndUpdateRequest {
+	@NotBlank(message = "상품명을 입력해주세요")
 	private String name;
 	private Long categoryId;
 	private Long price;
