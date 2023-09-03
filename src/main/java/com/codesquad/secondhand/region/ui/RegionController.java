@@ -1,5 +1,6 @@
 package com.codesquad.secondhand.region.ui;
 
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,11 +21,11 @@ public class RegionController {
 	private final RegionService regionService;
 
 	@GetMapping
-	public ResponseEntity<CommonResponse> showRegions(@RequestParam int cursor) {
-		CommonResponse commonResponse = CommonResponse.createOK(
-			regionService.findAll(cursor),
-			ResponseMessage.REGION_FIND_ALL
-		);
-		return ResponseEntity.ok().body(commonResponse);
+	public ResponseEntity<CommonResponse> showRegions(Pageable pageable,
+		@RequestParam(defaultValue = "") String title) {
+		return ResponseEntity.ok()
+			.body(CommonResponse.createOK(
+				regionService.findAllByTitle(pageable, title),
+				ResponseMessage.REGION_FIND_ALL));
 	}
 }
