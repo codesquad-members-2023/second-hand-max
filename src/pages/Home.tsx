@@ -1,3 +1,4 @@
+import ProductList from '@components/ProductList';
 import TopBar from '@components/TopBar';
 import { styled } from 'styled-components';
 
@@ -5,7 +6,9 @@ const Home: React.FC = () => {
   return (
     <>
       <Title aria-label="홈">홈</Title>
-      <Container></Container>
+      <Content>
+        <ProductList />
+      </Content>
     </>
   );
 };
@@ -15,8 +18,9 @@ const Title = styled(TopBar)`
   ${({ theme: { fonts } }) => fonts.display.strong16};
 `;
 
-const Container = styled.div`
+const Content = styled.div`
   box-sizing: border-box;
+  padding: 16px;
   padding-top: ${({ theme: { dimensions } }) => dimensions.topBarHeight};
   height: 100%;
   overflow: scroll;

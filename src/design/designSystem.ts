@@ -136,6 +136,7 @@ const lightModeColorPalette = {
 
 const radius = {
   half: '50%',
+  small: '8px',
   medium: '12px',
   large: '16px',
 };
@@ -145,9 +146,17 @@ const dimensions = {
   bottomBarHeight: '64px',
 };
 
+const opacity = {
+  hover: 0.8,
+  press: 0.64,
+  disabled: 0.32,
+  transparent: 0.04,
+};
+
 export const theme = {
   fonts: typographySystem,
   colors: lightModeColorPalette,
   radius,
   dimensions,
+  opacity,
 };

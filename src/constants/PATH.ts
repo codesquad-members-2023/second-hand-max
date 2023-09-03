@@ -8,6 +8,7 @@ const PATH = {
   MY_ACCOUNT: 'my-account',
 
   SIGN_UP: 'sign-up',
+  OAUTH_LOADING: 'oauth',
 } as const;
 
 export default PATH;
