@@ -2,13 +2,13 @@ package codesquard.app.api.response;
 
 import org.springframework.http.HttpStatus;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-
 import codesquard.app.api.errors.errorcode.ErrorCode;
+import lombok.Getter;
 
+@Getter
 public class ApiResponse<T> {
+
 	private final int statusCode;
-	@JsonInclude(JsonInclude.Include.NON_NULL)
 	private final String message;
 	private final T data;
 
@@ -22,8 +22,13 @@ public class ApiResponse<T> {
 		return new ApiResponse<>(httpStatus, message, data);
 	}
 
-	public static <T> ApiResponse<T> ok(T data) {
-		return new ApiResponse<>(HttpStatus.OK, HttpStatus.OK.name(), data);
+
+	public static <T> ApiResponse<T> ok(String message, T data) {
+		return new ApiResponse<>(HttpStatus.OK, message, data);
+	}
+
+	public static <T> ApiResponse<T> created(String message, T data) {
+		return new ApiResponse<>(HttpStatus.CREATED, message, data);
 	}
 
 	public static <T> ApiResponse<T> error(ErrorCode errorCode) {

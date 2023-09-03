@@ -1,9 +1,10 @@
 spring:
   profiles:
     group:
-      local: local, secret
-      dev: dev, secret
+      local: local, secret, s3
+      dev: dev, secret, s3
     default: local
+
 ---
 spring:
   config:
@@ -15,22 +16,22 @@ spring:
     username: ${db.local.datasource.username}
     password: ${db.local.datasource.password}
   jpa:
+    database: mysql
+    database-platform: org.hibernate.dialect.MySQL8Dialect
     hibernate:
       ddl-auto: create
     properties:
       hibernate:
         format_sql: true
-cloud:
-  aws:
-    credentials:
-      access-key: ${aws.access-key}
-      secret-key: ${aws.secret-key}
-    region:
-      static: ap-northeast-2
-    stack:
-      auto: false
-    s3:
-      bucket: ${aws.s3.bucket}
+        dialect: org.hibernate.dialect.MySQL8Dialect
+  redis:
+    host: localhost
+    port: 6379
+
+
+logging:
+  level:
+    codesquard: debug
 ---
 
 spring:
@@ -43,11 +44,29 @@ spring:
     username: ${db.dev.datasource.username}
     password: ${db.dev.datasource.password}
   jpa:
+    database: mysql
+    database-platform: org.hibernate.dialect.MySQL8Dialect
     hibernate:
-      ddl-auto: none
+      ddl-auto: create
     properties:
       hibernate:
         format_sql: true
+        dialect: org.hibernate.dialect.MySQL8Dialect
+  redis:
+    host: redis
+    port: 6379
+
+
+logging:
+  level:
+    codesquard: info
+
+---
+
+spring:
+  config:
+    activate:
+      on-profile: s3
 
 cloud:
   aws:
