@@ -1,5 +1,6 @@
 package com.codesquad.secondhand.api.controller.region;
 
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,10 +24,9 @@ public class RegionController {
 
 	@GetMapping
 	public ApiResponse<RegionSliceResponse> listAllRegions(
-		@RequestParam(required = false, defaultValue = "") String title,
-		@RequestParam Cursor cursor) {
+		@RequestParam(required = false, defaultValue = "") String title, Pageable pageable) {
 		return ApiResponse.of(HttpStatus.OK, ResponseMessage.REGION_FETCH_SUCCESS.getMessage(),
-			regionService.listAllRegions(title, cursor.getCursor()));
+			regionService.listAllRegions(title, pageable));
 	}
 
 }

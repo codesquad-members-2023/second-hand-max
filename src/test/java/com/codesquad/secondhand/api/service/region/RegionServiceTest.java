@@ -40,9 +40,10 @@ class RegionServiceTest extends IntegrationTestSupport {
 	void listAllRegions(int cursor, int size, boolean hasNext) {
 		// given
 		regionRepository.saveAll(FixtureFactory.createRegionFixtures(40));
+		Pageable pageable = PageRequest.of(cursor, size);
 
 		// when
-		RegionSliceResponse regions = regionService.listAllRegions(EMPTY, cursor);
+		RegionSliceResponse regions = regionService.listAllRegions(EMPTY, pageable);
 
 		// then
 		assertAll(
@@ -59,8 +60,10 @@ class RegionServiceTest extends IntegrationTestSupport {
 		regionRepository.saveAll(FixtureFactory.createRegionFixtures(10, "size ten"));
 		regionRepository.saveAll(FixtureFactory.createRegionFixtures(30, "size thirty"));
 
+		Pageable pageable = PageRequest.of(cursor, size);
+
 		// when
-		RegionSliceResponse regions = regionService.listAllRegions(title, cursor);
+		RegionSliceResponse regions = regionService.listAllRegions(title, pageable);
 
 		// then
 		assertAll(
