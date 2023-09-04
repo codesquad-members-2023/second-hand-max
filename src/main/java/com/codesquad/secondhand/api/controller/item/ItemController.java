@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.codesquad.secondhand.api.ApiResponse;
+import com.codesquad.secondhand.api.ResponseMessage;
 import com.codesquad.secondhand.api.service.item.ItemService;
 import com.codesquad.secondhand.api.service.item.response.ItemSliceResponse;
 
@@ -26,7 +27,8 @@ public class ItemController {
 		@RequestParam int page,
 		@RequestParam int size
 	) {
-		return ApiResponse.of(HttpStatus.OK, "상품 목록 조회를 성공하였습니다.", itemService.listOfItems(category, region, page, size));
+		return ApiResponse.of(HttpStatus.OK, ResponseMessage.ITEM_FETCH_SUCCESS.getMessage(),
+			itemService.listOfItems(category, region, page, size));
 	}
 
 }
