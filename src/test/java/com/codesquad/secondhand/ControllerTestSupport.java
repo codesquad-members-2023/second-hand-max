@@ -9,6 +9,7 @@ import com.codesquad.secondhand.api.controller.category.CategoryController;
 import com.codesquad.secondhand.api.controller.region.RegionController;
 import com.codesquad.secondhand.api.controller.user_region.UserRegionController;
 import com.codesquad.secondhand.api.service.category.CategoryService;
+import com.codesquad.secondhand.api.controller.user_region.UserRegionController;
 import com.codesquad.secondhand.api.service.region.RegionService;
 import com.codesquad.secondhand.api.service.user_region.UserRegionService;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -34,5 +35,8 @@ public abstract class ControllerTestSupport {
   
 	@MockBean
 	protected CategoryService categoryService;
+
+	@MockBean
+	protected UserRegionService userRegionService;
 
 }
