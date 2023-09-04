@@ -11,8 +11,8 @@ import com.codesquad.secondhand.api.ApiResponse;
 public class UserExceptionHandler {
 
 	@ResponseStatus(HttpStatus.BAD_REQUEST)
-	@ExceptionHandler(NoSuchUserException.class)
-	public ApiResponse<Void> handleNoSuchUserException(NoSuchUserException exception) {
+	@ExceptionHandler({NoSuchUserException.class, DuplicatedNicknameException.class, DuplicatedEmailException.class})
+	public ApiResponse<Void> handleUserException(RuntimeException exception) {
 		return ApiResponse.noData(HttpStatus.BAD_REQUEST, exception.getMessage());
 	}
 

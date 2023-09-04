@@ -1,5 +1,7 @@
 package com.codesquad.secondhand.api.controller.user;
 
+import javax.validation.Valid;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -29,7 +31,7 @@ public class UserController {
 	@ResponseStatus(HttpStatus.CREATED)
 	@PostMapping()
 	public ApiResponse<Void> createLocalUser(@RequestPart(required = false) MultipartFile file,
-		@RequestPart UserCreateRequest request) {
+		@Valid @RequestPart UserCreateRequest request) {
 		userService.createLocalUser(
 			request.toService(file == null ? null : imageService.createImage(file, USER_IMAGE_DIRECTORY)));
 		return ApiResponse.noData(HttpStatus.CREATED, ResponseMessage.USER_CREATE_SUCCESS.getMessage());

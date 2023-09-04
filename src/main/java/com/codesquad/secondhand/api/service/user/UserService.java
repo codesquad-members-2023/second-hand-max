@@ -12,6 +12,8 @@ import com.codesquad.secondhand.domain.region.Region;
 import com.codesquad.secondhand.domain.user.MyRegion;
 import com.codesquad.secondhand.domain.user.User;
 import com.codesquad.secondhand.domain.user.UserRepository;
+import com.codesquad.secondhand.exception.user.DuplicatedEmailException;
+import com.codesquad.secondhand.exception.user.DuplicatedNicknameException;
 
 import lombok.RequiredArgsConstructor;
 
@@ -25,13 +27,12 @@ public class UserService {
 	public void createLocalUser(UserCreateServiceRequest request) {
 		Provider localProvider = new Provider(LOCAL_PROVIDER_ID, LOCAL_PROVIDER_TYPE);
 		Region defaultRegion = new Region(DEFAULT_REGION_ID, DEFAULT_REGION_TITLE);
-		// TODO: 중복된 닉네임 검증 및 등록된 이메일 검증
-		// if (userRepository.existsByNickname(request.getNickname())) {
-		// 	throw new 이미 사용 중인 닉네임입니다.;
-		// }
-		// if (userRepository.existsByProviderAndEmail(localProvider, request.getEmail())) {
-		// 	throw new 이미 가입된 이메일입니다.;
-		// }
+		if (userRepository.existsByNickname(request.getNickname())) {
+			throw new DuplicatedNicknameException();
+		}
+		if (userRepository.existsByProviderAndEmail(localProvider, request.getEmail())) {
+			throw new DuplicatedEmailException();
+		}
 		User user = new User(
 			null,
 			new MyRegion(),
