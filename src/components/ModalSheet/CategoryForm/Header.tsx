@@ -1,19 +1,12 @@
-import Icons from '@design/Icons';
-import { MouseEvent } from 'react';
+import BackButton from '@components/BackButton';
 import { css, styled } from 'styled-components';
-import CloseButton from '@components/CloseButton';
 
 const Header: React.FC = () => {
-  function onCloseButton(e: MouseEvent) {
-    const btn = e.target as HTMLElement;
-    const dialog = btn.closest('dialog');
-    dialog?.close('cancel');
-  }
 
   return (
     <Container>
-      <span>동네 설정</span>
-      <CloseButton />
+      <BackButton />
+      <Title>카테고리</Title>
     </Container>
   );
 };
@@ -21,7 +14,7 @@ const Header: React.FC = () => {
 const Container = styled.h2`
   ${({ theme: { fonts, colors } }) => css`
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
     align-items: center;
     box-sizing: border-box;
     height: 56px;
@@ -29,5 +22,9 @@ const Container = styled.h2`
     stroke: ${colors.neutral.text};
   `}
 `;
+
+const Title = styled.span`
+
+`
 
 export default Header;

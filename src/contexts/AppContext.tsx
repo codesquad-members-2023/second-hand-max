@@ -1,23 +1,27 @@
 import ActionType from '@constants/ActionType';
+import ModalType from '@constants/ModalType';
 import { createContext, useReducer } from 'react';
-import Product from 'types/Product';
 
 type AppState = {
-  products: Product[];
-  detail: Product | null;
-  modal: null | 'REGION';
+  detail: number | null;
+  modal: ModalType;
+  history: AppState[];
 };
 
 type Action =
   | {
       type: ActionType.DETAIL;
-      payload: Product;
+      payload: number;
     }
   | {
       type: ActionType.CLOSE;
     }
   | {
-      type: ActionType.REGION;
+      type: ActionType.MODAL;
+      payload: ModalType;
+    }
+  | {
+      type: ActionType.BACK;
     };
 
 type AppStateDispatchContext = {
@@ -34,39 +38,36 @@ const reducer = (state: AppState, action: Action): AppState => {
       return {
         ...state,
         detail: action.payload,
+        history: [...state.history, state],
       };
 
     case ActionType.CLOSE:
       return {
         ...state,
         detail: null,
-        modal: null,
+        modal: ModalType.NULL,
+        history: [...state.history, state],
       };
-
-    case ActionType.REGION:
+    case ActionType.MODAL:
       return {
         ...state,
-        modal: 'REGION',
+        detail: null,
+        modal: action.payload,
       };
+    case ActionType.BACK: {
+      const prev = state.history.length
+        ? state.history[state.history.length - 1]
+        : null;
+
+      return prev ? { ...prev } : { ...state };
+    }
   }
 };
 
 const initialState: AppState = {
-  products: [
-    {
-      itemId: 0,
-      thumbnailUrl: 'http:~~',
-      title: '잎사귀 포스터',
-      tradingRegion: '역삼 1동',
-      createdAt: '2023-08-22T14:14:32',
-      price: 59000,
-      status: '판매중',
-      chatCount: 0,
-      wishCount: 1,
-    },
-  ],
   detail: null,
-  modal: 'REGION',
+  modal: ModalType.NULL,
+  history: [],
 };
 
 export const AppProvider: React.FC<{ children: React.ReactNode }> = ({

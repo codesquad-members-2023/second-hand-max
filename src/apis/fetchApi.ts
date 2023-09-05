@@ -1,8 +1,7 @@
-// const BASE_URL = import.meta.env.VITE_APP_BASE_URL;
+const BASE_URL = import.meta.env.VITE_APP_BASE_URL;
 
 const fetchData = async (path: string, options?: RequestInit) => {
-  const response = await fetch(path, options);
-  // const response = await fetch(BASE_URL + path, options);
+  const response = await fetch(BASE_URL + path, options);
 
   if (!response.ok) {
     throw new Error(`HTTP error! status: ${response.status}`);

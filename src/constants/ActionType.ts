@@ -1,7 +1,8 @@
 enum ActionType {
-  DETAIL,
   CLOSE,
-  REGION,
+  BACK,
+  DETAIL,
+  MODAL,
 }
 
 export default ActionType;
