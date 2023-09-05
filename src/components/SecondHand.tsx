@@ -4,14 +4,14 @@ import Detail from './Detail';
 
 const SecondHand: React.FC = () => {
   return (
-    <Container>
+    <ViewBox>
       <Tabs />
       <Detail />
-    </Container>
+    </ViewBox>
   );
 };
 
-const Container = styled.div`
+const ViewBox = styled.div`
   ${({ theme: { colors } }) => css`
     min-width: 393px;
     height: 852px;
