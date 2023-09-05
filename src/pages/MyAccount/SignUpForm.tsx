@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { css, styled } from 'styled-components';
 
@@ -9,9 +9,13 @@ import TopBar from '@components/TopBar';
 import ProfileImageButton from '@components/ProfileImageButton';
 import PATH from '@constants/PATH';
 import useOAuth from '@hooks/useOAuth';
+import { AppStateDispatchContext } from 'contexts/AppContext';
+import ActionType from '@constants/ActionType';
+import ERROR_MESSAGE from '@constants/ERROR_MESSAGE';
 
 const SignUpForm: React.FC = () => {
   const [id, setId] = useState('');
+  const dispatch = useContext(AppStateDispatchContext);
   const navigate = useNavigate();
   const { initOAuth } = useOAuth('sign-up', id);
 
@@ -54,7 +58,18 @@ const SignUpForm: React.FC = () => {
           />
         </Field>
 
-        <Button className="add-region-button" $flexible="Fixed" $type="Outline">
+        <Button
+          className="add-region-button"
+          $flexible="Fixed"
+          $type="Outline"
+          onClick={() => {
+            if (dispatch) {
+              dispatch({ type: ActionType.REGION });
+            } else {
+              alert(ERROR_MESSAGE.REFRESH_REQUEST);
+            }
+          }}
+        >
           <Icons.Plus />
           <span>위치 추가</span>
         </Button>
