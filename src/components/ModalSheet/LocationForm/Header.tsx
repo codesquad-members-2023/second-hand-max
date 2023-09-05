@@ -1,13 +1,13 @@
-import { AppStateDispatchContext } from 'contexts/AppContext';
-import { useContext } from 'react';
+import Icons from '@design/Icons';
+import { MouseEvent } from 'react';
 import { css, styled } from 'styled-components';
 import CloseButton from '@components/CloseButton';
 
 const Header: React.FC = () => {
-  const dispatch = useContext(AppStateDispatchContext);
-
-  if (!dispatch) {
-    return null;
+  function onCloseButton(e: MouseEvent) {
+    const btn = e.target as HTMLElement;
+    const dialog = btn.closest('dialog');
+    dialog?.close('cancel');
   }
 
   return (
