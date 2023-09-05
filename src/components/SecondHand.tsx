@@ -1,17 +1,9 @@
 import { css, styled } from 'styled-components';
 import Tabs from './Tabs/index';
-import { useContext } from 'react';
-import { AppStateContext } from 'contexts/AppContext';
 import Detail from './Detail';
 import ModalSheet from './ModalSheet';
 
 const SecondHand: React.FC = () => {
-  const state = useContext(AppStateContext);
-
-  if (!state) {
-    return null;
-  }
-
   return (
     <Container>
       <Inner>

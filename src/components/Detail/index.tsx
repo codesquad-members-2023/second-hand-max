@@ -1,18 +1,10 @@
 import { styled } from 'styled-components';
 import Title from './Title';
 import Visual from './Visual';
-import { AppStateContext } from 'contexts/AppContext';
-import { useContext } from 'react';
 import Content from './Content';
-import sample from '../../assets/sample.jpg'
+import sample from '../../assets/sample.jpg';
 
 const Detail: React.FC = () => {
-  const state = useContext(AppStateContext);
-
-  if (!state || state.detail === null) {
-    return null;
-  }
-
   return (
     <Container>
       <Title />

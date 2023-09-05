@@ -1,12 +1,7 @@
 import { styled } from 'styled-components';
 import ListItem from './ListItem';
-import { useContext } from 'react';
-import { AppStateContext } from 'contexts/AppContext';
 
 const ProductList: React.FC = () => {
-  const state = useContext(AppStateContext);
-
-  if (!state) return null;
   return (
     <Container>
       {[
