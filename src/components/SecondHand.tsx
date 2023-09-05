@@ -33,6 +33,7 @@ const Container = styled.div`
     padding: 0 ${radius.medium};
     padding-top: calc(${radius.large} * 2);
     padding-bottom: calc(${radius.large} * 3);
+    margin-top: ${radius.large};
     background-color: ${colors.neutral.textWeak};
   `};
 `;
