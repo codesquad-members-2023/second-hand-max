@@ -1,3 +1,4 @@
+import Fab from '@components/Fab';
 import ProductList from '@components/ProductList';
 import TopBar from '@components/TopBar';
 import { styled } from 'styled-components';
@@ -8,6 +9,7 @@ const Home: React.FC = () => {
       <Title aria-label="홈">홈</Title>
       <Content>
         <ProductList />
+        <Fab />
       </Content>
     </>
   );
