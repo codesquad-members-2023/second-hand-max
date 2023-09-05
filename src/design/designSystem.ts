@@ -160,3 +160,5 @@ export const theme = {
   dimensions,
   opacity,
 };
+
+export type Theme = typeof theme;
