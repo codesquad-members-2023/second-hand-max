@@ -5,7 +5,7 @@ import Product from 'types/Product';
 type AppState = {
   products: Product[];
   detail: Product | null;
-  modal: null | 'LOCATION';
+  modal: null | 'REGION';
 };
 
 type Action =
@@ -15,6 +15,9 @@ type Action =
     }
   | {
       type: ActionType.CLOSE;
+    }
+  | {
+      type: ActionType.REGION;
     };
 
 type AppStateDispatchContext = {
@@ -39,6 +42,12 @@ const reducer = (state: AppState, action: Action): AppState => {
         detail: null,
         modal: null,
       };
+
+    case ActionType.REGION:
+      return {
+        ...state,
+        modal: 'REGION',
+      };
   }
 };
 
@@ -57,7 +66,7 @@ const initialState: AppState = {
     },
   ],
   detail: null,
-  modal: 'LOCATION',
+  modal: 'REGION',
 };
 
 export const AppProvider: React.FC<{ children: React.ReactNode }> = ({

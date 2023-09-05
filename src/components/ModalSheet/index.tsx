@@ -31,12 +31,12 @@ const ModalSheet: React.FC = () => {
 
   return (
     <Container ref={dialogRef} onClose={onCloseHandler} $type={state.modal}>
-      {state.modal === 'LOCATION' && <LocationForm />}
+      {state.modal === 'REGION' && <LocationForm />}
     </Container>
   );
 };
 
-const Container = styled.dialog<{ $type: null | 'LOCATION' }>`
+const Container = styled.dialog<{ $type: null | 'REGION' }>`
   ${({ theme: { radius }, $type }) => css`
     padding: 4px 24px;
     display: flex;
@@ -46,7 +46,7 @@ const Container = styled.dialog<{ $type: null | 'LOCATION' }>`
     box-sizing: border-box;
     border-radius: ${radius.large};
     box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
-    ${$type === 'LOCATION'
+    ${$type === 'REGION'
       ? css`
           width: 320px;
           height: 720px;
