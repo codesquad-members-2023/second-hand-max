@@ -1,11 +1,7 @@
 import { css, styled } from 'styled-components';
-
 import { getFormattedTimeDifference } from '@utils/time';
 import Product from 'types/Product';
 import Icons from '@design/Icons';
-import { useContext } from 'react';
-import { AppStateDispatchContext } from 'contexts/AppContext';
-import ActionType from '@constants/ActionType';
 import sample from '../../assets/sample.jpg';
 
 const ListItem: React.FC<Product> = (product) => {
@@ -20,11 +16,6 @@ const ListItem: React.FC<Product> = (product) => {
     chatCount,
     wishCount,
   } = product;
-  const dispatch = useContext(AppStateDispatchContext);
-
-  if (!dispatch) {
-    return null;
-  }
 
   return (
     <Container>
@@ -59,7 +50,7 @@ const ListItem: React.FC<Product> = (product) => {
           </div>
         </dl>
       </article>
-      <button onClick={() => dispatch({ type: ActionType.DETAIL, payload: itemId })}>
+      <button>
         <span className="blind">{title} 상세보기</span>
       </button>
     </Container>

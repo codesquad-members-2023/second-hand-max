@@ -1,18 +1,10 @@
-import ActionType from '@constants/ActionType';
 import Icons from '@design/Icons';
-import { AppStateDispatchContext } from 'contexts/AppContext';
-import { useContext } from 'react';
 import { css, styled } from 'styled-components';
 
 const Title: React.FC = () => {
-  const dispatch = useContext(AppStateDispatchContext);
-
-  if (!dispatch) {
-    return null;
-  }
   return (
     <Container>
-      <button onClick={() => dispatch({ type: ActionType.CLOSE })}>
+      <button>
         <Icons.ChevronLeft />
         <span>닫기</span>
       </button>
