@@ -1,14 +1,7 @@
-import { AppStateDispatchContext } from 'contexts/AppContext';
 import { css, styled } from 'styled-components';
-import { useContext } from 'react';
-import ActionType from '@constants/ActionType';
 
 const Overlay: React.FC = () => {
-  const dispatch = useContext(AppStateDispatchContext);
-  if(!dispatch) {
-    return null;
-  }
-  return <Container onClick={() => dispatch({type: ActionType.CLOSE})}></Container>;
+  return <Container></Container>;
 };
 
 const Container = styled.button`

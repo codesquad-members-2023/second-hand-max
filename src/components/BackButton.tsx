@@ -1,18 +1,9 @@
 import Icons from '@design/Icons';
 import { css, styled } from 'styled-components';
-import { useContext } from 'react';
-import { AppStateDispatchContext } from 'contexts/AppContext';
-import ActionType from '@constants/ActionType';
 
 const BackButton: React.FC = () => {
-  const dispatch = useContext(AppStateDispatchContext);
-
-  if (!dispatch) {
-    return null;
-  }
-
   return (
-    <Container onClick={() => dispatch({ type: ActionType.BACK })}>
+    <Container>
       <Icons.ChevronLeft />
       <span>뒤로</span>
     </Container>
