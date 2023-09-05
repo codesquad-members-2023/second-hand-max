@@ -1,12 +1,10 @@
 import { css, styled } from 'styled-components';
 import Tabs from './Tabs/index';
-import Detail from './Detail';
 
 const SecondHand: React.FC = () => {
   return (
     <ViewBox>
       <Tabs />
-      <Detail />
     </ViewBox>
   );
 };
