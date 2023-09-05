@@ -11,9 +11,15 @@ import com.codesquad.secondhand.api.ApiResponse;
 public class AuthExceptionHandler {
 
 	@ResponseStatus(HttpStatus.UNAUTHORIZED)
-	@ExceptionHandler(SignInFailedException.class)
-	public ApiResponse<Void> handleSignInFailedException(SignInFailedException exception) {
+	@ExceptionHandler({SignInFailedException.class, UnauthorizedUserException.class, InvalidTokenException.class})
+	public ApiResponse<Void> handleUnauthorizedException(RuntimeException exception) {
 		return ApiResponse.noData(HttpStatus.UNAUTHORIZED, exception.getMessage());
+	}
+
+	@ResponseStatus(HttpStatus.FORBIDDEN)
+	@ExceptionHandler(ExpiredTokenException.class)
+	public ApiResponse<Void> handleExpiredTokenException(ExpiredTokenException exception) {
+		return ApiResponse.noData(HttpStatus.FORBIDDEN, exception.getMessage());
 	}
 
 }
