@@ -2,6 +2,9 @@ package com.codesquad.secondhand.api.controller.auth.response;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import lombok.Getter;
+
+@Getter
 public class OAuthAccessTokenResponse {
 
 	@JsonProperty("access_token")
@@ -12,10 +15,6 @@ public class OAuthAccessTokenResponse {
 
 	public OAuthAccessTokenResponse(String accessToken) {
 		this.accessToken = accessToken;
-	}
-
-	public String getAccessToken() {
-		return accessToken;
 	}
 
 }

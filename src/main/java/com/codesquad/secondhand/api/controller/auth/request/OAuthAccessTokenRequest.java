@@ -1,5 +1,8 @@
 package com.codesquad.secondhand.api.controller.auth.request;
 
+import lombok.Getter;
+
+@Getter
 public class OAuthAccessTokenRequest {
 
 	private String client_id;
@@ -13,18 +16,6 @@ public class OAuthAccessTokenRequest {
 		this.client_id = clientId;
 		this.client_secret = clientSecret;
 		this.code = code;
-	}
-
-	public String getClient_id() {
-		return client_id;
-	}
-
-	public String getClient_secret() {
-		return client_secret;
-	}
-
-	public String getCode() {
-		return code;
 	}
 
 }

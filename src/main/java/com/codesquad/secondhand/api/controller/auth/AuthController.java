@@ -34,7 +34,7 @@ import lombok.RequiredArgsConstructor;
 @RestController
 public class AuthController {
 
-	private static final String ACCESS_TOKEN_URL = "https://github.com/login/oauth/access_token";
+	private static final String ACCESS_TOKEN_URL = "https://kauth.kakao.com/oauth/token";
 	private static final String USER_INFORMATION_URL = "https://api.github.com/user";
 
 	@Value("${security.oauth.kakao.client-id}")
