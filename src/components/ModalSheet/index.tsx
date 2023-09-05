@@ -1,8 +1,9 @@
 import { AppStateContext, AppStateDispatchContext } from 'contexts/AppContext';
 import { useContext, useEffect, useRef } from 'react';
 import { css, styled } from 'styled-components';
-import LocationForm from './LocationModal';
+
 import ActionType from '@constants/ActionType';
+import RegionModal from './RegionModal';
 
 const ModalSheet: React.FC = () => {
   const dialogRef = useRef<HTMLDialogElement>(null);
@@ -31,7 +32,7 @@ const ModalSheet: React.FC = () => {
 
   return (
     <Container ref={dialogRef} onClose={onCloseHandler} $type={state.modal}>
-      {state.modal === 'REGION' && <LocationForm />}
+      {state.modal === 'REGION' && <RegionModal />}
     </Container>
   );
 };

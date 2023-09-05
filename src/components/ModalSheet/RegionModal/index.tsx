@@ -2,7 +2,7 @@ import { css, styled } from 'styled-components';
 import Header from './Header';
 import Icons from '@design/Icons';
 
-const LocationModal: React.FC = () => {
+const RegionModal: React.FC = () => {
   return (
     <>
       <Header />
@@ -12,23 +12,23 @@ const LocationModal: React.FC = () => {
         최대 2개까지 설정 가능해요.
       </Message>
       <form method="dialog">
-        <LocationList>
+        <RegionList>
           <ListItem>
-            <Location>
+            <Region>
               <span>역삼 1동</span>
               <Delete>
                 <span className="blind">제거</span>
                 <Icons.CircleXFilled />
               </Delete>
-            </Location>
+            </Region>
           </ListItem>
           <ListItem>
-            <AddLocation>
+            <AddRegion>
               <Icons.Plus />
               <span>추가</span>
-            </AddLocation>
+            </AddRegion>
           </ListItem>
-        </LocationList>
+        </RegionList>
       </form>
     </>
   );
@@ -40,7 +40,7 @@ const Message = styled.p`
   ${({ theme }) => theme.fonts.display.default12}
 `;
 
-const LocationList = styled.ul`
+const RegionList = styled.ul`
   display: flex;
   flex-direction: column;
   gap: 8px;
@@ -52,7 +52,7 @@ const ListItem = styled.li`
   display: flex;
 `;
 
-const Location = styled.div`
+const Region = styled.div`
   ${({ theme: { fonts, colors, radius } }) => css`
     border-radius: ${radius.medium};
     background-color: ${colors.accent.primary};
@@ -75,7 +75,7 @@ const Delete = styled.button`
   line-height: 0;
 `;
 
-const AddLocation = styled.button`
+const AddRegion = styled.button`
   ${({ theme: { fonts, colors, radius } }) => css`
     width: 100%;
     height: 100%;
@@ -90,4 +90,4 @@ const AddLocation = styled.button`
   `}
 `;
 
-export default LocationModal;
+export default RegionModal;
