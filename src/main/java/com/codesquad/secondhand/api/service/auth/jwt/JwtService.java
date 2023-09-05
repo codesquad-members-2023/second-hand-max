@@ -48,20 +48,6 @@ public class JwtService {
 		return generateToken(user, ACCESS_TOKEN_DURATION);
 	}
 
-	private String generateToken(User user, Duration expiry) {
-		Date now = new Date();
-		Date expiredAt = new Date(now.getTime() + expiry.toMillis());
-
-		return Jwts.builder()
-			.setHeaderParam(Header.TYPE, Header.JWT_TYPE)
-			.setIssuer(jwtProperties.getIssuer())
-			.setIssuedAt(now)
-			.setExpiration(expiredAt)
-			.claim("id", user.getId())
-			.signWith(SignatureAlgorithm.HS256, jwtProperties.getSecretKey())
-			.compact();
-	}
-
 	public Claims parse(String authorizationHeader) {
 		validateAuthorizationHeader(authorizationHeader);
 		String token = extract(authorizationHeader);
@@ -78,7 +64,31 @@ public class JwtService {
 		}
 	}
 
-	public String extract(String authorizationHeader) {
+	public void validateRefreshToken(User user, String refreshToken) {
+		if (!refreshRepository.existsByUserIdAndToken(user.getId(), extract(refreshToken))) {
+			throw new InvalidTokenException();
+		}
+	}
+
+	public void deleteRefreshToken(SignInUser user) {
+		refreshRepository.deleteByUserId(user.getId());
+	}
+
+	private String generateToken(User user, Duration expiry) {
+		Date now = new Date();
+		Date expiredAt = new Date(now.getTime() + expiry.toMillis());
+
+		return Jwts.builder()
+			.setHeaderParam(Header.TYPE, Header.JWT_TYPE)
+			.setIssuer(jwtProperties.getIssuer())
+			.setIssuedAt(now)
+			.setExpiration(expiredAt)
+			.claim("id", user.getId())
+			.signWith(SignatureAlgorithm.HS256, jwtProperties.getSecretKey())
+			.compact();
+	}
+
+	private String extract(String authorizationHeader) {
 		return authorizationHeader.substring(PREFIX.length());
 	}
 
@@ -86,10 +96,6 @@ public class JwtService {
 		if (header == null || !header.startsWith(PREFIX)) {
 			throw new UnauthorizedUserException();
 		}
-	}
-
-	public void deleteRefreshToken(SignInUser user) {
-		refreshRepository.deleteByUserId(user.getId());
 	}
 
 }
