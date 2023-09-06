@@ -19,7 +19,7 @@ const useOAuth = (action: Action, id: string) => {
     const oauthUrl = `${import.meta.env.VITE_APP_OAUTH_URL}&state=${action}`;
 
     window.open(oauthUrl, '_blank', 'popup');
-    window.addEventListener('message', onMessageReceive);
+    window.addEventListener('message', onMessageReceive, { once: true });
   };
 
   const onMessageReceive = ({ origin, data }: MessageEvent) => {
