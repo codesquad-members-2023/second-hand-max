@@ -14,10 +14,10 @@ public class UserUpdateRequest {
 
 	@Pattern(regexp = "^(?=.*[a-zA-Z가-힣])[a-zA-Z가-힣0-9]{2,10}$", message = "닉네임은 2자 이상 10자 이하, 영문 또는 한글을 포함해야 합니다")
 	private String nickname;
-	private boolean isImageChanged;
+	private String isImageChanged;
 
 	public UserUpdateServiceRequest toService(Image image) {
-		return new UserUpdateServiceRequest(this.nickname, this.isImageChanged, image);
+		return new UserUpdateServiceRequest(this.nickname, Boolean.parseBoolean(this.isImageChanged), image);
 	}
 
 }
