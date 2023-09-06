@@ -1,4 +1,7 @@
-const BASE_URL = import.meta.env.VITE_APP_BASE_URL;
+const BASE_URL: string =
+  process.env.NODE_ENV === 'development'
+    ? import.meta.env.VITE_APP_BASE_URL
+    : '';
 
 const fetchData = async (path: string, options?: RequestInit) => {
   const response = await fetch(BASE_URL + path, options);
@@ -16,8 +19,7 @@ const fetchData = async (path: string, options?: RequestInit) => {
 
 export const signUpUser = (code: string, id: string) => {
   const formData = new FormData();
-  const data = JSON.stringify({ loginId: id, addrName: '가락 1동' });
-
+  const data = JSON.stringify({ loginId: id, addressName: '가락 1동' });
   formData.append('signupData', new Blob([data], { type: 'application/json' }));
 
   return fetchData(`/auth/naver/signup?code=${code}`, {
