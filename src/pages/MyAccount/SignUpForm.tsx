@@ -11,11 +11,16 @@ import useOAuth from '@hooks/useOAuth';
 
 const SignUpForm: React.FC = () => {
   const [id, setId] = useState('');
+  const [file, setFile] = useState<File>();
   const navigate = useNavigate();
-  const { initOAuth } = useOAuth('sign-up', id);
+  const { initOAuth } = useOAuth('sign-up', id, file);
 
   const onIdChange = (id: string) => {
     setId(id);
+  };
+
+  const onFileChange = (file: File) => {
+    setFile(file);
   };
 
   return (
@@ -37,7 +42,7 @@ const SignUpForm: React.FC = () => {
         </Button>
       </Title>
 
-      <ProfileImageButton />
+      <ProfileImageButton {...{ onFileChange }} />
       <Field>
         <Field.Label id="id" text="아이디" />
         <Field.Input
