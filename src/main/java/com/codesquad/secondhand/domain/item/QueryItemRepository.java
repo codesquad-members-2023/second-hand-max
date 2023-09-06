@@ -10,6 +10,7 @@ import static com.codesquad.secondhand.domain.wishlist.QWishList.*;
 import java.util.List;
 
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.SliceImpl;
 import org.springframework.stereotype.Repository;
@@ -27,7 +28,7 @@ public class QueryItemRepository {
 
 	private final JPAQueryFactory queryFactory;
 
-	public Slice<ItemResponse> filteredListByCategoryAndRegion(Long categoryId, Long regionId, int page, int size) {
+	public Slice<ItemResponse> filteredListByCategoryAndRegion(Long categoryId, Long regionId, Pageable pageable) {
 		List<ItemResponse> itemResponseList = queryFactory
 			.selectDistinct(new QItemResponse(
 				item.id,
@@ -63,10 +64,10 @@ public class QueryItemRepository {
 				item.price
 			)
 			.orderBy(item.updatedAt.desc())
-			.limit(size + 1) // 다음 항목 있는지 확인
-			.offset((long)page * size)
+			.limit(pageable.getPageSize() + 1) // 다음 항목 있는지 확인
+			.offset(pageable.getOffset())
 			.fetch();
-		return checkLastPage(size, itemResponseList);
+		return checkLastPage(pageable.getPageSize(), itemResponseList);
 	}
 
 	private BooleanExpression categoryIdEq(Long categoryId) {
