@@ -36,10 +36,10 @@ public class UserController {
 
 	@ResponseStatus(HttpStatus.CREATED)
 	@PostMapping()
-	public ApiResponse<Void> createLocalUser(@RequestPart(required = false) MultipartFile file,
+	public ApiResponse<Void> createLocalUser(@RequestPart(required = false) MultipartFile image,
 		@Valid @RequestPart UserCreateRequest request) {
 		userService.createLocalUser(
-			request.toService(file == null ? null : imageService.createImage(file, USER_IMAGE_DIRECTORY)));
+			request.toService(image == null ? null : imageService.createImage(image, USER_IMAGE_DIRECTORY)));
 		return ApiResponse.noData(HttpStatus.CREATED, ResponseMessage.USER_CREATE_SUCCESS.getMessage());
 	}
 
@@ -50,10 +50,10 @@ public class UserController {
 	}
 
 	@PatchMapping("/info")
-	public ApiResponse<Void> updateUserInformation(@RequestPart(required = false) MultipartFile file,
+	public ApiResponse<Void> updateUserInformation(@RequestPart(required = false) MultipartFile image,
 		@Valid @RequestPart UserUpdateRequest request, @SignIn SignInUser signInUser) {
 		userService.updateUserInformation(signInUser.getId(),
-			request.toService(file.isEmpty() ? null : imageService.createImage(file, USER_IMAGE_DIRECTORY)));
+			request.toService(image.isEmpty() ? null : imageService.createImage(image, USER_IMAGE_DIRECTORY)));
 		return ApiResponse.noData(HttpStatus.OK, ResponseMessage.USER_INFORMATION_UPDATE_SUCCESS.getMessage());
 	}
 
