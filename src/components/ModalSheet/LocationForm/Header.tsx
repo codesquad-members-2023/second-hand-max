@@ -1,14 +1,14 @@
-import Icons from '@design/Icons';
-import { MouseEvent } from 'react';
+// import Icons from '@design/Icons';
+// import { MouseEvent } from 'react';
 import { css, styled } from 'styled-components';
 import CloseButton from '@components/CloseButton';
 
 const Header: React.FC = () => {
-  function onCloseButton(e: MouseEvent) {
-    const btn = e.target as HTMLElement;
-    const dialog = btn.closest('dialog');
-    dialog?.close('cancel');
-  }
+  // function onCloseButton(e: MouseEvent) {
+  //   const btn = e.target as HTMLElement;
+  //   const dialog = btn.closest('dialog');
+  //   dialog?.close('cancel');
+  // }
 
   return (
     <Container>

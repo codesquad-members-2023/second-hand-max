@@ -99,15 +99,10 @@ const CategoryList: React.FC = () => {
   );
 };
 
-
-
-
-
-const Option: React.FC<OptionProps> = ({ id, title, imageUrl }) => {
+const Option: React.FC<OptionProps> = ({ title }) => {
   return (
     <article>
       <h3 className="blind">{title}</h3>
-
     </article>
   );
 };
