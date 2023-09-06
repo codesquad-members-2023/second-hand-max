@@ -6,8 +6,8 @@ import sample from '../../assets/sample.jpg';
 
 const ListItem: React.FC<Product> = (product) => {
   const {
-    itemId,
-    thumbnailUrl,
+    // itemId,
+    // thumbnailUrl,
     title,
     tradingRegion,
     createdAt,
