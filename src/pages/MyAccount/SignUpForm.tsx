@@ -19,7 +19,7 @@ const SignUpForm: React.FC = () => {
   };
 
   return (
-    <ColumnLayout>
+    <StyledSignUpPage>
       <Title aria-label="내 계정">
         <Button
           className="cancel-button"
@@ -37,50 +37,28 @@ const SignUpForm: React.FC = () => {
         </Button>
       </Title>
 
-      <Form>
-        <ProfileImageButton />
-
-        <Field>
-          <Field.Label id="id" text="아이디" />
-          <Field.Input
-            id="id"
-            name="id"
-            placeholder="내용을 입력하세요"
-            value={id}
-            onChange={({ target }) => {
-              onIdChange(target.value);
-            }}
-          />
-        </Field>
-
-        <Button className="add-region-button" $flexible="Fixed" $type="Outline">
-          <Icons.Plus />
-          <span>위치 추가</span>
-        </Button>
-      </Form>
-    </ColumnLayout>
+      <ProfileImageButton />
+      <Field>
+        <Field.Label id="id" text="아이디" />
+        <Field.Input
+          id="id"
+          name="id"
+          placeholder="내용을 입력하세요"
+          value={id}
+          onChange={({ target }) => {
+            onIdChange(target.value);
+          }}
+        />
+      </Field>
+      <Button className="add-region-button" $flexible="Fixed" $type="Outline">
+        <Icons.Plus />
+        <span>위치 추가</span>
+      </Button>
+    </StyledSignUpPage>
   );
 };
 
-const ColumnLayout = styled.div`
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-`;
-
-const Title = styled(TopBar)`
-  justify-content: space-between;
-  ${({ theme: { fonts } }) => css`
-    ${fonts.display.strong16};
-
-    button {
-      ${fonts.available.strong16};
-    }
-  `};
-`;
-
-const Form = styled.div`
+const StyledSignUpPage = styled.div`
   width: 100%;
   display: flex;
   flex-direction: column;
@@ -94,6 +72,17 @@ const Form = styled.div`
       ${fonts.available.strong16};
     `};
   }
+`;
+
+const Title = styled(TopBar)`
+  justify-content: space-between;
+  ${({ theme: { fonts } }) => css`
+    ${fonts.display.strong16};
+
+    button {
+      ${fonts.available.strong16};
+    }
+  `};
 `;
 
 export default SignUpForm;
