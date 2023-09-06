@@ -6,7 +6,7 @@ import { signInUser, signUpUser } from 'apis/fetchApi';
 
 type Action = 'sign-up' | 'sign-in';
 
-const useOAuth = (action: Action, id: string) => {
+const useOAuth = (action: Action, id: string, file?: File) => {
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -24,24 +24,19 @@ const useOAuth = (action: Action, id: string) => {
 
   const onMessageReceive = ({ origin, data }: MessageEvent) => {
     const isSameOrigin = origin === window.location.origin;
-    const { status } = data;
+    const { status, code } = data;
 
     if (!isSameOrigin || status === 'error') {
       throw new Error('비정상적인 접근입니다.');
     }
 
-    const { action, code } = data;
-
-    if (action === 'sign-up' || action === 'sign-in') {
-      onAuth(code, id, action);
-    }
+    onAuth(code);
   };
 
-  const onAuth = async (code: string, id: string, action: Action) => {
-    const userData = await (action === 'sign-in' ? signInUser : signUpUser)(
-      code,
-      id,
-    );
+  const onAuth = async (code: string) => {
+    const userData = await (action === 'sign-in'
+      ? signInUser(code, id)
+      : signUpUser(code, id, file));
 
     alert(userData.message);
     navigate(`/${PATH.MY_ACCOUNT}`);
