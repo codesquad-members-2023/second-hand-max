@@ -1,7 +1,8 @@
 package com.codesquad.secondhand.api.service.user;
 
-import static com.codesquad.secondhand.domain.provider.Provider.*;
 import static com.codesquad.secondhand.domain.region.Region.*;
+
+import java.util.UUID;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,7 +30,7 @@ public class UserService {
 
 	@Transactional
 	public void createLocalUser(UserCreateServiceRequest request) {
-		Provider localProvider = new Provider(LOCAL_PROVIDER_ID, LOCAL_PROVIDER_TYPE);
+		Provider localProvider = Provider.ofLocal();
 		Region defaultRegion = new Region(DEFAULT_REGION_ID, DEFAULT_REGION_TITLE);
 		if (userRepository.existsByNickname(request.getNickname())) {
 			throw new DuplicatedNicknameException();
@@ -50,6 +51,24 @@ public class UserService {
 		userRepository.save(user);
 	}
 
+	@Transactional
+	public User createOAuthUser(Provider provider, String email) {
+		Region defaultRegion = new Region(DEFAULT_REGION_ID, DEFAULT_REGION_TITLE);
+		String nickname = UUID.randomUUID().toString().substring(0, 10);
+		User user = new User(
+			null,
+			new MyRegion(),
+			null,
+			provider,
+			null,
+			nickname,
+			email,
+			null);
+		user.addUserRegion(defaultRegion);
+		userRepository.save(user);
+		return user;
+  }
+  
 	public UserInformationResponse showUserInformation(Long userId) {
 		User user = userRepository.findById(userId).orElseThrow(NoSuchUserException::new);
 		return UserInformationResponse.of(user);

@@ -5,6 +5,7 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import com.codesquad.secondhand.domain.category.Category;
+import com.codesquad.secondhand.domain.provider.Provider;
 import com.codesquad.secondhand.domain.region.Region;
 import com.codesquad.secondhand.domain.user.MyRegion;
 import com.codesquad.secondhand.domain.user.User;
@@ -30,7 +31,8 @@ public abstract class FixtureFactory {
 	}
 
 	public static User createUserFixtureWithRegions(List<Region> regions) {
-		User user = new User(null, new MyRegion(), null, null, null, "nickname", "test@email.com", "password123!");
+		User user = new User(null, new MyRegion(), null, Provider.ofLocal(), null, "nickname", "test@email.com",
+			"password123!");
 		regions.forEach(user::addUserRegion);
 		return user;
 	}

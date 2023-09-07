@@ -3,7 +3,6 @@ package com.codesquad.secondhand.api.service.region;
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
@@ -29,12 +28,6 @@ class RegionServiceTest extends IntegrationTestSupport {
 
 	@Autowired
 	private UserRegionRepository userRegionRepository;
-
-	@BeforeEach
-	private void init() {
-		userRegionRepository.deleteAllInBatch();
-		regionRepository.deleteAllInBatch();
-	}
 
 	@DisplayName("cursor 값에 해당하는 page의 동네 목록을 생성한다.")
 	@CsvSource(value = {"0,20,true", "1,20,false"})

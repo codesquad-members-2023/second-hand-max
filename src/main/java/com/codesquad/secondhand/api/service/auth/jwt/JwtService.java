@@ -4,11 +4,12 @@ import java.time.Duration;
 import java.util.Date;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.codesquad.secondhand.annotation.SignInUser;
 import com.codesquad.secondhand.api.service.auth.response.SignInResponse;
-import com.codesquad.secondhand.domain.auth.Refresh;
-import com.codesquad.secondhand.domain.auth.RefreshRepository;
+import com.codesquad.secondhand.domain.auth.RefreshToken;
+import com.codesquad.secondhand.domain.auth.RefreshTokenRepository;
 import com.codesquad.secondhand.domain.user.User;
 import com.codesquad.secondhand.exception.auth.ExpiredTokenException;
 import com.codesquad.secondhand.exception.auth.InvalidTokenException;
@@ -33,13 +34,15 @@ public class JwtService {
 	private static final Duration REFRESH_TOKEN_DURATION = Duration.ofDays(14);
 
 	private final JwtProperties jwtProperties;
-	private final RefreshRepository refreshRepository;
+	private final RefreshTokenRepository refreshTokenRepository;
 
+	@Transactional
 	public SignInResponse issueTokens(User user) {
 		String accessToken = generateToken(user, ACCESS_TOKEN_DURATION);
 		String refreshToken = generateToken(user, REFRESH_TOKEN_DURATION);
-
-		refreshRepository.save(new Refresh(null, user, refreshToken));
+		RefreshToken previousRefreshToken = refreshTokenRepository.findByUserId(user.getId())
+			.orElseGet(() -> refreshTokenRepository.save(new RefreshToken(null, user, refreshToken)));
+		previousRefreshToken.updateToken(refreshToken);
 
 		return new SignInResponse(accessToken, refreshToken);
 	}
@@ -65,13 +68,14 @@ public class JwtService {
 	}
 
 	public void validateRefreshToken(User user, String refreshToken) {
-		if (!refreshRepository.existsByUserIdAndToken(user.getId(), extract(refreshToken))) {
+		if (!refreshTokenRepository.existsByUserIdAndToken(user.getId(), extract(refreshToken))) {
 			throw new InvalidTokenException();
 		}
 	}
 
+	@Transactional
 	public void deleteRefreshToken(SignInUser user) {
-		refreshRepository.deleteByUserId(user.getId());
+		refreshTokenRepository.deleteByUserId(user.getId());
 	}
 
 	private String generateToken(User user, Duration expiry) {

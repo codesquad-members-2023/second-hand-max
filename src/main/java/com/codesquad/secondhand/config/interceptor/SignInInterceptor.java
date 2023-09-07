@@ -4,6 +4,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.http.HttpMethod;
+import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 
 import com.codesquad.secondhand.api.service.auth.jwt.JwtService;
@@ -12,6 +13,7 @@ import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
+@Component
 public class SignInInterceptor implements HandlerInterceptor {
 
 	private static final String AUTHORIZATION_HEADER = "Authorization";
@@ -24,7 +26,8 @@ public class SignInInterceptor implements HandlerInterceptor {
 			return true;
 		}
 
-		if (request.getMethod().equals(HttpMethod.POST.name()) && request.getRequestURI().contains("/api/auth")) {
+		if ((request.getMethod().equals(HttpMethod.POST.name()) || request.getMethod().equals(HttpMethod.GET.name()))
+			&& request.getRequestURI().contains("/api/auth")) {
 			return true;
 		}
 

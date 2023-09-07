@@ -8,6 +8,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import com.codesquad.secondhand.api.controller.category.CategoryController;
 import com.codesquad.secondhand.api.controller.region.RegionController;
 import com.codesquad.secondhand.api.controller.user_region.UserRegionController;
+import com.codesquad.secondhand.api.service.auth.jwt.JwtService;
 import com.codesquad.secondhand.api.service.category.CategoryService;
 import com.codesquad.secondhand.api.service.region.RegionService;
 import com.codesquad.secondhand.api.service.user_region.UserRegionService;
@@ -34,5 +35,8 @@ public abstract class ControllerTestSupport {
 
 	@MockBean
 	protected CategoryService categoryService;
+
+	@MockBean
+	protected JwtService jwtService;
 
 }

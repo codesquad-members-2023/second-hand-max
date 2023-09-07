@@ -20,8 +20,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Getter
 @Entity
-@Table(name = "refresh")
-public class Refresh {
+@Table(name = "refresh_token")
+public class RefreshToken {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -32,5 +32,9 @@ public class Refresh {
 	private User user;
 
 	private String token;
+
+	public void updateToken(String refreshToken) {
+		this.token = refreshToken;
+	}
 
 }
