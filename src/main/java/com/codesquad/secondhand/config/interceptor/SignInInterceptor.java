@@ -27,7 +27,7 @@ public class SignInInterceptor implements HandlerInterceptor {
 			return true;
 		}
 
-		if (request.getMethod().equals(HttpMethod.POST.name()) && request.getServletPath().contains("/api/auth")) {
+		if (request.getMethod().equals(HttpMethod.POST.name()) && request.getRequestURI().contains("/api/auth")) {
 			return true;
 		}
 
