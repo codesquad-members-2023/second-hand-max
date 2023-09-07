@@ -7,13 +7,12 @@ import Icons from '@design/Icons';
 import TopBar from '@components/TopBar';
 import ProfileImageButton from '@components/ProfileImageButton';
 import PATH from '@constants/PATH';
-import useOAuth from '@hooks/useOAuth';
+import { InitOAuthType } from '@hooks/useOAuth';
 
-const SignUpForm: React.FC = () => {
+const SignUpForm: React.FC<{ initOAuth: InitOAuthType }> = ({ initOAuth }) => {
   const [id, setId] = useState('');
   const [file, setFile] = useState<File>();
   const navigate = useNavigate();
-  const { initOAuth } = useOAuth('sign-up', id, file);
 
   const onIdChange = (id: string) => {
     setId(id);
@@ -37,7 +36,12 @@ const SignUpForm: React.FC = () => {
           닫기
         </Button>
         <span>회원가입</span>
-        <Button $flexible="Flexible" $type="Ghost" onClick={initOAuth}>
+        <Button
+          $flexible="Flexible"
+          $type="Ghost"
+          disabled={!id}
+          onClick={() => initOAuth({ action: 'sign-up', id, file })}
+        >
           완료
         </Button>
       </Title>

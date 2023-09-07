@@ -6,8 +6,10 @@ import TopBar from '@components/TopBar';
 import Profile from './Profile';
 import SignInForm from './SignInForm';
 import SignUpForm from './SignUpForm';
+import useOAuth from '@hooks/useOAuth';
 
 const MyAccount: React.FC = () => {
+  const { initOAuth } = useOAuth();
   const isLogin = Boolean(localStorage.getItem('accessToken'));
 
   return (
@@ -15,8 +17,16 @@ const MyAccount: React.FC = () => {
       <Title aria-label="내 계정">내 계정</Title>
       <Contents>
         <Routes>
-          <Route index element={isLogin ? <Profile /> : <SignInForm />} />
-          <Route path={PATH.SIGN_UP} element={<SignUpForm />} />
+          <Route
+            index
+            element={
+              isLogin ? <Profile /> : <SignInForm initOAuth={initOAuth} />
+            }
+          />
+          <Route
+            path={PATH.SIGN_UP}
+            element={<SignUpForm initOAuth={initOAuth} />}
+          />
         </Routes>
       </Contents>
     </>
