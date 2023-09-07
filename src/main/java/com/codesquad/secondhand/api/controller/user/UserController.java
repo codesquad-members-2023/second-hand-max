@@ -53,7 +53,7 @@ public class UserController {
 	public ApiResponse<Void> updateUserInformation(@RequestPart(required = false) MultipartFile image,
 		@Valid @RequestPart UserUpdateRequest request, @SignIn SignInUser signInUser) {
 		userService.updateUserInformation(signInUser.getId(),
-			request.toService(image.isEmpty() ? null : imageService.createImage(image, USER_IMAGE_DIRECTORY)));
+			request.toService(image == null ? null : imageService.createImage(image, USER_IMAGE_DIRECTORY)));
 		return ApiResponse.noData(HttpStatus.OK, ResponseMessage.USER_INFORMATION_UPDATE_SUCCESS.getMessage());
 	}
 

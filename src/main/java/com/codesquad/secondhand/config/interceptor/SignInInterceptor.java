@@ -31,6 +31,10 @@ public class SignInInterceptor implements HandlerInterceptor {
 			return true;
 		}
 
+		if (request.getMethod().equals(HttpMethod.POST.name()) && request.getRequestURI().contains("/api/users")) {
+			return true;
+		}
+
 		String accessToken = request.getHeader(AUTHORIZATION_HEADER);
 		Claims claims = jwtService.parse(accessToken);
 
