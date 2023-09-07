@@ -30,8 +30,7 @@ public class WebConfig implements WebMvcConfigurer {
 	public void addInterceptors(InterceptorRegistry registry) {
 		registry.addInterceptor(signInInterceptor)
 			.addPathPatterns("/**")
-			.excludePathPatterns("/api/auth/oauth/kakao")
-			.excludePathPatterns("/api/auth/refresh");
+			.excludePathPatterns("/error", "/*.ico", "/api/auth/oauth/kakao", "/api/auth/refresh");
 	}
 
 	@Override
