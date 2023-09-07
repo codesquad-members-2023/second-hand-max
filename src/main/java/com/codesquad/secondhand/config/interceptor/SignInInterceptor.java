@@ -22,12 +22,11 @@ public class SignInInterceptor implements HandlerInterceptor {
 
 	@Override
 	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
-		if (request.getMethod().equals(HttpMethod.OPTIONS.name())) {
+		if (CorsUtils.isPreFlightRequest(request)) {
 			return true;
 		}
 
-		if ((request.getMethod().equals(HttpMethod.POST.name()) || request.getMethod().equals(HttpMethod.GET.name()))
-			&& request.getRequestURI().contains("/api/auth")) {
+		if (request.getMethod().equals(HttpMethod.POST.name()) && request.getRequestURI().contains("/api/auth")) {
 			return true;
 		}
 
