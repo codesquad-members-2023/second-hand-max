@@ -7,14 +7,16 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+import com.codesquad.secondhand.domain.image.Image;
 import com.codesquad.secondhand.util.BaseTimeEntity;
 
 import lombok.Getter;
 
 @Getter
-@Table(name = "image")
+@Table(name = "item_image")
 @Entity
 public class ItemImage extends BaseTimeEntity {
 
@@ -26,8 +28,8 @@ public class ItemImage extends BaseTimeEntity {
 	@JoinColumn(name = "item_id")
 	private Item item;
 
-	private String imageUrl;
-	private boolean isThumbnail;
-	private boolean isDeleted;
+	@OneToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "image_id")
+	private Image image;
 
 }

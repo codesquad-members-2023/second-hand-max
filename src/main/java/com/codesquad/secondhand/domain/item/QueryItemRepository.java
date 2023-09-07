@@ -1,6 +1,7 @@
 package com.codesquad.secondhand.domain.item;
 
 import static com.codesquad.secondhand.domain.chat.QChat.*;
+import static com.codesquad.secondhand.domain.image.QImage.*;
 import static com.codesquad.secondhand.domain.item.QItem.*;
 import static com.codesquad.secondhand.domain.item.QItemImage.*;
 import static com.codesquad.secondhand.domain.region.QRegion.*;
@@ -28,12 +29,12 @@ public class QueryItemRepository {
 
 	public Slice<ItemResponse> filteredListByCategoryAndRegion(Long categoryId, Long regionId, int page, int size) {
 		List<ItemResponse> itemResponseList = queryFactory
-			.select(new QItemResponse(
+			.selectDistinct(new QItemResponse(
 				item.id,
 				item.title,
 				item.region.title,
 				item.status.type,
-				itemImage.imageUrl,
+				itemImage.image.imageUrl,
 				item.createdAt,
 				item.updatedAt,
 				item.price,
@@ -48,7 +49,7 @@ public class QueryItemRepository {
 			)
 			.leftJoin(item.region, region)
 			.leftJoin(item.itemImages, itemImage)
-			.on(itemImage.isThumbnail.eq(true))
+			.leftJoin(itemImage.image, image)
 			.leftJoin(item.chats, chat)
 			.leftJoin(item.wishLists, wishList)
 			.groupBy(
@@ -56,7 +57,7 @@ public class QueryItemRepository {
 				item.title,
 				item.region.title,
 				item.status.type,
-				itemImage.imageUrl,
+				itemImage.image,
 				item.createdAt,
 				item.updatedAt,
 				item.price

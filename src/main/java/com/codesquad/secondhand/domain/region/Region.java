@@ -18,6 +18,9 @@ import lombok.NoArgsConstructor;
 @Table(name = "region")
 public class Region {
 
+	public static final Long DEFAULT_REGION_ID = 432L;
+	public static final String DEFAULT_REGION_TITLE = "서울특별시 강남구 역삼동";
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
