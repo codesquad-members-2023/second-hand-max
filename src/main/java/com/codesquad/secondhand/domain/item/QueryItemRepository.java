@@ -1,6 +1,7 @@
 package com.codesquad.secondhand.domain.item;
 
 import static com.codesquad.secondhand.domain.chat.QChat.*;
+import static com.codesquad.secondhand.domain.image.QImage.*;
 import static com.codesquad.secondhand.domain.item.QItem.*;
 import static com.codesquad.secondhand.domain.item.QItemImage.*;
 import static com.codesquad.secondhand.domain.region.QRegion.*;
@@ -9,6 +10,7 @@ import static com.codesquad.secondhand.domain.wishlist.QWishList.*;
 import java.util.List;
 
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.SliceImpl;
 import org.springframework.stereotype.Repository;
@@ -26,14 +28,14 @@ public class QueryItemRepository {
 
 	private final JPAQueryFactory queryFactory;
 
-	public Slice<ItemResponse> filteredListByCategoryAndRegion(Long categoryId, Long regionId, int page, int size) {
+	public Slice<ItemResponse> filteredListByCategoryAndRegion(Long categoryId, Long regionId, Pageable pageable) {
 		List<ItemResponse> itemResponseList = queryFactory
-			.select(new QItemResponse(
+			.selectDistinct(new QItemResponse(
 				item.id,
 				item.title,
 				item.region.title,
 				item.status.type,
-				itemImage.imageUrl,
+				itemImage.image.imageUrl,
 				item.createdAt,
 				item.updatedAt,
 				item.price,
@@ -48,7 +50,7 @@ public class QueryItemRepository {
 			)
 			.leftJoin(item.region, region)
 			.leftJoin(item.itemImages, itemImage)
-			.on(itemImage.isThumbnail.eq(true))
+			.leftJoin(itemImage.image, image)
 			.leftJoin(item.chats, chat)
 			.leftJoin(item.wishLists, wishList)
 			.groupBy(
@@ -56,16 +58,16 @@ public class QueryItemRepository {
 				item.title,
 				item.region.title,
 				item.status.type,
-				itemImage.imageUrl,
+				itemImage.image,
 				item.createdAt,
 				item.updatedAt,
 				item.price
 			)
 			.orderBy(item.updatedAt.desc())
-			.limit(size + 1) // 다음 항목 있는지 확인
-			.offset((long)page * size)
+			.limit(pageable.getPageSize() + 1) // 다음 항목 있는지 확인
+			.offset(pageable.getOffset())
 			.fetch();
-		return checkLastPage(size, itemResponseList);
+		return checkLastPage(pageable.getPageSize(), itemResponseList);
 	}
 
 	private BooleanExpression categoryIdEq(Long categoryId) {

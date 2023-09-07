@@ -70,4 +70,9 @@ public class User extends BaseTimeEntity {
 		myRegion.removeRegion(region);
 	}
 
+	public void updateInfo(String newNickname, Image newProfile) {
+		this.nickname = newNickname;
+		this.profile = newProfile;
+	}
+
 }

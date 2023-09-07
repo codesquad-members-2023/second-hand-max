@@ -7,7 +7,10 @@ import java.util.UUID;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.codesquad.secondhand.api.controller.user.response.UserInformationResponse;
 import com.codesquad.secondhand.api.service.user.request.UserCreateServiceRequest;
+import com.codesquad.secondhand.api.service.user.request.UserUpdateServiceRequest;
+import com.codesquad.secondhand.domain.image.Image;
 import com.codesquad.secondhand.domain.provider.Provider;
 import com.codesquad.secondhand.domain.region.Region;
 import com.codesquad.secondhand.domain.user.MyRegion;
@@ -15,6 +18,7 @@ import com.codesquad.secondhand.domain.user.User;
 import com.codesquad.secondhand.domain.user.UserRepository;
 import com.codesquad.secondhand.exception.user.DuplicatedEmailException;
 import com.codesquad.secondhand.exception.user.DuplicatedNicknameException;
+import com.codesquad.secondhand.exception.user.NoSuchUserException;
 
 import lombok.RequiredArgsConstructor;
 
@@ -63,6 +67,18 @@ public class UserService {
 		user.addUserRegion(defaultRegion);
 		userRepository.save(user);
 		return user;
+  }
+  
+	public UserInformationResponse showUserInformation(Long userId) {
+		User user = userRepository.findById(userId).orElseThrow(NoSuchUserException::new);
+		return UserInformationResponse.of(user);
+	}
+
+	@Transactional
+	public void updateUserInformation(Long userId, UserUpdateServiceRequest request) {
+		User user = userRepository.findById(userId).orElseThrow(NoSuchUserException::new);
+		Image newImage = request.isImageChanged() ? request.getNewImage() : user.getProfile();
+		user.updateInfo(request.getNewNickname(), newImage);
 	}
 
 }

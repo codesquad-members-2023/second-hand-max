@@ -20,13 +20,14 @@ public class ItemResponse {
 	private Long numLike;
 
 	@QueryProjection
-	public ItemResponse(Long id, String title, String region, String status, String thumbnail, LocalDateTime createdAt,
+	public ItemResponse(Long id, String title, String region, String status, String imageUrl,
+		LocalDateTime createdAt,
 		LocalDateTime updatedAt, Integer price, Long numChat, Long numLike) {
 		this.id = id;
 		this.title = title;
 		this.region = region;
 		this.status = status;
-		this.thumbnail = thumbnail;
+		this.thumbnail = imageUrl;
 		this.createdAt = createdAt;
 		this.updatedAt = updatedAt;
 		this.price = price;

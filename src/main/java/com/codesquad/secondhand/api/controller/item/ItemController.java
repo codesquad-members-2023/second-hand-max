@@ -1,5 +1,6 @@
 package com.codesquad.secondhand.api.controller.item;
 
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,14 +22,10 @@ public class ItemController {
 	private final ItemService itemService;
 
 	@GetMapping
-	public ApiResponse<ItemSliceResponse> listFilteredItems(
-		@RequestParam Long category,
-		@RequestParam Long region,
-		@RequestParam int page,
-		@RequestParam int size
-	) {
+	public ApiResponse<ItemSliceResponse> listFilteredItems(Pageable pageable,
+		@RequestParam Long category, @RequestParam Long region) {
 		return ApiResponse.of(HttpStatus.OK, ResponseMessage.ITEM_FETCH_SUCCESS.getMessage(),
-			itemService.listOfItems(category, region, page, size));
+			itemService.listOfItems(category, region, pageable));
 	}
 
 }
