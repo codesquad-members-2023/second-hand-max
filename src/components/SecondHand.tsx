@@ -11,7 +11,7 @@ const SecondHand: React.FC = () => {
 
 const ViewBox = styled.div`
   ${({ theme: { colors } }) => css`
-    min-width: 393px;
+    width: 393px;
     height: 852px;
     background-color: ${colors.neutral.background};
     box-shadow: 0 5px 20px rgba(0, 0, 0, 0.8);
