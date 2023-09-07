@@ -1,4 +1,4 @@
-package com.codesquad.secondhand.api.controller.auth.response;
+package com.codesquad.secondhand.api.service.auth.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -10,8 +10,5 @@ import lombok.NoArgsConstructor;
 public class OAuthUserResponse {
 
 	private Long id;
-	private String name;
-	private String email;
-	private String profile;
 
 }
