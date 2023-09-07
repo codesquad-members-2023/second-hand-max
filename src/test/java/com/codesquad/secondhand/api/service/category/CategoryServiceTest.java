@@ -4,7 +4,6 @@ import static org.assertj.core.api.AssertionsForClassTypes.*;
 
 import java.util.List;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,11 +20,6 @@ public class CategoryServiceTest extends IntegrationTestSupport {
 
 	@Autowired
 	private CategoryRepository categoryRepository;
-
-	@BeforeEach
-	private void init() {
-		categoryRepository.deleteAllInBatch();
-	}
 
 	@DisplayName("카테고리 목록을 조회한다.")
 	@Test
