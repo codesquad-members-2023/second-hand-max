@@ -58,6 +58,10 @@ public class User extends BaseTimeEntity {
 	private String email;
 	private String password;
 
+	public String getProfileUrl() {
+		return profile == null ? null : profile.getImageUrl();
+	}
+
 	public List<UserRegion> listUserRegion() {
 		return myRegion.listAll();
 	}
