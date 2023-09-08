@@ -32,9 +32,8 @@ public class ImageService {
 	@Value("${cloud.aws.s3.bucket}")
 	private String bucket;
 
-	private final AmazonS3Client amazonS3Client;
-
 	private final ImageRepository imageRepository;
+	private final AmazonS3Client amazonS3Client;
 
 	@Transactional
 	public Image createImage(MultipartFile file, String directory) {

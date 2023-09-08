@@ -67,8 +67,9 @@ public class UserService {
 		user.addUserRegion(defaultRegion);
 		userRepository.save(user);
 		return user;
-  }
-  
+	}
+
+	@Transactional(readOnly = true)
 	public UserInformationResponse showUserInformation(Long userId) {
 		User user = userRepository.findById(userId).orElseThrow(NoSuchUserException::new);
 		return UserInformationResponse.of(user);
@@ -78,7 +79,7 @@ public class UserService {
 	public void updateUserInformation(Long userId, UserUpdateServiceRequest request) {
 		User user = userRepository.findById(userId).orElseThrow(NoSuchUserException::new);
 		Image newImage = request.isImageChanged() ? request.getNewImage() : user.getProfile();
-		user.updateInfo(request.getNewNickname(), newImage);
+		user.updateInformation(request.getNewNickname(), newImage);
 	}
 
 }

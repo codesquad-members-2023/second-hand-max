@@ -18,8 +18,6 @@ import lombok.RequiredArgsConstructor;
 @Service
 public class RegionService {
 
-	private static final int REGION_PER_PAGE = 20;
-
 	private final RegionRepository regionRepository;
 
 	@Transactional(readOnly = true)
