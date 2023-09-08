@@ -19,22 +19,30 @@ const useOAuth = () => {
   const fileRef = useRef<File>();
   const navigate = useNavigate();
 
-  const onAuth = useCallback(
-    async (code: string, id: string, file?: File) => {
-      const isSignUpAction = actionRef.current === 'sign-up';
-      const userData = await (isSignUpAction
-        ? signUpUser({ code, id, file })
-        : signInUser({ code, id }));
+  const onSignIn = useCallback(
+    async (code: string, id: string) => {
+      const userData = await signInUser({ code, id });
+      const isSuccess = userData.statusCode === 200;
 
-      alert(userData.message);
-
-      if (isSignUpAction) {
-        navigate(`/${PATH.MY_ACCOUNT}`);
-
-        return;
+      if (isSuccess) {
+        navigate(`${PATH.BASE}`);
       }
 
-      navigate(`${PATH.BASE}`);
+      alert(userData.message);
+    },
+    [navigate],
+  );
+
+  const onSignUp = useCallback(
+    async (code: string, id: string, file?: File) => {
+      const userData = await signUpUser({ code, id, file });
+      const isSuccess = userData.statusCode === 201;
+
+      if (isSuccess) {
+        navigate(`/${PATH.MY_ACCOUNT}`);
+      }
+
+      alert(userData.message);
     },
     [navigate],
   );
@@ -48,9 +56,19 @@ const useOAuth = () => {
         throw new Error('비정상적인 접근입니다.');
       }
 
-      onAuth(code, idRef.current, fileRef.current);
+      if (actionRef.current === 'sign-up') {
+        onSignUp(code, idRef.current, fileRef.current);
+
+        return;
+      }
+
+      if (actionRef.current === 'sign-in') {
+        onSignIn(code, idRef.current);
+
+        return;
+      }
     },
-    [onAuth],
+    [onSignUp, onSignIn],
   );
 
   useEffect(() => {
