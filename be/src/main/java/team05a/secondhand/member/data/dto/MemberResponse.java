@@ -1,4 +1,4 @@
-package team05a.secondhand.oauth.data.dto;
+package team05a.secondhand.member.data.dto;
 
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -7,17 +7,17 @@ import team05a.secondhand.member.data.entity.Member;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class MemberLoginResponse {
+public class MemberResponse {
 
 	private String nickname;
 	private String profileImgUrl;
 
-	public MemberLoginResponse(String nickname, String profileImgUrl) {
+	public MemberResponse(String nickname, String profileImgUrl) {
 		this.nickname = nickname;
 		this.profileImgUrl = profileImgUrl;
 	}
 
-	public static MemberLoginResponse from(Member member) {
-		return new MemberLoginResponse(member.getNickname(), member.getProfileImgUrl());
+	public static MemberResponse from(Member member) {
+		return new MemberResponse(member.getNickname(), member.getProfileImgUrl());
 	}
 }

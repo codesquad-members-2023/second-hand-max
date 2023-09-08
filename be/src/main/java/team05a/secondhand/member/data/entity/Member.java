@@ -15,6 +15,7 @@ import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import team05a.secondhand.member_address.data.entity.MemberAddress;
@@ -46,7 +47,8 @@ public class Member {
 	@OneToMany(mappedBy = "member")
 	private List<MemberAddress> memberAddresses = new ArrayList<>();
 
-	public Member(OauthAttributes type, String email, String nickname, String profileImgUrl) {
+	@Builder
+	private Member(OauthAttributes type, String email, String nickname, String profileImgUrl) {
 		this.type = type;
 		this.email = email;
 		this.nickname = nickname;

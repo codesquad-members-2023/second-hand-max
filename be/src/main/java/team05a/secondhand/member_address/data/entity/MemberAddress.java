@@ -1,5 +1,8 @@
 package team05a.secondhand.member_address.data.entity;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -10,6 +13,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import team05a.secondhand.address.data.entity.Address;
@@ -31,4 +35,25 @@ public class MemberAddress {
 	@JoinColumn(name = "address_id")
 	private Address address;
 	private boolean isLastVisited;
+
+	@Builder
+	private MemberAddress(Long id, Member member, Address address, boolean isLastVisited) {
+		this.id = id;
+		this.member = member;
+		this.address = address;
+		this.isLastVisited = isLastVisited;
+	}
+
+	public static List<MemberAddress> of(Member member, List<Address> addresses) {
+		List<MemberAddress> memberAddresses = addresses.stream()
+			.map(address -> MemberAddress.builder()
+				.member(member)
+				.address(address)
+				.build())
+			.collect(Collectors.toList());
+
+		memberAddresses.get(memberAddresses.size() - 1).isLastVisited = true;
+
+		return memberAddresses;
+	}
 }
