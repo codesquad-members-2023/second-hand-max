@@ -24,14 +24,21 @@ public abstract class FixtureFactory {
 			.collect(Collectors.toList());
 	}
 
-	public static List<Category> createCategoryFixture(int size) {
+	public static List<Category> createCategoryFixtures(int size) {
 		return IntStream.rangeClosed(1, size)
 			.mapToObj(i -> new Category((long)i, "category" + i, "http://url" + i + ".com"))
 			.collect(Collectors.toList());
 	}
 
-	public static User createUserFixtureWithRegions(List<Region> regions) {
+	public static User createUserFixture(List<Region> regions) {
 		User user = new User(null, new MyRegion(), null, Provider.ofLocal(), null, "nickname", "test@email.com",
+			"password123!");
+		regions.forEach(user::addUserRegion);
+		return user;
+	}
+
+	public static User createUserFixture(List<Region> regions, String nickname, String email) {
+		User user = new User(null, new MyRegion(), null, Provider.ofLocal(), null, nickname, email,
 			"password123!");
 		regions.forEach(user::addUserRegion);
 		return user;

@@ -26,7 +26,7 @@ public class CategoryServiceTest extends IntegrationTestSupport {
 	void listAllCategories() {
 		//given
 		int numCategories = 22;
-		categoryRepository.saveAll(FixtureFactory.createCategoryFixture(numCategories));
+		categoryRepository.saveAll(FixtureFactory.createCategoryFixtures(numCategories));
 
 		//when
 		List<CategoryResponse> categories = categoryService.getCategories();

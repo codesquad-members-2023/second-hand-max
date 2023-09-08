@@ -14,22 +14,18 @@ import com.codesquad.secondhand.FixtureFactory;
 import com.codesquad.secondhand.IntegrationTestSupport;
 import com.codesquad.secondhand.domain.region.Region;
 import com.codesquad.secondhand.domain.region.RegionRepository;
-import com.codesquad.secondhand.domain.user_region.UserRegionRepository;
 import com.codesquad.secondhand.exception.user_region.DuplicatedUserRegionException;
 import com.codesquad.secondhand.exception.user_region.ExceedUserRegionLimitException;
 import com.codesquad.secondhand.exception.user_region.MinimumUserRegionViolationException;
 import com.codesquad.secondhand.exception.user_region.NoSuchUserRegionException;
 
-class UserTest extends IntegrationTestSupport {
+class UserRegionTest extends IntegrationTestSupport {
 
 	@Autowired
 	private UserRepository userRepository;
 
 	@Autowired
 	private RegionRepository regionRepository;
-
-	@Autowired
-	private UserRegionRepository userRegionRepository;
 
 	@DisplayName("사용자 동네 등록 시나리오")
 	@TestFactory
@@ -38,7 +34,7 @@ class UserTest extends IntegrationTestSupport {
 		List<Region> regions = FixtureFactory.createRegionFixtures(3);
 		regionRepository.saveAll(regions);
 
-		User user = FixtureFactory.createUserFixtureWithRegions(List.of(regions.get(0)));
+		User user = FixtureFactory.createUserFixture(List.of(regions.get(0)));
 		userRepository.save(user);
 
 		return List.of(
@@ -80,7 +76,7 @@ class UserTest extends IntegrationTestSupport {
 		List<Region> regions = FixtureFactory.createRegionFixtures(3);
 		regionRepository.saveAll(regions);
 
-		User user = FixtureFactory.createUserFixtureWithRegions(List.of(regions.get(0), regions.get(1)));
+		User user = FixtureFactory.createUserFixture(List.of(regions.get(0), regions.get(1)));
 		userRepository.save(user);
 
 		return List.of(
