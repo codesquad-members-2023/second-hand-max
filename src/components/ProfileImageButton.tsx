@@ -4,10 +4,13 @@ import Icons from '@design/Icons';
 import Button from './Button';
 import ACCEPTED_EXTENSIONS from '@constants/ACCEPTED_EXTENSIONS';
 
-const ProfileImageButton: React.FC<{
+type Props = {
   onFileChange: (file: File) => void;
-}> = ({ onFileChange }) => {
-  const [imageSrc, setImageSrc] = useState('');
+  image?: string;
+};
+
+const ProfileImageButton: React.FC<Props> = ({ onFileChange, image }) => {
+  const [imageSrc, setImageSrc] = useState(image);
   const reader = useMemo(() => new FileReader(), []);
 
   return (
@@ -22,7 +25,7 @@ const ProfileImageButton: React.FC<{
 
           if (file) {
             reader.onload = ({ target }) => {
-              if (target && target.result) {
+              if (target?.result) {
                 setImageSrc(target.result as string);
               }
             };

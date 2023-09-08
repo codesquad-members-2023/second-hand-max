@@ -1,16 +1,27 @@
 import { css, styled } from 'styled-components';
-
 import Button from '@components/Button';
 import ProfileImageButton from '@components/ProfileImageButton';
+import { LOCAL_STORAGE_KEY } from '@constants/LOCAL_STORAGE_KEY';
+import { User } from 'apis/types';
 
 const Profile: React.FC = () => {
+  const onFileChange = () => {
+    // TODO: 프로필 사진 변경 핸들러 구현하기
+  };
+
+  const userLocalData = localStorage.getItem(LOCAL_STORAGE_KEY.USER);
+  const user: User | null = userLocalData && JSON.parse(userLocalData);
+
   return (
     <ColumnLayout>
       <h2 className="blind">프로필</h2>
 
       <UserProfile>
-        <ProfileImageButton image="https://yt3.ggpht.com/yti/AOXPAcU8rxU7kN4l9ZeFEPPrsxF9rr2eM7tlXnqqgAHoCA=s88-c-k-c0x00ffffff-no-rj" />
-        <UserName>khundi</UserName>
+        <ProfileImageButton
+          onFileChange={onFileChange}
+          image={user?.profileUrl}
+        />
+        <UserName>{user?.loginId}</UserName>
       </UserProfile>
 
       <Button className="logout-button" $flexible="Fixed" $type="Contained">

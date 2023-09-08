@@ -7,10 +7,11 @@ import Profile from './Profile';
 import SignInForm from './SignInForm';
 import SignUpForm from './SignUpForm';
 import useOAuth from '@hooks/useOAuth';
+import { LOCAL_STORAGE_KEY } from '@constants/LOCAL_STORAGE_KEY';
 
 const MyAccount: React.FC = () => {
   const { initOAuth } = useOAuth();
-  const isLogin = Boolean(localStorage.getItem('accessToken'));
+  const isLogin = !!localStorage.getItem(LOCAL_STORAGE_KEY.TOKENS);
 
   return (
     <>
