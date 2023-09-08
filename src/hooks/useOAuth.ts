@@ -1,50 +1,97 @@
-import { useEffect } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-
 import PATH from '@constants/PATH';
 import { signInUser, signUpUser } from 'apis/fetchApi';
+import { LOCAL_STORAGE_KEY } from '@constants/LOCAL_STORAGE_KEY';
 
 type Action = 'sign-up' | 'sign-in';
 
-const useOAuth = (action: Action, id: string) => {
+type InitOAuthParams = {
+  action: Action;
+  id: string;
+  file?: File;
+};
+
+export type InitOAuthType = (params: InitOAuthParams) => void;
+
+const useOAuth = () => {
+  const actionRef = useRef<Action>();
+  const idRef = useRef<string>();
+  const fileRef = useRef<File>();
   const navigate = useNavigate();
+
+  const onSignIn = useCallback(
+    async (code: string, id: string) => {
+      const userData = await signInUser({ code, id });
+      const isSuccess = userData.statusCode === 200;
+
+      if (isSuccess) {
+        const { jwt: tokens, user } = userData.data;
+
+        localStorage.setItem(LOCAL_STORAGE_KEY.TOKENS, JSON.stringify(tokens));
+        localStorage.setItem(LOCAL_STORAGE_KEY.USER, JSON.stringify(user));
+
+        navigate(`${PATH.BASE}`);
+      }
+
+      alert(userData.message);
+    },
+    [navigate],
+  );
+
+  const onSignUp = useCallback(
+    async (code: string, id: string, file?: File) => {
+      const userData = await signUpUser({ code, id, file });
+      const isSuccess = userData.statusCode === 201;
+
+      if (isSuccess) {
+        navigate(`/${PATH.MY_ACCOUNT}`);
+      }
+
+      alert(userData.message);
+    },
+    [navigate],
+  );
+
+  const onMessageReceive = useCallback(
+    ({ origin, data }: MessageEvent) => {
+      const isSameOrigin = origin === window.location.origin;
+      const { status, code } = data;
+
+      if (!isSameOrigin || status === 'error' || !idRef.current) {
+        throw new Error('비정상적인 접근입니다.');
+      }
+
+      if (actionRef.current === 'sign-up') {
+        onSignUp(code, idRef.current, fileRef.current);
+
+        return;
+      }
+
+      if (actionRef.current === 'sign-in') {
+        onSignIn(code, idRef.current);
+
+        return;
+      }
+    },
+    [onSignUp, onSignIn],
+  );
 
   useEffect(() => {
     return () => {
       window.removeEventListener('message', onMessageReceive);
     };
-  }, []);
+  }, [onMessageReceive]);
 
-  const initOAuth = () => {
+  const initOAuth = ({ action, id, file }: InitOAuthParams) => {
+    actionRef.current = action;
+    idRef.current = id;
+    fileRef.current = file;
+
     const oauthUrl = `${import.meta.env.VITE_APP_OAUTH_URL}&state=${action}`;
 
-    window.open(oauthUrl, '_blank', 'popup');
     window.addEventListener('message', onMessageReceive, { once: true });
-  };
-
-  const onMessageReceive = ({ origin, data }: MessageEvent) => {
-    const isSameOrigin = origin === window.location.origin;
-    const { status } = data;
-
-    if (!isSameOrigin || status === 'error') {
-      throw new Error('비정상적인 접근입니다.');
-    }
-
-    const { action, code } = data;
-
-    if (action === 'sign-up' || action === 'sign-in') {
-      onAuth(code, id, action);
-    }
-  };
-
-  const onAuth = async (code: string, id: string, action: Action) => {
-    const userData = await (action === 'sign-in' ? signInUser : signUpUser)(
-      code,
-      id,
-    );
-
-    alert(userData.message);
-    navigate(`/${PATH.MY_ACCOUNT}`);
+    window.open(oauthUrl, '_blank', 'popup');
   };
 
   return { initOAuth };
