@@ -30,10 +30,4 @@ public class CommonExceptionHandler {
 		);
 	}
 
-	@ResponseStatus(HttpStatus.BAD_REQUEST)
-	@ExceptionHandler(InvalidCursorException.class)
-	public ApiResponse<Void> handleInvalidCursorException(InvalidCursorException exception) {
-		return ApiResponse.noData(HttpStatus.BAD_REQUEST, exception.getMessage());
-	}
-
 }
