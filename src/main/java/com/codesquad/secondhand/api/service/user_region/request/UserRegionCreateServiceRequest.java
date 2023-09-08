@@ -8,7 +8,6 @@ import lombok.Getter;
 public class UserRegionCreateServiceRequest {
 
 	private Long userId;
-
 	private Long regionId;
 
 }
