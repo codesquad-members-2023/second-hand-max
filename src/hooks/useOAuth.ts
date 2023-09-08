@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import PATH from '@constants/PATH';
 import { signInUser, signUpUser } from 'apis/fetchApi';
+import { LOCAL_STORAGE_KEY } from '@constants/LOCAL_STORAGE_KEY';
 
 type Action = 'sign-up' | 'sign-in';
 
@@ -25,6 +26,11 @@ const useOAuth = () => {
       const isSuccess = userData.statusCode === 200;
 
       if (isSuccess) {
+        const { jwt: tokens, user } = userData.data;
+
+        localStorage.setItem(LOCAL_STORAGE_KEY.TOKENS, JSON.stringify(tokens));
+        localStorage.setItem(LOCAL_STORAGE_KEY.USER, JSON.stringify(user));
+
         navigate(`${PATH.BASE}`);
       }
 

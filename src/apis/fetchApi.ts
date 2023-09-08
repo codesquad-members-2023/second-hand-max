@@ -1,3 +1,5 @@
+import { LOCAL_STORAGE_KEY } from '@constants/LOCAL_STORAGE_KEY';
+
 const BASE_URL: string =
   process.env.NODE_ENV === 'development'
     ? import.meta.env.VITE_APP_BASE_URL
@@ -6,18 +8,63 @@ const BASE_URL: string =
 const fetchData = async (path: string, options?: RequestInit) => {
   const response = await fetch(BASE_URL + path, options);
 
-  if (!response.ok) {
-    throw new Error(`HTTP error! status: ${response.status}`);
+  if (response.status === 401) {
+    try {
+      const tokenResponse = await updateAccessToken();
+      const isSuccess = tokenResponse.statusCode === 200;
+
+      if (isSuccess) {
+        const { accessToken } = tokenResponse.data.jwt;
+
+        localStorage.setItem(LOCAL_STORAGE_KEY.TOKENS, accessToken);
+      } else {
+        throw new Error('토큰 재발급에 실패했습니다.');
+      }
+    } catch (error) {
+      console.error(error);
+    }
   }
 
-  if (response.headers.get('content-type') === 'application/json') {
-    const data = await response.json();
-
-    return data;
-  }
+  return response;
 };
 
-export const signUpUser = (code: string, id: string, file?: File) => {
+type SignUpUserSuccess = {
+  statusCode: 201;
+  message: string;
+  data: null;
+};
+
+type SignUpUserFailure =
+  | {
+      statusCode: 400;
+      message: '잘못된 인가 코드입니다.';
+      data: null;
+    }
+  | {
+      statusCode: 400;
+      message: '유효하지 않은 입력형식입니다.';
+      data: {
+        field: string;
+        defaultMessage: string;
+      }[];
+    }
+  | {
+      statusCode: 409;
+      message: string;
+      data: null;
+    };
+
+type SignUpUserResponse = SignUpUserSuccess | SignUpUserFailure;
+
+export const signUpUser = async ({
+  code,
+  id,
+  file,
+}: {
+  code: string;
+  id: string;
+  file?: File;
+}): Promise<SignUpUserResponse> => {
   const formData = new FormData();
 
   if (file) {
@@ -27,14 +74,45 @@ export const signUpUser = (code: string, id: string, file?: File) => {
   const data = JSON.stringify({ loginId: id, addressNames: ['가락 1동'] });
   formData.append('signupData', new Blob([data], { type: 'application/json' }));
 
-  return fetchData(`/auth/naver/signup?code=${code}`, {
+  const response = await fetchData(`/auth/naver/signup?code=${code}`, {
     method: 'POST',
     body: formData,
   });
+
+  return response.json();
 };
 
-export const signInUser = (code: string, id: string) => {
-  return fetchData(`/auth/naver/login?code=${code}`, {
+type SignInUserFailure = {
+  statusCode: 401;
+  message: string;
+  data: null;
+};
+
+type SignInUserSuccess = {
+  statusCode: 200;
+  message: string;
+  data: {
+    jwt: {
+      accessToken: string;
+      refreshToken: string;
+    };
+    user: {
+      loginId: string;
+      profileUrl: string;
+    };
+  };
+};
+
+type SignInUserResponse = SignInUserFailure | SignInUserSuccess;
+
+export const signInUser = async ({
+  code,
+  id,
+}: {
+  code: string;
+  id: string;
+}): Promise<SignInUserResponse> => {
+  const response = await fetchData(`/auth/naver/login?code=${code}`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -43,10 +121,52 @@ export const signInUser = (code: string, id: string) => {
       loginId: id,
     }),
   });
+
+  return response.json();
 };
 
 export const signOutUser = () => {
   return fetchData('/auth/logout');
+};
+
+type UpdateAccessTokenFailure = {
+  statusCode: 400;
+  message: string;
+  data: null;
+};
+
+type UpdateAccessTokenSuccess = {
+  statusCode: 200;
+  message: string;
+  data: {
+    jwt: {
+      accessToken: string;
+    };
+  };
+};
+
+type UpdateAccessTokenResponse =
+  | UpdateAccessTokenFailure
+  | UpdateAccessTokenSuccess;
+
+const updateAccessToken = async (): Promise<UpdateAccessTokenResponse> => {
+  const tokens = localStorage.getItem(LOCAL_STORAGE_KEY.TOKENS);
+
+  if (!tokens) {
+    throw new Error('로컬스토리지에 토큰이 없습니다.');
+  }
+
+  const { refreshToken } = JSON.parse(tokens);
+
+  const response = await fetch(BASE_URL + '/auth/token', {
+    method: 'POST',
+    body: JSON.stringify({ refreshToken }),
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  });
+
+  return response.json();
 };
 
 export const getRegions = () => {
