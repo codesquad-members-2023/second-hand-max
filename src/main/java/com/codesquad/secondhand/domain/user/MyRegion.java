@@ -26,7 +26,6 @@ public class MyRegion {
 	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
 	private final List<UserRegion> userRegions = new ArrayList<>();
 
-	// --- Validation ---
 	public List<UserRegion> listAll() {
 		return List.copyOf(userRegions);
 	}

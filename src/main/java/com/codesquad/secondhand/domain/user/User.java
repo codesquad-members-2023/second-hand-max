@@ -58,7 +58,7 @@ public class User extends BaseTimeEntity {
 	private String email;
 	private String password;
 
-	public String getProfileUrl() {
+	public String findProfileUrl() {
 		return profile == null ? null : profile.getImageUrl();
 	}
 
