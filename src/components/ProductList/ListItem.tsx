@@ -1,8 +1,8 @@
 import { css, styled } from 'styled-components';
 import { getFormattedTimeDifference } from '@utils/time';
-import Product from 'types/Product';
 import Icons from '@design/Icons';
 import sample from '../../assets/sample.jpg';
+import { Product } from 'apis/types';
 
 const ListItem: React.FC<Product> = (product) => {
   const {
