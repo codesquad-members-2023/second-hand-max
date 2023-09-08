@@ -8,4 +8,9 @@ export type Product = {
   status: string;
   chatCount: number;
   wishCount: number;
-}
+};
+
+export type User = {
+  loginId: string;
+  profileUrl: string;
+};

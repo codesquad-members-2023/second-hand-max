@@ -1,4 +1,5 @@
 import { LOCAL_STORAGE_KEY } from '@constants/LOCAL_STORAGE_KEY';
+import { User } from './types';
 
 const BASE_URL: string =
   process.env.NODE_ENV === 'development'
@@ -96,10 +97,7 @@ type SignInUserSuccess = {
       accessToken: string;
       refreshToken: string;
     };
-    user: {
-      loginId: string;
-      profileUrl: string;
-    };
+    user: User;
   };
 };
 
