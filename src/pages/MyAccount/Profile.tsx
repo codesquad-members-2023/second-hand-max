@@ -3,14 +3,28 @@ import Button from '@components/Button';
 import ProfileImageButton from '@components/ProfileImageButton';
 import { LOCAL_STORAGE_KEY } from '@constants/LOCAL_STORAGE_KEY';
 import { User } from 'apis/types';
+import { signOutUser } from 'apis/fetchApi';
 
 const Profile: React.FC = () => {
+  const userLocalData = localStorage.getItem(LOCAL_STORAGE_KEY.USER);
+  const user: User | null = userLocalData && JSON.parse(userLocalData);
+
   const onFileChange = () => {
     // TODO: 프로필 사진 변경 핸들러 구현하기
   };
 
-  const userLocalData = localStorage.getItem(LOCAL_STORAGE_KEY.USER);
-  const user: User | null = userLocalData && JSON.parse(userLocalData);
+  const onLogout = () => {
+    try {
+      signOutUser();
+    } catch (error) {
+      console.error(error);
+    }
+
+    localStorage.removeItem(LOCAL_STORAGE_KEY.TOKENS);
+    localStorage.removeItem(LOCAL_STORAGE_KEY.USER);
+
+    // 토큰을 전역 상태로 가지고 있는 방법 구상중...
+  };
 
   return (
     <ColumnLayout>
@@ -24,7 +38,12 @@ const Profile: React.FC = () => {
         <UserName>{user?.loginId}</UserName>
       </UserProfile>
 
-      <Button className="logout-button" $flexible="Fixed" $type="Contained">
+      <Button
+        className="logout-button"
+        $flexible="Fixed"
+        $type="Contained"
+        onClick={onLogout}
+      >
         로그아웃
       </Button>
     </ColumnLayout>

@@ -124,7 +124,20 @@ export const signInUser = async ({
 };
 
 export const signOutUser = () => {
-  return fetchData('/auth/logout');
+  const tokens = localStorage.getItem(LOCAL_STORAGE_KEY.TOKENS);
+
+  if (!tokens) {
+    throw new Error('로컬스토리지에 access token이 없습니다.');
+  }
+
+  const { accessToken } = JSON.parse(tokens ?? '');
+
+  return fetchData('/auth/logout', {
+    method: 'POST',
+    headers: {
+      Authorization: 'Bearer ' + accessToken,
+    },
+  });
 };
 
 type UpdateAccessTokenFailure = {
