@@ -1,11 +1,11 @@
 import Icons from '@design/Icons';
 import { styled } from 'styled-components';
 
-const CloseButton: React.FC<{ blind?: boolean }> = ({ blind }) => {
+const CloseButton: React.FC = () => {
   return (
     <Container type="button" value="cancel" formMethod="dialog">
       <Icons.XCross />
-      <span className={blind ? '' : 'blind'}>닫기</span>
+      <span>닫기</span>
     </Container>
   );
 };
