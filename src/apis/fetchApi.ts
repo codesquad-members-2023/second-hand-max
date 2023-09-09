@@ -1,5 +1,5 @@
 import { LOCAL_STORAGE_KEY } from '@constants/LOCAL_STORAGE_KEY';
-import { User } from './types';
+import { AccessToken, Tokens, User } from './types';
 
 const BASE_URL: string =
   process.env.NODE_ENV === 'development'
@@ -93,10 +93,7 @@ type SignInUserSuccess = {
   statusCode: 200;
   message: string;
   data: {
-    jwt: {
-      accessToken: string;
-      refreshToken: string;
-    };
+    jwt: Tokens;
     user: User;
   };
 };
@@ -150,9 +147,7 @@ type UpdateAccessTokenSuccess = {
   statusCode: 200;
   message: string;
   data: {
-    jwt: {
-      accessToken: string;
-    };
+    jwt: AccessToken;
   };
 };
 
