@@ -32,8 +32,7 @@ const Profile: React.FC = () => {
 
       <UserProfile>
         <ProfileImageButton
-          onFileChange={onFileChange}
-          image={user?.profileUrl}
+          {...{ onFileChange, initialImageSrc: user?.profileUrl }}
         />
         <UserName>{user?.loginId}</UserName>
       </UserProfile>

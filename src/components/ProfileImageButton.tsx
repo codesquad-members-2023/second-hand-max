@@ -6,12 +6,30 @@ import ACCEPTED_EXTENSIONS from '@constants/ACCEPTED_EXTENSIONS';
 
 type Props = {
   onFileChange: (file: File) => void;
-  image?: string;
+  initialImageSrc?: string;
 };
 
-const ProfileImageButton: React.FC<Props> = ({ onFileChange, image }) => {
-  const [imageSrc, setImageSrc] = useState(image);
+const ProfileImageButton: React.FC<Props> = ({
+  onFileChange,
+  initialImageSrc,
+}) => {
+  const [imageSrc, setImageSrc] = useState(initialImageSrc);
   const reader = useMemo(() => new FileReader(), []);
+
+  const onImageChange = ({ target }: React.ChangeEvent<HTMLInputElement>) => {
+    const file = target.files?.[0];
+
+    if (file) {
+      reader.onload = ({ target }) => {
+        if (target?.result) {
+          setImageSrc(target.result as string);
+        }
+      };
+
+      reader.readAsDataURL(file);
+      onFileChange(file);
+    }
+  };
 
   return (
     <CircularProfileImage $hasImage={!!imageSrc}>
@@ -20,20 +38,7 @@ const ProfileImageButton: React.FC<Props> = ({ onFileChange, image }) => {
         type="file"
         name="profile"
         accept={ACCEPTED_EXTENSIONS.PROFILE_IMAGE}
-        onChange={({ target }) => {
-          const file = target.files?.[0] ?? null;
-
-          if (file) {
-            reader.onload = ({ target }) => {
-              if (target?.result) {
-                setImageSrc(target.result as string);
-              }
-            };
-
-            onFileChange(file);
-            reader.readAsDataURL(file);
-          }
-        }}
+        onChange={onImageChange}
       />
       {imageSrc && <Image src={imageSrc} alt="프로필 이미지" />}
     </CircularProfileImage>
