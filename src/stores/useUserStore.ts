@@ -5,14 +5,14 @@ import { persist } from 'zustand/middleware';
 
 type UserState = {
   user: User | null;
-  setUserId: (id: User) => void;
+  setUser: (id: User) => void;
 };
 
 export const useUserStore = create<UserState>()(
   persist(
     (set) => ({
       user: null,
-      setUserId: (user) => set(() => ({ user })),
+      setUser: (user) => set(() => ({ user })),
     }),
     { name: LOCAL_STORAGE_KEY.USER },
   ),

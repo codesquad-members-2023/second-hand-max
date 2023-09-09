@@ -54,7 +54,7 @@ const useOAuth = () => {
       const { jwt: tokens, user } = userData.data;
 
       localStorage.setItem(LOCAL_STORAGE_KEY.TOKENS, JSON.stringify(tokens));
-      userStore.setUserId(user);
+      userStore.setUser(user);
 
       navigate(`${PATH.BASE}`);
     }
