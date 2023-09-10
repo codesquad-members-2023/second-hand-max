@@ -13,8 +13,10 @@ import com.cokkiri.secondhand.item.entity.Location;
 
 import lombok.AccessLevel;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+@Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 @Table(name = "my_location")
@@ -33,12 +35,17 @@ public class MyLocation {
 	@JoinColumn(name = "location_id")
 	private Location location;
 
-	private boolean isSelected;
+	@Column(name = "is_selected")
+	private boolean selected;
 
 	@Builder
-	public MyLocation(UserEntity user, Location location, boolean isSelected) {
+	public MyLocation(UserEntity user, Location location, boolean selected) {
 		this.user = user;
 		this.location = location;
-		this.isSelected = isSelected;
+		this.selected = selected;
+	}
+
+	public void chooseMyLocation() {
+		this.selected = true;
 	}
 }

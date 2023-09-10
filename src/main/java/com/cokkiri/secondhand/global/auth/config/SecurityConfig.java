@@ -10,12 +10,10 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.logout.LogoutFilter;
 
-import com.cokkiri.secondhand.global.auth.infrastructure.JwtTokenGenerator;
+import com.cokkiri.secondhand.global.auth.filter.JwtAuthorizationFilter;
 import com.cokkiri.secondhand.global.auth.handler.OAuthLoginFailureHandler;
 import com.cokkiri.secondhand.global.auth.handler.OAuthLoginSuccessHandler;
 import com.cokkiri.secondhand.global.auth.service.OAuthService;
-import com.cokkiri.secondhand.global.auth.filter.JwtAuthorizationFilter;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.RequiredArgsConstructor;
 
@@ -24,8 +22,6 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-	private final JwtTokenGenerator jwtTokenGenerator;
-	private final ObjectMapper objectMapper;
 	private final JwtAuthorizationFilter jwtAuthorizationFilter;
 
 	private final OAuthLoginSuccessHandler oAuthLoginSuccessHandler;
@@ -48,10 +44,12 @@ public class SecurityConfig {
 			.and()
 
 			.authorizeRequests()
-			.antMatchers("/api/users",
+			.antMatchers(
+				"/api/users",
 				"/api/login",
-				"/api/reissue-access-token",
-				"/api/items").permitAll()
+				"/api/reissue-access-token").permitAll() // White URI List
+			.antMatchers(
+				"/api/items").permitAll() // Public URI List
 			.anyRequest().authenticated()
 			.and()
 
