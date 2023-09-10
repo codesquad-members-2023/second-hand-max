@@ -1,19 +1,47 @@
 import { css, styled } from 'styled-components';
-
 import Button from '@components/Button';
 import ProfileImageButton from '@components/ProfileImageButton';
+import { signOutUser } from 'apis/api';
+import { useUserStore } from 'stores/useUserStore';
+import { useTokenStore } from 'stores/useTokenStore';
 
 const Profile: React.FC = () => {
+  const tokenStore = useTokenStore();
+  const userStore = useUserStore();
+
+  const onFileChange = () => {
+    // TODO: 프로필 사진 변경 핸들러 구현하기
+  };
+
+  const onLogout = () => {
+    try {
+      signOutUser();
+    } catch (error) {
+      console.error(error);
+    }
+
+    tokenStore.reset();
+    userStore.reset();
+    alert('로그아웃 되었습니다.');
+  };
+
   return (
     <ColumnLayout>
       <h2 className="blind">프로필</h2>
 
       <UserProfile>
-        <ProfileImageButton image="https://yt3.ggpht.com/yti/AOXPAcU8rxU7kN4l9ZeFEPPrsxF9rr2eM7tlXnqqgAHoCA=s88-c-k-c0x00ffffff-no-rj" />
-        <UserName>khundi</UserName>
+        <ProfileImageButton
+          {...{ onFileChange, initialImageSrc: userStore.user?.profileUrl }}
+        />
+        <UserName>{userStore.user?.loginId}</UserName>
       </UserProfile>
 
-      <Button className="logout-button" $flexible="Fixed" $type="Contained">
+      <Button
+        className="logout-button"
+        $flexible="Fixed"
+        $type="Contained"
+        onClick={onLogout}
+      >
         로그아웃
       </Button>
     </ColumnLayout>

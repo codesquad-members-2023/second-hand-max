@@ -1,15 +1,13 @@
-import { useRef, useState } from 'react';
+import { useState } from 'react';
 import { css, styled } from 'styled-components';
 import { Link } from 'react-router-dom';
-
 import Button from '@components/Button';
 import Field from '@components/Field';
 import PATH from '@constants/PATH';
-import useOAuth from '@hooks/useOAuth';
+import { InitOAuthType } from '@hooks/useOAuth';
 
-const SignInForm: React.FC = () => {
+const SignInForm: React.FC<{ initOAuth: InitOAuthType }> = ({ initOAuth }) => {
   const [id, setId] = useState('');
-  const { initOAuth } = useOAuth('sign-in', id);
 
   const onChangeId = (id: string) => {
     setId(id);
@@ -21,7 +19,7 @@ const SignInForm: React.FC = () => {
         onSubmit={(event) => {
           event.preventDefault();
 
-          initOAuth();
+          initOAuth({ action: 'sign-in', id });
         }}
       >
         <Field>
@@ -36,7 +34,12 @@ const SignInForm: React.FC = () => {
           />
         </Field>
 
-        <Button className="login-button" $flexible="Fixed" $type="Contained">
+        <Button
+          className="login-button"
+          $flexible="Fixed"
+          $type="Contained"
+          disabled={!id}
+        >
           로그인
         </Button>
       </LoginForm>

@@ -1,19 +1,30 @@
 import Icons from '@design/Icons';
 import { getFormattedTimeDifference } from '@utils/time';
 import { css, styled } from 'styled-components';
-import Product from 'types/Product';
 
-const Content: React.FC<Product> = ({
-  itemId,
-  thumbnailUrl,
-  title,
-  tradingRegion,
-  createdAt,
-  price,
-  status,
-  chatCount,
-  wishCount,
-}) => {
+const Content: React.FC = () => {
+  const {
+    // itemId,
+    // thumbnailUrl,
+    title,
+    tradingRegion,
+    createdAt,
+    // price,
+    // status,
+    chatCount,
+    wishCount,
+  } = {
+    // itemId: 0,
+    // thumbnailUrl: 'http:~~',
+    title: '잎사귀 포스터',
+    tradingRegion: '역삼 1동',
+    createdAt: '2023-08-22T14:14:32',
+    // price: 59000,
+    // status: '판매중',
+    chatCount: 0,
+    wishCount: 1,
+  };
+
   return (
     <Container>
       <SellerInfo>
