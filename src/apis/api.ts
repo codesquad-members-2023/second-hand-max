@@ -1,33 +1,7 @@
-import { LOCAL_STORAGE_KEY } from '@constants/LOCAL_STORAGE_KEY';
+import { BASE_URL } from '@constants/BASE_URL';
+import { fetchData } from './fetchData';
 import { AccessToken, Tokens, User } from './types';
-
-const BASE_URL: string =
-  process.env.NODE_ENV === 'development'
-    ? import.meta.env.VITE_APP_BASE_URL
-    : '';
-
-const fetchData = async (path: string, options?: RequestInit) => {
-  const response = await fetch(BASE_URL + path, options);
-
-  if (response.status === 401) {
-    try {
-      const tokenResponse = await updateAccessToken();
-      const isSuccess = tokenResponse.statusCode === 200;
-
-      if (isSuccess) {
-        const { accessToken } = tokenResponse.data.jwt;
-
-        localStorage.setItem(LOCAL_STORAGE_KEY.TOKENS, accessToken);
-      } else {
-        throw new Error('토큰 재발급에 실패했습니다.');
-      }
-    } catch (error) {
-      console.error(error);
-    }
-  }
-
-  return response;
-};
+import { useTokenStore } from 'stores/useTokenStore';
 
 type SignUpUserSuccess = {
   statusCode: 201;
@@ -121,13 +95,13 @@ export const signInUser = async ({
 };
 
 export const signOutUser = () => {
-  const tokens = localStorage.getItem(LOCAL_STORAGE_KEY.TOKENS);
+  const tokens = useTokenStore.getState().tokens;
 
   if (!tokens) {
     throw new Error('로컬스토리지에 access token이 없습니다.');
   }
 
-  const { accessToken } = JSON.parse(tokens ?? '');
+  const { accessToken } = tokens;
 
   return fetchData('/auth/logout', {
     method: 'POST',
@@ -155,15 +129,9 @@ type UpdateAccessTokenResponse =
   | UpdateAccessTokenFailure
   | UpdateAccessTokenSuccess;
 
-const updateAccessToken = async (): Promise<UpdateAccessTokenResponse> => {
-  const tokens = localStorage.getItem(LOCAL_STORAGE_KEY.TOKENS);
-
-  if (!tokens) {
-    throw new Error('로컬스토리지에 토큰이 없습니다.');
-  }
-
-  const { refreshToken } = JSON.parse(tokens);
-
+export const updateAccessToken = async (
+  refreshToken: string,
+): Promise<UpdateAccessTokenResponse> => {
   const response = await fetch(BASE_URL + '/auth/token', {
     method: 'POST',
     body: JSON.stringify({ refreshToken }),

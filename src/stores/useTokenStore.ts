@@ -1,25 +1,25 @@
 import { LOCAL_STORAGE_KEY } from '@constants/LOCAL_STORAGE_KEY';
-import { User } from 'apis/types';
+import { Tokens } from 'apis/types';
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
-type UserState = {
-  user: User | null;
-  setUser: (id: User) => void;
+type TokenState = {
+  tokens: Tokens | null;
+  setTokens: (tokens: Tokens) => void;
   reset: () => void;
 };
 
 const initialState = {
-  user: null,
+  tokens: null,
 };
 
-export const useUserStore = create<UserState>()(
+export const useTokenStore = create<TokenState>()(
   persist(
     (set) => ({
       ...initialState,
-      setUser: (user) => set(() => ({ user })),
+      setTokens: (tokens) => set(() => ({ tokens })),
       reset: () => set(() => ({ ...initialState })),
     }),
-    { name: LOCAL_STORAGE_KEY.USER },
+    { name: LOCAL_STORAGE_KEY.TOKENS },
   ),
 );

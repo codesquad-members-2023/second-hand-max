@@ -1,17 +1,17 @@
 import { styled } from 'styled-components';
 import { Routes, Route } from 'react-router-dom';
-
 import PATH from '@constants/PATH';
 import TopBar from '@components/TopBar';
 import Profile from './Profile';
 import SignInForm from './SignInForm';
 import SignUpForm from './SignUpForm';
 import useOAuth from '@hooks/useOAuth';
-import { LOCAL_STORAGE_KEY } from '@constants/LOCAL_STORAGE_KEY';
+import { useTokenStore } from 'stores/useTokenStore';
 
 const MyAccount: React.FC = () => {
   const { initOAuth } = useOAuth();
-  const isLogin = !!localStorage.getItem(LOCAL_STORAGE_KEY.TOKENS);
+  const { tokens } = useTokenStore();
+  const isLogin = !!tokens;
 
   return (
     <>
