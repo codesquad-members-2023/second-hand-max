@@ -1,5 +1,6 @@
 package com.codesquad.secondhand;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -47,7 +48,7 @@ public abstract class FixtureFactory {
 		return user;
 	}
 
-	public static List<Image> createImageListFixtures(int size) {
+	public static List<Image> createImageFixtures(int size) {
 		return IntStream.rangeClosed(1, size)
 			.mapToObj(i -> new Image(null, "imageUrl" + i + ".jpg"))
 			.collect(Collectors.toList());

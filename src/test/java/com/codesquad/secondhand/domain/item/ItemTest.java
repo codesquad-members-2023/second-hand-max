@@ -38,7 +38,7 @@ public class ItemTest extends IntegrationTestSupport {
 		return List.of(
 			DynamicTest.dynamicTest("상품 이미지를 저장할 수 있다.", () -> {
 				// given
-				List<Image> images = FixtureFactory.createImageListFixtures(3);
+				List<Image> images = FixtureFactory.createImageFixtures(3);
 				// imageRepository.saveAll(images);
 
 				// when
@@ -59,7 +59,7 @@ public class ItemTest extends IntegrationTestSupport {
 		User seller = FixtureFactory.createUserFixtureWithRegions(List.of(regions.get(0)));
 		List<Status> statusList = FixtureFactory.createStatusFixtures();
 		Item newItem = FixtureFactory.createItemFixtures(seller, categories.get(0), regions.get(0), statusList.get(0));
-		List<Image> images = FixtureFactory.createImageListFixtures(2);
+		List<Image> images = FixtureFactory.createImageFixtures(2);
 		imageRepository.saveAll(images);
 
 		return List.of(
@@ -72,7 +72,7 @@ public class ItemTest extends IntegrationTestSupport {
 			DynamicTest.dynamicTest("등록하지 않은 상품 이미지를 삭제하는 경우 예외가 발생한다.", () -> {
 				// given
 				newItem.addItemImages(images);
-				List<Image> otherImage = FixtureFactory.createImageListFixtures(1);
+				List<Image> otherImage = FixtureFactory.createImageFixtures(1);
 
 				// when & then
 				assertThatThrownBy(() -> newItem.removeItemImage(otherImage.get(0)))

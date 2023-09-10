@@ -5,10 +5,12 @@ import java.util.List;
 import com.codesquad.secondhand.api.service.item.request.ItemPostingServiceRequest;
 import com.codesquad.secondhand.domain.image.Image;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @NoArgsConstructor
+@AllArgsConstructor
 @Getter
 public class ItemPostingRequest {
 

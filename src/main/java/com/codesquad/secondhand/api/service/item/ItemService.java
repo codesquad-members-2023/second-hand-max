@@ -73,6 +73,7 @@ public class ItemService {
 		);
 
 		item.addItemImages(request.getImages());
+		itemRepository.save(item);
 	}
 
 }
