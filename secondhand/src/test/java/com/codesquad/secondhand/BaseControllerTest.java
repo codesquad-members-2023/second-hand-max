@@ -4,20 +4,20 @@ import java.util.Map;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
 
-import com.codesquad.secondhand.annotation.IntegrationTest;
-import com.codesquad.secondhand.domain.category.service.CategoryService;
+import com.codesquad.secondhand.amazon.S3Uploader;
+import com.codesquad.secondhand.domain.image.service.ImageQueryService;
 import com.codesquad.secondhand.domain.image.service.ImageService;
 import com.codesquad.secondhand.domain.jwt.Jwt;
 import com.codesquad.secondhand.domain.jwt.JwtProvider;
 import com.codesquad.secondhand.domain.member.service.MemberService;
-import com.codesquad.secondhand.domain.product.repository.ImageJpaRepository;
 import com.codesquad.secondhand.domain.product.service.ProductService;
+import com.codesquad.secondhand.domain.reaction.service.ReactionService;
 import com.codesquad.secondhand.redis.util.RedisUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-@IntegrationTest
 public abstract class BaseControllerTest {
 
 	public static final long MEMBER_ID = 1L;
@@ -35,19 +35,22 @@ public abstract class BaseControllerTest {
 	public JwtProvider jwtProvider;
 
 	@Autowired
-	public CategoryService categoryService;
-
-	@Autowired
-	public ImageService imageService;
-
-	@Autowired
 	public MemberService memberService;
 
 	@Autowired
 	public ProductService productService;
 
 	@Autowired
-	public ImageJpaRepository imageJpaRepository;
+	public ImageService imageService;
+
+	@MockBean
+	public S3Uploader s3Uploader;
+
+	@Autowired
+	public ImageQueryService imageQueryService;
+
+	@Autowired
+	public ReactionService reactionService;
 
 	public Jwt jwt;
 
@@ -56,6 +59,6 @@ public abstract class BaseControllerTest {
 
 	@BeforeEach
 	void init() {
-		jwt = jwtProvider.createTokens(Map.of("memberId", MEMBER_ID, "email", TEST_EMAIL));
+		jwt = jwtProvider.createTokens(Map.of("memberId", MEMBER_ID));
 	}
 }

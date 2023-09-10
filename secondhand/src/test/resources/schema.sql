@@ -2,7 +2,7 @@ DROP TABLE IF EXISTS product;
 DROP TABLE IF EXISTS category;
 DROP TABLE IF EXISTS region;
 DROP TABLE IF EXISTS image;
-DROP TABLE IF EXISTS `like`;
+DROP TABLE IF EXISTS reaction;
 DROP TABLE IF EXISTS chat;
 DROP TABLE IF EXISTS chat_message;
 DROP TABLE IF EXISTS chat_member;
@@ -14,16 +14,17 @@ DROP TABLE IF EXISTS member_region;
 
 CREATE TABLE product
 (
-    id          BIGINT        NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    region_id   BIGINT        NOT NULL,
-    category_id BIGINT        NOT NULL,
-    member_id   BIGINT        NOT NULL,
-    name        VARCHAR(20)   NOT NULL,
-    price       BIGINT NULL,
-    content     VARCHAR(1000) NOT NULL,
-    created_at  DATETIME      NOT NULL,
-    status      INT           NOT NULL DEFAULT 1,
-    view_count  BIGINT        NOT NULL DEFAULT 0
+    id              BIGINT        NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    region_id       BIGINT        NOT NULL,
+    category_id     BIGINT        NOT NULL,
+    member_id       BIGINT        NOT NULL,
+    name            VARCHAR(20)   NOT NULL,
+    price           BIGINT NULL,
+    content         VARCHAR(1000) NOT NULL,
+    created_at      DATETIME      NOT NULL,
+    status          INT           NOT NULL DEFAULT 1,
+    thumbnail_image VARCHAR(1000) NOT NULL,
+    view_count      BIGINT        NOT NULL DEFAULT 0
 );
 
 CREATE TABLE category
@@ -46,7 +47,7 @@ CREATE TABLE image
     img_url    VARCHAR(1000) NOT NULL
 );
 
-CREATE TABLE `like`
+CREATE TABLE reaction
 (
     id         BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     product_id BIGINT NOT NULL,
@@ -94,7 +95,7 @@ CREATE TABLE member
     id              BIGINT      NOT NULL AUTO_INCREMENT PRIMARY KEY,
     nickname        VARCHAR(20) NOT NULL,
     email           VARCHAR(50) NOT NULL,
-    selected_region VARCHAR(50) NULL,
+    selected_region BiGINT NULL,
     profile_img     VARCHAR(1000) NULL
 );
 

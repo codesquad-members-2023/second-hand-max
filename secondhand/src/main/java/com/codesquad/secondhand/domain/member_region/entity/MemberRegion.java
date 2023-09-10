@@ -15,9 +15,11 @@ import com.codesquad.secondhand.domain.region.entity.Region;
 
 import lombok.AccessLevel;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
+@Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class MemberRegion {
 	@Id
@@ -47,4 +49,12 @@ public class MemberRegion {
 				.build())
 			.collect(Collectors.toUnmodifiableList());
 	}
+
+	public static MemberRegion of(Member member, Region region) {
+		return MemberRegion.builder()
+			.member(member)
+			.region(region)
+			.build();
+	}
+
 }
