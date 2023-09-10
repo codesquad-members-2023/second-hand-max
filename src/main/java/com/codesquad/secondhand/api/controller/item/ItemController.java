@@ -3,6 +3,7 @@ package com.codesquad.secondhand.api.controller.item;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -15,6 +16,7 @@ import com.codesquad.secondhand.annotation.SignInUser;
 import com.codesquad.secondhand.api.ApiResponse;
 import com.codesquad.secondhand.api.ResponseMessage;
 import com.codesquad.secondhand.api.controller.item.request.ItemPostingRequest;
+import com.codesquad.secondhand.api.controller.item.response.ItemDetailResponse;
 import com.codesquad.secondhand.api.service.image.ImageService;
 import com.codesquad.secondhand.api.service.item.ItemService;
 import com.codesquad.secondhand.api.service.item.response.ItemSliceResponse;
@@ -43,6 +45,12 @@ public class ItemController {
 		itemService.postItem(request.toService(imageService.findImagesByIds(request.getImageIds())),
 			signInUser.getId());
 		return ApiResponse.noData(HttpStatus.CREATED, ResponseMessage.ITEM_POST_SUCCESS.getMessage());
+	}
+
+	@GetMapping("/{id}")
+	public ApiResponse<ItemDetailResponse> getItemDetail(@PathVariable Long id) {
+		return ApiResponse.of(HttpStatus.OK, ResponseMessage.ITEM_DETAIL_FETCH_SUCCESS.getMessage(),
+			itemService.getItemDetail(id));
 	}
 
 }

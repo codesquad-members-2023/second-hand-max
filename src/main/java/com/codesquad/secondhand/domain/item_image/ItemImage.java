@@ -12,7 +12,6 @@ import javax.persistence.Table;
 
 import com.codesquad.secondhand.domain.image.Image;
 import com.codesquad.secondhand.domain.item.Item;
-import com.codesquad.secondhand.util.BaseTimeEntity;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -24,7 +23,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @Entity
 @Table(name = "item_image")
-public class ItemImage extends BaseTimeEntity {
+public class ItemImage {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)

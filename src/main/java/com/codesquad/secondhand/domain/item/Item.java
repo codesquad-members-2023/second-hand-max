@@ -92,8 +92,16 @@ public class Item extends BaseTimeEntity {
 		this.isDeleted = false;
 	}
 
-	public List<ItemImage> listItemImage() {
-		return detailShot.listAll();
+	public List<Image> listImage() {
+		return detailShot.listAllImages();
+	}
+
+	public int getNumChat() {
+		return this.getChats().size();
+	}
+
+	public int getNumLike() {
+		return this.getWishLists().size();
 	}
 
 	public void addItemImages(List<Image> images) {

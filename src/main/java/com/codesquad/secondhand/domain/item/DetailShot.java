@@ -2,6 +2,7 @@ package com.codesquad.secondhand.domain.item;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Embeddable;
@@ -20,8 +21,10 @@ public class DetailShot {
 	@OneToMany(mappedBy = "item", cascade = CascadeType.ALL, orphanRemoval = true)
 	private final List<ItemImage> itemImages = new ArrayList<>();
 
-	public List<ItemImage> listAll() {
-		return List.copyOf(itemImages);
+	public List<Image> listAllImages() {
+		return itemImages.stream()
+			.map(ItemImage::getImage)
+			.collect(Collectors.toUnmodifiableList());
 	}
 
 	public void addImage(ItemImage itemImage) {

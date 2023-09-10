@@ -8,6 +8,7 @@ import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.codesquad.secondhand.api.controller.item.response.ItemDetailResponse;
 import com.codesquad.secondhand.api.service.item.request.ItemPostingServiceRequest;
 import com.codesquad.secondhand.api.service.item.response.ItemResponse;
 import com.codesquad.secondhand.api.service.item.response.ItemSliceResponse;
@@ -23,6 +24,7 @@ import com.codesquad.secondhand.domain.status.StatusRepository;
 import com.codesquad.secondhand.domain.user.User;
 import com.codesquad.secondhand.domain.user.UserRepository;
 import com.codesquad.secondhand.exception.category.NoSuchCategoryException;
+import com.codesquad.secondhand.exception.item.NoSuchItemException;
 import com.codesquad.secondhand.exception.region.NoSuchRegionException;
 import com.codesquad.secondhand.exception.status.NoSuchStatusException;
 import com.codesquad.secondhand.exception.user.NoSuchUserException;
@@ -74,6 +76,13 @@ public class ItemService {
 
 		item.addItemImages(request.getImages());
 		itemRepository.save(item);
+	}
+
+	// todo : isWishlisted & incrementView
+	@Transactional(readOnly = true)
+	public ItemDetailResponse getItemDetail(Long itemId) {
+		Item item = itemRepository.findDetailById(itemId).orElseThrow(NoSuchItemException::new);
+		return ItemDetailResponse.from(item);
 	}
 
 }
