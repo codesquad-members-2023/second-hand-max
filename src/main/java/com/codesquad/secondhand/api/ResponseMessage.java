@@ -13,6 +13,7 @@ public enum ResponseMessage {
 
 	// Item
 	ITEM_FETCH_SUCCESS("상품 목록 조회를 성공하였습니다"),
+	ITEM_POST_SUCCESS("상품 등록을 성공하였습니다"),
 
 	// User
 	USER_REGION_FETCH_SUCCESS("나의 동네 조회를 성공하였습니다"),
