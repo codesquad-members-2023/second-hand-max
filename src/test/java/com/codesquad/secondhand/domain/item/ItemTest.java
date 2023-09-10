@@ -45,7 +45,7 @@ public class ItemTest extends IntegrationTestSupport {
 				newItem.addItemImages(images);
 
 				//then
-				assertThat(newItem.listItemImage()).hasSize(3);
+				assertThat(newItem.listImage()).hasSize(3);
 			})
 		);
 	}
@@ -84,7 +84,7 @@ public class ItemTest extends IntegrationTestSupport {
 				newItem.removeItemImage(images.get(0));
 
 				//then
-				assertThat(newItem.listItemImage()).hasSize(1);
+				assertThat(newItem.listImage()).hasSize(1);
 			})
 		);
 	}
