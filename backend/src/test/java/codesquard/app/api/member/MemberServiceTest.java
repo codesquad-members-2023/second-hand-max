@@ -8,6 +8,7 @@ import static org.springframework.boot.test.context.SpringBootTest.*;
 
 import java.io.File;
 import java.io.IOException;
+import java.time.LocalDateTime;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -17,13 +18,14 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 
+import codesquard.app.IntegrationTestSupport;
 import codesquard.app.api.image.ImageUploader;
 import codesquard.app.domain.jwt.JwtProvider;
 import codesquard.app.domain.member.Member;
 import codesquard.support.SupportRepository;
 
 @SpringBootTest(webEnvironment = WebEnvironment.DEFINED_PORT)
-class MemberServiceTest {
+class MemberServiceTest extends IntegrationTestSupport {
 
 	@Autowired
 	private JwtProvider jwtProvider;
@@ -41,9 +43,10 @@ class MemberServiceTest {
 		willDoNothing().given(imageUploader).deleteImage(anyString());
 		repository.save(Member.create("url", "email", "pie"));
 
+		LocalDateTime now = LocalDateTime.now();
 		var request = given().log().all()
 			.header(HttpHeaders.AUTHORIZATION,
-				"Bearer " + jwtProvider.createJwtBasedOnMember(new Member(1L)).getAccessToken())
+				"Bearer " + jwtProvider.createJwtBasedOnMember(new Member(1L), now).getAccessToken())
 			.contentType(MediaType.MULTIPART_FORM_DATA_VALUE)
 			.multiPart("updateImageFile",
 				File.createTempFile("test-image", ".png"),

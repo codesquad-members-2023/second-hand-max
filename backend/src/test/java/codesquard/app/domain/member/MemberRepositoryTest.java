@@ -2,7 +2,6 @@ package codesquard.app.domain.member;
 
 import org.assertj.core.api.Assertions;
 import org.assertj.core.api.SoftAssertions;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -12,12 +11,6 @@ import codesquard.app.api.errors.errorcode.OauthErrorCode;
 import codesquard.app.api.errors.exception.RestApiException;
 
 class MemberRepositoryTest extends IntegrationTestSupport {
-
-	@BeforeEach
-	void cleanup() {
-		memberTownRepository.deleteAllInBatch();
-		memberRepository.deleteAllInBatch();
-	}
 
 	@DisplayName("로그인 아이디를 가지고 회원을 조회할 수 있다")
 	@Test
@@ -95,5 +88,20 @@ class MemberRepositoryTest extends IntegrationTestSupport {
 			.orElse(null);
 		// then
 		Assertions.assertThat(findMember).isNull();
+	}
+
+	@DisplayName("이메일을 가지고 회원을 조회한다")
+	@Test
+	public void findMemberByEmail() {
+		// given
+		String email = "23Yong@gmail.com";
+		String loginId = "23Yong";
+		Member member = Member.create(null, email, loginId);
+		memberRepository.save(member);
+		// when
+		Member findMember = memberRepository.findMemberByEmail(email)
+			.orElseThrow(() -> new RestApiException(MemberErrorCode.NOT_FOUND_MEMBER));
+		// thenR
+		Assertions.assertThat(findMember).isNotNull();
 	}
 }

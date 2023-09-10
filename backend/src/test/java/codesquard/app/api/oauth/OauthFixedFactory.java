@@ -5,6 +5,8 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.time.LocalDateTime;
+import java.util.List;
 
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.mock.web.MockMultipartFile;
@@ -17,25 +19,27 @@ import codesquard.app.api.oauth.request.OauthSignUpRequest;
 import codesquard.app.api.oauth.response.OauthAccessTokenResponse;
 import codesquard.app.api.oauth.response.OauthSignUpResponse;
 import codesquard.app.api.oauth.response.OauthUserProfileResponse;
+import codesquard.app.domain.jwt.JwtProvider;
+import codesquard.app.domain.member.Member;
+import codesquard.app.domain.membertown.MemberTown;
 
 public class OauthFixedFactory {
 
 	private static final String LOGIN_ID = "23Yong";
-	private static final String ADDR_NAME = "가락 1동";
-	private static final String ACCESS_TOKEN = "accessTokenValue";
+	private static final List<String> ADDRESS_NAMES = List.of("가락 1동");
+	private static final String ACCESS_TOKEN = "eyJhbGciOiJIUzI1NiJ9.eyJsb2dpbklkIjoiMjNZb25nIiwiZW1haWwiOiIyM1lvbm"
+		+ "dAZ21haWwuY29tIiwibWVtYmVySWQiOjEsImV4cCI6MTY3MjQ5OTEwMH0.7w2MKSLPVEr6wo7B-C6drNA3eETikpnYi2M1V8c9erY";
 	private static final String SCOPE = "scopeValue";
 	private static final String TOKEN_TYPE = "Bearer";
-
 	private static final String EMAIL = "23Yong@gmail.com";
-
 	private static final String AVATAR_URL = "avatarUrlValue";
 
 	public static OauthSignUpRequest createFixedOauthSignUpRequest() {
-		return OauthSignUpRequest.create(LOGIN_ID, ADDR_NAME);
+		return OauthSignUpRequest.create(LOGIN_ID, ADDRESS_NAMES);
 	}
 
-	public static OauthSignUpRequest createFixedOauthSignUpRequest(String loginId, String addrName) {
-		return OauthSignUpRequest.create(loginId, addrName);
+	public static OauthSignUpRequest createFixedOauthSignUpRequest(String loginId, List<String> addressNames) {
+		return OauthSignUpRequest.create(loginId, addressNames);
 	}
 
 	public static OauthAccessTokenResponse createFixedOauthAccessTokenResponse() {
@@ -43,7 +47,7 @@ public class OauthFixedFactory {
 	}
 
 	public static OauthUserProfileResponse createOauthUserProfileResponse() {
-		return OauthUserProfileResponse.create(EMAIL);
+		return OauthUserProfileResponse.create(EMAIL, null);
 	}
 
 	public static OauthSignUpResponse createdFixedOauthSignUpResponse() {
@@ -68,6 +72,30 @@ public class OauthFixedFactory {
 	}
 
 	public static OauthLoginRequest createFixedOauthLoginRequest() {
-		return new OauthLoginRequest("23Yong");
+		return OauthLoginRequest.create("23Yong");
+	}
+
+	public static LocalDateTime createNow() {
+		return LocalDateTime.now();
+	}
+
+	public static Member createFixedMember() {
+		return Member.create(AVATAR_URL, EMAIL, LOGIN_ID);
+	}
+
+	public static Member createFixedMemberWithMemberTown() {
+		Member member = createFixedMember();
+		member.addMemberTown(MemberTown.create("가락 1동"));
+		return member;
+	}
+
+	public static String createExpectedAccessTokenBy(JwtProvider jwtProvider, Member member,
+		LocalDateTime localDateTime) {
+		return jwtProvider.createJwtBasedOnMember(member, localDateTime).getAccessToken();
+	}
+
+	public static String createExpectedRefreshTokenBy(JwtProvider jwtProvider, Member member,
+		LocalDateTime localDateTime) {
+		return jwtProvider.createJwtBasedOnMember(member, localDateTime).getRefreshToken();
 	}
 }

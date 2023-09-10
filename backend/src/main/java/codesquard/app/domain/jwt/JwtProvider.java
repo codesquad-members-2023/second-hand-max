@@ -1,5 +1,6 @@
 package codesquard.app.domain.jwt;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -29,26 +30,27 @@ public class JwtProvider {
 		this.jwtProperties = jwtProperties;
 	}
 
-	public Jwt createJwtBasedOnMember(Member member) {
+	public Jwt createJwtWithRefreshTokenBasedOnMember(Member member, String refreshToken, LocalDateTime now) {
 		Map<String, Object> claims = member.createClaims();
-		Date expireDateAccessToken = jwtProperties.getExpireDateAccessToken();
-		Date expireDateRefreshToken = jwtProperties.getExpireDateRefreshToken();
+		Date expireDateAccessToken = jwtProperties.createExpireAccessTokenDate(now);
+		Date expireDateRefreshToken = getClaims(refreshToken).getExpiration();
+		return createJwt(claims, expireDateAccessToken, expireDateRefreshToken);
+	}
+
+	public Jwt createJwtBasedOnMember(Member member, LocalDateTime now) {
+		Map<String, Object> claims = member.createClaims();
+		Date expireDateAccessToken = jwtProperties.createExpireAccessTokenDate(now);
+		Date expireDateRefreshToken = jwtProperties.getExpireDateRefreshToken(now);
 		return createJwt(claims, expireDateAccessToken, expireDateRefreshToken);
 	}
 
 	private Jwt createJwt(Map<String, Object> claims, Date expireDateAccessToken, Date expireDateRefreshToken) {
-		// 1. accessToken 생성
 		String accessToken = createToken(claims, expireDateAccessToken);
-
-		// 2. refreshToken 생성
 		String refreshToken = createToken(new HashMap<>(), expireDateRefreshToken);
-
-		// 3. JWT 생성
 		return Jwt.create(accessToken, refreshToken, expireDateAccessToken, expireDateRefreshToken);
 	}
 
 	private String createToken(Map<String, Object> claims, Date expireDate) {
-		// claims를 비밀키로 이용하여 암호화
 		return Jwts.builder()
 			.setClaims(claims)
 			.setExpiration(expireDate)
@@ -56,22 +58,19 @@ public class JwtProvider {
 			.compact();
 	}
 
-	/**
-	 * 액세스 토큰에 해당하는 해시맵 응답
-	 * @UnsupportedJwtException – claimsJws 인수가 Claims JWS를 나타내지 않는 경우
-	 * @MalformedJwtException – claimsJws 문자열이 유효한 JWS가 아닌 경우
-	 * @SignatureException – claimsJws의 JWS 서명이 유효성 검사가 실패하는 경우
-	 * @ExpiredJwtException – 만약 명세된 JWT가 Claims JWT이고 Claims이 만료된 경우
-	 * @IllegalArgumentException – ClaimsJws 문자열이 null, empty, 공백인 경우
-	 * @return token을 비밀키로 복호화한 Claims
-	 */
 	public Claims getClaims(String token) {
 		// token을 비밀키로 복호화하여 Claims 추출
-		return Jwts.parserBuilder()
-			.setSigningKey(jwtProperties.getKey())
-			.build()
-			.parseClaimsJws(token)
-			.getBody();
+		try {
+			return Jwts.parserBuilder()
+				.setSigningKey(jwtProperties.getKey())
+				.build()
+				.parseClaimsJws(token)
+				.getBody();
+		} catch (ExpiredJwtException e) {
+			throw new RestApiException(JwtTokenErrorCode.EXPIRE_TOKEN);
+		} catch (JwtException e) {
+			throw new RestApiException(JwtTokenErrorCode.INVALID_TOKEN);
+		}
 	}
 
 	public void validateToken(String token) {
@@ -81,8 +80,10 @@ public class JwtProvider {
 				.build()
 				.parseClaimsJws(token);
 		} catch (ExpiredJwtException e) {
+			log.error("토큰 만료 에러 : {}", e.getMessage());
 			throw new RestApiException(JwtTokenErrorCode.EXPIRE_TOKEN);
 		} catch (JwtException e) {
+			log.error("Jwt 에러 : {}", e.getMessage());
 			throw new RestApiException(JwtTokenErrorCode.INVALID_TOKEN);
 		}
 	}
@@ -98,4 +99,5 @@ public class JwtProvider {
 
 		return Principal.from(claims, token);
 	}
+
 }
