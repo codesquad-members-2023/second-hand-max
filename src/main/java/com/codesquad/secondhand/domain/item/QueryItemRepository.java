@@ -3,7 +3,7 @@ package com.codesquad.secondhand.domain.item;
 import static com.codesquad.secondhand.domain.chat.QChat.*;
 import static com.codesquad.secondhand.domain.image.QImage.*;
 import static com.codesquad.secondhand.domain.item.QItem.*;
-import static com.codesquad.secondhand.domain.item.QItemImage.*;
+import static com.codesquad.secondhand.domain.item_image.QItemImage.*;
 import static com.codesquad.secondhand.domain.region.QRegion.*;
 import static com.codesquad.secondhand.domain.wishlist.QWishList.*;
 
@@ -49,7 +49,7 @@ public class QueryItemRepository {
 				categoryIdEq(categoryId)
 			)
 			.leftJoin(item.region, region)
-			.leftJoin(item.itemImages, itemImage)
+			.leftJoin(item.detailShot.itemImages, itemImage)
 			.leftJoin(itemImage.image, image)
 			.leftJoin(item.chats, chat)
 			.leftJoin(item.wishLists, wishList)
