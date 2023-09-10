@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.codesquad.secondhand.annotation.SignIn;
+import com.codesquad.secondhand.annotation.SignInUser;
 import com.codesquad.secondhand.api.ApiResponse;
 import com.codesquad.secondhand.api.ResponseMessage;
 import com.codesquad.secondhand.api.controller.user_region.request.UserRegionCreateRequest;
@@ -28,25 +30,23 @@ public class UserRegionController {
 	private final UserRegionService userRegionService;
 
 	@GetMapping
-	public ApiResponse<List<UserRegionResponse>> listUserRegions() {
-		final Long userId = 1L;
+	public ApiResponse<List<UserRegionResponse>> listUserRegions(@SignIn SignInUser signInUser) {
 		return ApiResponse.of(HttpStatus.OK, ResponseMessage.USER_REGION_FETCH_SUCCESS.getMessage(),
-			userRegionService.listUserRegions(userId));
+			userRegionService.listUserRegions(signInUser.getId()));
 	}
 
 	@ResponseStatus(HttpStatus.CREATED)
 	@PostMapping()
-	public ApiResponse<Void> createUserRegion(@RequestBody UserRegionCreateRequest request) {
-		final Long userId = 1L;
-		userRegionService.createUserRegion(request.toService(userId));
+	public ApiResponse<Void> createUserRegion(@RequestBody UserRegionCreateRequest request,
+		@SignIn SignInUser signInUser) {
+		userRegionService.createUserRegion(request.toService(signInUser.getId()));
 		return ApiResponse.noData(HttpStatus.CREATED, ResponseMessage.USER_REGION_CREATE_SUCCESS.getMessage());
 	}
 
 	@ResponseStatus(HttpStatus.NO_CONTENT)
 	@DeleteMapping("/{id}")
-	public ApiResponse<Void> deleteUserRegion(@PathVariable Long id) {
-		final Long userId = 1L;
-		userRegionService.deleteUserRegion(userId, id);
+	public ApiResponse<Void> deleteUserRegion(@PathVariable Long id, @SignIn SignInUser signInUser) {
+		userRegionService.deleteUserRegion(signInUser.getId(), id);
 		return ApiResponse.noData(HttpStatus.NO_CONTENT, ResponseMessage.USER_REGION_DELETE_SUCCESS.getMessage());
 	}
 

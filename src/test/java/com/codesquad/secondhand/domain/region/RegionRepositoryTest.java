@@ -2,7 +2,6 @@ package com.codesquad.secondhand.domain.region;
 
 import static org.assertj.core.api.Assertions.*;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
@@ -24,12 +23,6 @@ class RegionRepositoryTest extends IntegrationTestSupport {
 
 	@Autowired
 	private UserRegionRepository userRegionRepository;
-
-	@BeforeEach
-	private void init() {
-		userRegionRepository.deleteAllInBatch();
-		regionRepository.deleteAllInBatch();
-	}
 
 	@DisplayName("Pageable 객체를 받아서 해당 page의 동네 목록을 size개씩 반환한다.")
 	@CsvSource(value = {"0,20", "1,20"})

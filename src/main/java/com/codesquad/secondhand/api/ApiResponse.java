@@ -8,13 +8,13 @@ import lombok.Getter;
 public class ApiResponse<T> {
 
 	private int code;
-	private HttpStatus status;
+	private String status;
 	private String message;
 	private T data;
 
 	public ApiResponse(HttpStatus status, String message, T data) {
 		this.code = status.value();
-		this.status = status;
+		this.status = status.getReasonPhrase();
 		this.message = message;
 		this.data = data;
 	}
