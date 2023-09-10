@@ -5,15 +5,22 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import com.codesquad.secondhand.Image.application.dto.ImageResponse;
+import com.codesquad.secondhand.Image.domain.Image;
+
 public enum ImageFixture {
 
-	이미지_기본_사용자_프로필(1L, "hhttps://i.ibb.co/wzwLBcq/user-default-profile-image.png"),
-	이미지_기본_상품_썸네일(2L, "https://i.ibb.co/CsRg4q7/item-default-thumbnail-image.png"),
-	이미지_빈티지_일본_경대(3L, "http://image.com/vintage_japanese_dressing_table.jpg"),
-	이미지_빈티지_일본_경대2(4L, "http://image.com/vintage_japanese_dressing_table2.jpg"),
-	이미지_도자기_화병_5종(5L, "http://image.com/five_vases.jpg"),
-	이미지_잎사귀_포스터(6L, "http://image.com/leaf_poster.jpg"),
-	이미지_빈티지_밀크_그래스_램프(7L, "http://image.com/vintage_milk_lamp.jpg");
+	이미지_빈티지_일본_경대(1L, "http://www.image.com/vintage_japanese_dressing_table.jpg"),
+	이미지_빈티지_일본_경대2(2L, "http://www.image.com/vintage_japanese_dressing_table2.jpg"),
+	이미지_도자기_화병_5종(3L, "http://www.image.com/five_vases.jpg"),
+	이미지_잎사귀_포스터(4L, "http://www.image.com/leaf_poster.jpg"),
+	이미지_빈티지_밀크_그래스_램프(5L, "http://www.image.com/vintage_milk_lamp.jpg"),
+	이미지_LG_그램(6L, "http://www.image.com/LG_gram.jpg"),
+	이미지_젤다의_전설(7L, "http://www.image.com/legend_of_zelda.jpg"),
+	이미지_모자(8L, "http://www.image.com/hat.jpg"),
+	이미지_프린터(9L, "http://www.image.com/printer.jpg"),
+	이미지_키보드(10L, "http://www.image.com/keyboard.jpg"),
+	이미지_슬라이스_치즈(11L, "http://www.image.com/slice_cheese.jpg");
 
 	private final Long id;
 	private final String imageUrl;
@@ -42,18 +49,19 @@ public enum ImageFixture {
 			.orElseThrow();
 	}
 
-	public static String findThumbnail(Long itemId) {
-		List<ItemImageFixture> ItemImageFixtures = ItemImageFixture.findAllByItemId(itemId);
+	public static List<ImageResponse> findAllImageResponseByIds(List<Long> ids) {
+		return ids.stream()
+			.distinct()
+			.map(id -> findById(id).toImageResponse())
+			.collect(Collectors.toUnmodifiableList());
+	}
 
-		if (ItemImageFixtures.isEmpty()) {
-			return 이미지_기본_상품_썸네일.imageUrl;
-		}
+	public ImageResponse toImageResponse() {
+		return new ImageResponse(id, imageUrl);
+	}
 
-		Long imageId = ItemImageFixtures.stream()
-			.findFirst()
-			.orElseThrow()
-			.getImageId();
-		return findById(imageId).getImageUrl();
+	public Image toImage() {
+		return new Image(id, imageUrl);
 	}
 
 	public Long getId() {

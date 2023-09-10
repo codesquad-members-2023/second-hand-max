@@ -1,14 +1,24 @@
 package com.codesquad.secondhand.item.infrastructure;
 
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Slice;
+import java.util.Optional;
+
+import javax.persistence.LockModeType;
+
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.Query;
 
 import com.codesquad.secondhand.item.domain.Item;
 
 public interface ItemRepository extends JpaRepository<Item, Long>, ItemDao {
 
-	@Query("SELECT i FROM Item i JOIN FETCH i.user u LEFT JOIN FETCH i.category c JOIN FETCH i.region r JOIN FETCH i.status s LEFT JOIN FETCH i.images ii LEFT JOIN FETCH ii.image WHERE i.isDeleted = false ORDER BY i.createdAt DESC")
-	Slice<Item> findSliceByCategoryIdAndRegionId(Pageable pageable, Long categoryId, Long regionId);
+	@Lock(LockModeType.PESSIMISTIC_WRITE)
+	@Query("select i from Item i inner join fetch i.region r "
+		+ "inner join fetch i.category c "
+		+ "inner join fetch i.status s "
+		+ "inner join fetch i.user u "
+		+ "left join fetch i.images.itemImages ii "
+		+ "left join fetch ii.image image "
+		+ "where i.id = :id")
+	Optional<Item> findDetailById(Long id);
 }

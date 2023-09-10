@@ -30,7 +30,7 @@ public class ItemDaoImpl implements ItemDao {
 		List<Item> content = jpaQueryFactory.selectFrom(item)
 			.innerJoin(item.region, region).fetchJoin()
 			.innerJoin(item.status, status).fetchJoin()
-			.leftJoin(item.images, itemImage).fetchJoin()
+			.leftJoin(item.images.itemImages, itemImage).fetchJoin()
 			.leftJoin(itemImage.image, image).fetchJoin()
 			.where(
 				categoryIdEq(categoryId),
