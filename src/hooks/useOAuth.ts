@@ -1,7 +1,8 @@
 import { useNavigate } from 'react-router-dom';
 import PATH from '@constants/PATH';
-import { signInUser, signUpUser } from 'apis/fetchApi';
-import { LOCAL_STORAGE_KEY } from '@constants/LOCAL_STORAGE_KEY';
+import { signInUser, signUpUser } from 'apis/api';
+import { useUserStore } from 'stores/useUserStore';
+import { useTokenStore } from 'stores/useTokenStore';
 
 type Action = 'sign-up' | 'sign-in';
 
@@ -15,6 +16,8 @@ export type InitOAuthType = (params: InitOAuthParams) => void;
 
 const useOAuth = () => {
   const navigate = useNavigate();
+  const userStore = useUserStore();
+  const tokenStore = useTokenStore();
 
   const initOAuth = ({ action, id, file }: InitOAuthParams) => {
     const onMessageReceive = ({ origin, data }: MessageEvent) => {
@@ -51,8 +54,8 @@ const useOAuth = () => {
     if (isSuccess) {
       const { jwt: tokens, user } = userData.data;
 
-      localStorage.setItem(LOCAL_STORAGE_KEY.TOKENS, JSON.stringify(tokens));
-      localStorage.setItem(LOCAL_STORAGE_KEY.USER, JSON.stringify(user));
+      tokenStore.setTokens(tokens);
+      userStore.setUser(user);
 
       navigate(`${PATH.BASE}`);
     }

@@ -1,13 +1,13 @@
 import { css, styled } from 'styled-components';
 import Button from '@components/Button';
 import ProfileImageButton from '@components/ProfileImageButton';
-import { LOCAL_STORAGE_KEY } from '@constants/LOCAL_STORAGE_KEY';
-import { User } from 'apis/types';
-import { signOutUser } from 'apis/fetchApi';
+import { signOutUser } from 'apis/api';
+import { useUserStore } from 'stores/useUserStore';
+import { useTokenStore } from 'stores/useTokenStore';
 
 const Profile: React.FC = () => {
-  const userLocalData = localStorage.getItem(LOCAL_STORAGE_KEY.USER);
-  const user: User | null = userLocalData && JSON.parse(userLocalData);
+  const tokenStore = useTokenStore();
+  const userStore = useUserStore();
 
   const onFileChange = () => {
     // TODO: 프로필 사진 변경 핸들러 구현하기
@@ -20,10 +20,9 @@ const Profile: React.FC = () => {
       console.error(error);
     }
 
-    localStorage.removeItem(LOCAL_STORAGE_KEY.TOKENS);
-    localStorage.removeItem(LOCAL_STORAGE_KEY.USER);
-
-    // 토큰을 전역 상태로 가지고 있는 방법 구상중...
+    tokenStore.reset();
+    userStore.reset();
+    alert('로그아웃 되었습니다.');
   };
 
   return (
@@ -32,9 +31,9 @@ const Profile: React.FC = () => {
 
       <UserProfile>
         <ProfileImageButton
-          {...{ onFileChange, initialImageSrc: user?.profileUrl }}
+          {...{ onFileChange, initialImageSrc: userStore.user?.profileUrl }}
         />
-        <UserName>{user?.loginId}</UserName>
+        <UserName>{userStore.user?.loginId}</UserName>
       </UserProfile>
 
       <Button
