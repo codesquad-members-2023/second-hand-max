@@ -1,4 +1,4 @@
-export type Product = {
+export type ProductListItem = {
   itemId: number;
   thumbnailUrl: string;
   title: string;

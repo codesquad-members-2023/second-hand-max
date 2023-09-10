@@ -1,6 +1,7 @@
 import Fab from '@components/Fab';
 import ProductList from '@components/ProductList';
 import TopBar from '@components/TopBar';
+import { Outlet } from 'react-router-dom';
 import { styled } from 'styled-components';
 
 const Home: React.FC = () => {
@@ -10,6 +11,7 @@ const Home: React.FC = () => {
       <Content>
         <ProductList />
         <Fab />
+        <Outlet />
       </Content>
     </>
   );
