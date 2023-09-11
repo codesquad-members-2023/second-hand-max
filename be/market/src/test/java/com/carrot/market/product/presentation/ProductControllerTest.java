@@ -12,9 +12,12 @@ import java.util.List;
 import org.junit.jupiter.api.Test;
 
 import com.carrot.market.product.application.dto.response.CategoryDto;
-import com.carrot.market.product.application.dto.response.MainPageServiceDto;
+import com.carrot.market.product.application.dto.response.DetailPageServiceDto;
+import com.carrot.market.product.application.dto.response.ProductDetailDto;
+import com.carrot.market.product.application.dto.response.ProductDetailResponseDto;
+import com.carrot.market.product.application.dto.response.SellerDetailDto;
 import com.carrot.market.product.domain.SellingStatus;
-import com.carrot.market.product.infrastructure.dto.MainPageSliceDto;
+import com.carrot.market.product.infrastructure.dto.response.DetailPageSliceResponseDto;
 import com.carrot.market.support.ControllerTestSupport;
 
 class ProductControllerTest extends ControllerTestSupport {
@@ -22,11 +25,12 @@ class ProductControllerTest extends ControllerTestSupport {
 	@Test
 	void mainpage() throws Exception {
 		// given
-		MainPageSliceDto mainPageSliceDto = new MainPageSliceDto(1L, 1L, "name", "location", "image",
+		DetailPageSliceResponseDto mainPageSliceDto = new DetailPageSliceResponseDto(1L, 1L, "name", "location",
+			"image",
 			LocalDateTime.now(), 3000L,
 			SellingStatus.SELLING.name(), 2L, 2L);
 		when(productService.getMainPage(any(), any(), any(), anyInt())).thenReturn(
-			new MainPageServiceDto(List.of(mainPageSliceDto), 2L)
+			new DetailPageServiceDto(List.of(mainPageSliceDto), 2L)
 		);
 
 		// when & then
@@ -69,6 +73,48 @@ class ProductControllerTest extends ControllerTestSupport {
 			.andExpect(jsonPath("$.data.[1].id").value(2L))
 			.andExpect(jsonPath("$.data.[1].name").value("june"))
 			.andExpect(jsonPath("$.data.[1].imageUrl").value("www.google.com"));
-
 	}
+
+	@Test
+	void productDetail() throws Exception {
+		// given
+		SellerDetailDto june = new SellerDetailDto(1L, "June");
+		ProductDetailDto productDetailDto = ProductDetailDto.builder()
+			.location("soosongdong")
+			.status(SellingStatus.SELLING.name())
+			.title("title")
+			.category("category")
+			.content("content")
+			.chatCount(1L)
+			.likeCount(2L)
+			.hits(3L)
+			.price(1000L)
+			.isLiked(false)
+			.build();
+		ProductDetailResponseDto productDetailResponseDto = new ProductDetailResponseDto(List.of("www.google.com"),
+			june, productDetailDto);
+
+		when(productService.getProduct(any(), any())).thenReturn(productDetailResponseDto);
+
+		mockMvc.perform(
+				get("/api/products/1").requestAttr("memberId", 1)
+			)
+			.andDo(print())
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.success").value("true"))
+			.andExpect(jsonPath("$.data.imageUrls[0]").value("www.google.com"))
+			.andExpect(jsonPath("$.data.seller.id").value(1L))
+			.andExpect(jsonPath("$.data.seller.nickname").value("June"))
+			.andExpect(jsonPath("$.data.product.location").value("soosongdong"))
+			.andExpect(jsonPath("$.data.product.status").value(SellingStatus.SELLING.name()))
+			.andExpect(jsonPath("$.data.product.title").value("title"))
+			.andExpect(jsonPath("$.data.product.category").value("category"))
+			.andExpect(jsonPath("$.data.product.content").value("content"))
+			.andExpect(jsonPath("$.data.product.chatCount").value(1L))
+			.andExpect(jsonPath("$.data.product.likeCount").value(2L))
+			.andExpect(jsonPath("$.data.product.hits").value(3L))
+			.andExpect(jsonPath("$.data.product.price").value(1000L))
+			.andExpect(jsonPath("$.data.product.isLiked").value(false));
+	}
+
 }

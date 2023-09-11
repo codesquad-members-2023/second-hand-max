@@ -15,8 +15,8 @@ import com.carrot.market.location.domain.Location;
 import com.carrot.market.location.infrastructure.LocationRepository;
 import com.carrot.market.member.application.dto.request.SignupServiceRequest;
 import com.carrot.market.member.domain.Member;
-import com.carrot.market.member.infrastructure.MemberLocationRepository;
 import com.carrot.market.member.infrastructure.MemberRepository;
+import com.carrot.market.oauth.application.dto.response.LoginResponse;
 import com.carrot.market.support.IntegrationTestSupport;
 
 class MemberServiceTest extends IntegrationTestSupport {
@@ -26,6 +26,9 @@ class MemberServiceTest extends IntegrationTestSupport {
 
 	@Autowired
 	private LocationRepository locationRepository;
+
+	@Autowired
+	private MemberRepository memberRepository;
 
 	@DisplayName("회원의 메인 동네를 서브 동네와 바꿀 수 있다.")
 	@Test
@@ -43,13 +46,14 @@ class MemberServiceTest extends IntegrationTestSupport {
 			.mainLocationId(mainLocation.getId())
 			.subLocationId(subLocation.getId())
 			.build();
-		memberService.signup(signUpRequest);
+		LoginResponse loginResponse = memberService.signup(signUpRequest);
+		Long memberId = loginResponse.user().id();
 
 		//when
-		memberService.updateLocation(socialId, subLocation.getId());
+		memberService.updateLocation(memberId, subLocation.getId());
 
 		//then
-		var memberLocations = memberService.getRegisteredLocations(socialId);
+		var memberLocations = memberService.getRegisteredLocations(memberId);
 
 		assertThat(memberLocations).hasSize(2)
 			.extracting("id", "isMainLocation")
@@ -78,14 +82,15 @@ class MemberServiceTest extends IntegrationTestSupport {
 				.mainLocationId(mainLocation.getId())
 				.subLocationId(subLocation.getId())
 				.build();
-			memberService.signup(signUpRequest);
-			memberService.removeRegisteredLocation(socialId, subLocation.getId());
+			LoginResponse loginResponse = memberService.signup(signUpRequest);
+			Long memberId = loginResponse.user().id();
+			memberService.removeRegisteredLocation(memberId, subLocation.getId());
 
 			//when
-			memberService.updateLocation(socialId, newLocation.getId());
+			memberService.updateLocation(memberId, newLocation.getId());
 
 			//then
-			var memberLocations = memberService.getRegisteredLocations(socialId);
+			var memberLocations = memberService.getRegisteredLocations(memberId);
 
 			assertThat(memberLocations).hasSize(2)
 				.extracting("id", "isMainLocation")
@@ -112,10 +117,11 @@ class MemberServiceTest extends IntegrationTestSupport {
 				.mainLocationId(mainLocation.getId())
 				.subLocationId(subLocation.getId())
 				.build();
-			memberService.signup(signUpRequest);
+			LoginResponse loginResponse = memberService.signup(signUpRequest);
+			Long memberId = loginResponse.user().id();
 
 			//when //then
-			assertThatThrownBy(() -> memberService.updateLocation(socialId, newLocation.getId()))
+			assertThatThrownBy(() -> memberService.updateLocation(memberId, newLocation.getId()))
 				.isInstanceOf(ApiException.class)
 				.hasMessage("새로운 동네를 추가할 수 없습니다.");
 		}
@@ -141,13 +147,13 @@ class MemberServiceTest extends IntegrationTestSupport {
 				.mainLocationId(mainLocation.getId())
 				.subLocationId(subLocation.getId())
 				.build();
-			memberService.signup(signUpRequest);
-
+			LoginResponse loginResponse = memberService.signup(signUpRequest);
+			Long memberId = loginResponse.user().id();
 			//when
-			memberService.removeRegisteredLocation(socialId, mainLocation.getId());
+			memberService.removeRegisteredLocation(memberId, mainLocation.getId());
 
 			//then
-			var memberLocations = memberService.getRegisteredLocations(socialId);
+			var memberLocations = memberService.getRegisteredLocations(memberId);
 
 			assertThat(memberLocations).hasSize(1)
 				.extracting("id", "isMainLocation")
@@ -170,11 +176,13 @@ class MemberServiceTest extends IntegrationTestSupport {
 				.mainLocationId(mainLocation.getId())
 				.subLocationId(subLocation.getId())
 				.build();
-			memberService.signup(signUpRequest);
-			memberService.removeRegisteredLocation(socialId, subLocation.getId());
+			LoginResponse loginResponse = memberService.signup(signUpRequest);
+			Long memberId = loginResponse.user().id();
+
+			memberService.removeRegisteredLocation(memberId, subLocation.getId());
 
 			//when // then
-			assertThatThrownBy(() -> memberService.removeRegisteredLocation(socialId, mainLocation.getId()))
+			assertThatThrownBy(() -> memberService.removeRegisteredLocation(memberId, mainLocation.getId()))
 				.isInstanceOf(ApiException.class)
 				.hasMessage("새로운 동네를 삭제할 수 없습니다.");
 		}

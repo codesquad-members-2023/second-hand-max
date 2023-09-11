@@ -1,5 +1,7 @@
 package com.carrot.market.member.application;
 
+import static com.carrot.market.product.infrastructure.QueryProductRepository.*;
+
 import java.util.List;
 import java.util.Map;
 
@@ -17,10 +19,12 @@ import com.carrot.market.member.application.dto.request.SignupServiceRequest;
 import com.carrot.market.member.application.dto.response.LoginMemberResponse;
 import com.carrot.market.member.application.dto.response.MainLocationResponse;
 import com.carrot.market.member.application.dto.response.MemberLocationResponse;
+import com.carrot.market.member.application.dto.response.ReissueAccessTokenResponse;
 import com.carrot.market.member.domain.Member;
 import com.carrot.market.member.domain.MemberLocation;
 import com.carrot.market.member.infrastructure.MemberLocationRepository;
 import com.carrot.market.member.infrastructure.MemberRepository;
+import com.carrot.market.member.presentation.dto.request.ReissueAccessTokenRequest;
 import com.carrot.market.oauth.application.dto.response.LoginResponse;
 
 import lombok.RequiredArgsConstructor;
@@ -43,23 +47,20 @@ public class MemberService {
 		Member savedMember = memberRepository.save(member);
 
 		Jwt jwt = jwtProvider.createJwt(Map.of(MEMBER_ID, savedMember.getId()));
-		savedMember.setRefreshToken(jwt.getRefreshToken());
-		LoginMemberResponse loginMemberResponse = new LoginMemberResponse(savedMember.getId(),
-			savedMember.getNickname());
+		savedMember.setRefreshToken(jwt.refreshToken());
+		LoginMemberResponse loginMemberResponse = LoginMemberResponse.from(member);
 
-		saveMemberLocation(true, member, signupServiceRequest.mainLocationId());
+		saveMainMemberLocation(member, findLocationById(signupServiceRequest.mainLocationId()));
 
-		saveMemberLocation(false, member, signupServiceRequest.subLocationId());
+		saveSubMemberLocation(member, findLocationById(signupServiceRequest.subLocationId()));
 
 		return LoginResponse.success(jwt, loginMemberResponse);
 	}
 
 	@Transactional
-	public MainLocationResponse updateLocation(String socialId, Long locationId) {
-		final Member member = memberRepository.findBySocialId(socialId)
-			.orElseThrow(() -> new ApiException(MemberException.NOT_FOUND_MEMBER));
-		final Location location = locationRepository.findById(locationId)
-			.orElseThrow(() -> new ApiException(LocationException.NOT_FOUND_ID));
+	public MainLocationResponse updateLocation(Long memberId, Long locationId) {
+		final Member member = findMemberById(memberId);
+		final Location location = findLocationById(locationId);
 
 		if (member.isRegisteredLocation(location)) {
 			member.changeMainLocation(location);
@@ -69,14 +70,17 @@ public class MemberService {
 			throw new ApiException(MemberException.NOT_REGISTER_LOCATION);
 		}
 
-		saveMemberLocation(Boolean.FALSE, member, locationId);
+		saveSubMemberLocation(member, location);
 
 		return new MainLocationResponse(member.getMainMemberLocation());
 	}
 
-	public List<MemberLocationResponse> getRegisteredLocations(String socialId) {
-		final Member member = memberRepository.findBySocialId(socialId)
-			.orElseThrow(() -> new ApiException(MemberException.NOT_FOUND_MEMBER));
+	public List<MemberLocationResponse> getRegisteredLocations(Long memberId) {
+		if (memberRepository.findById(memberId).isEmpty()) {
+			Location location = locationRepository.findById(BASIC_LOCATION_ID).get();
+			return List.of(MemberLocationResponse.fromLocation(location));
+		}
+		final Member member = findMemberById(memberId);
 
 		return member.getMemberLocations()
 			.stream()
@@ -85,15 +89,9 @@ public class MemberService {
 	}
 
 	@Transactional
-	public MainLocationResponse removeRegisteredLocation(String socialId, Long locationId) {
-		final Member member = memberRepository.findBySocialId(socialId)
-			.orElseThrow(() -> new ApiException(MemberException.NOT_FOUND_MEMBER));
-		final Location location = locationRepository.findById(locationId)
-			.orElseThrow(() -> new ApiException(LocationException.NOT_FOUND_ID));
-
-		if (!canRemove(member, location)) {
-			throw new ApiException(MemberException.NOT_REMOVE_LOCATION);
-		}
+	public MainLocationResponse removeRegisteredLocation(Long memberId, Long locationId) {
+		final Member member = findMemberById(memberId);
+		final Location location = findLocationById(locationId);
 
 		MemberLocation removedLocation = member.removeLocation(location);
 		memberLocationRepository.delete(removedLocation);
@@ -101,17 +99,20 @@ public class MemberService {
 		return new MainLocationResponse(member.getMainMemberLocation());
 	}
 
-	private static boolean canRemove(Member member, Location location) {
-		return member.isAllRegisteredLocation() && member.isRegisteredLocation(location);
+	private MemberLocation saveMainMemberLocation(Member member, Location location) {
+		return saveMemberLocation(true, member, location);
 	}
 
-	private MemberLocation saveMemberLocation(boolean isMain, Member member, Long locationId) {
+	private MemberLocation saveSubMemberLocation(Member member, Location location) {
+		return saveMemberLocation(false, member, location);
+	}
+
+	private MemberLocation saveMemberLocation(boolean isMain, Member member, Location location) {
 		return memberLocationRepository.save(
 			MemberLocation.builder()
 				.isMain(isMain)
 				.member(member)
-				.location(locationRepository.findById(locationId)
-					.orElseThrow(() -> new ApiException(LocationException.NOT_FOUND_ID)))
+				.location(location)
 				.build()
 		);
 	}
@@ -123,4 +124,28 @@ public class MemberService {
 			});
 		return true;
 	}
+
+	private Location findLocationById(Long locationId) {
+		return locationRepository.findById(locationId)
+			.orElseThrow(() -> new ApiException(LocationException.NOT_FOUND_ID));
+	}
+
+	private Member findMemberById(Long memberId) {
+		return memberRepository.findById(memberId)
+			.orElseThrow(() -> new ApiException(MemberException.NOT_FOUND_MEMBER));
+	}
+
+	public ReissueAccessTokenResponse reissueAccessToken(ReissueAccessTokenRequest reissueAccessTokenRequest) {
+		String refreshToken = reissueAccessTokenRequest.refreshToken();
+		Member member = memberRepository.findByRefreshToken(refreshToken)
+			.orElseThrow(() -> new ApiException(MemberException.NOT_FOUND_MEMBER));
+		Jwt jwt = jwtProvider.reissueAccessToken(Map.of(MEMBER_ID, member.getId()), refreshToken);
+		return new ReissueAccessTokenResponse(jwt.accessToken());
+	}
+
+	@Transactional
+	public void logout(Long memberId, String refreshToken) {
+		memberRepository.updateRefreshTokenNullByUserIdAndRefreshToken(memberId, refreshToken);
+	}
+
 }

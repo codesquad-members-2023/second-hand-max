@@ -7,20 +7,23 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
 import org.springframework.test.web.servlet.MockMvc;
 
-import com.carrot.market.member.application.MemberService;
-import com.carrot.market.member.presentation.MemberController;
 import com.carrot.market.global.filter.JwtAuthorizationFilter;
+import com.carrot.market.image.application.ImageService;
+import com.carrot.market.image.presentation.ImageController;
 import com.carrot.market.location.application.LocationService;
 import com.carrot.market.location.presentation.LocationController;
+import com.carrot.market.member.application.MemberService;
+import com.carrot.market.member.presentation.MemberController;
 import com.carrot.market.product.application.ProductService;
 import com.carrot.market.product.presentation.ProductController;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @WebMvcTest(controllers = {
 	ProductController.class,
-	MemberController.class
+	MemberController.class,
 	LocationController.class,
-	ProductController.class
+	ProductController.class,
+	ImageController.class
 }, excludeFilters = {
 	@ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = JwtAuthorizationFilter.class)
 })
@@ -40,4 +43,6 @@ public abstract class ControllerTestSupport {
 	@MockBean
 	protected MemberService memberService;
 
+	@MockBean
+	protected ImageService imageService;
 }
