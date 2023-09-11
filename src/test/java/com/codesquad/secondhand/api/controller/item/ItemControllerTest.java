@@ -91,4 +91,5 @@ public class ItemControllerTest extends ControllerTestSupport {
 			.andExpect(jsonPath("$.data.isLiked").value(false))
 			.andExpect(jsonPath("$.data.images").doesNotExist());
 	}
+
 }

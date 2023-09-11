@@ -82,6 +82,7 @@ public class UserTest extends IntegrationTestSupport {
 		List<Region> regions = FixtureFactory.createRegionFixtures(3);
 		regionRepository.saveAll(regions);
 		User seller = FixtureFactory.createUserFixtureWithRegions(List.of(regions.get(0), regions.get(1)));
+		userRepository.save(seller);
 
 		return List.of(
 			DynamicTest.dynamicTest("사용자의 동네가 아닌 다른 동네에 새로운 상품을 등록하는 경우 예외가 발생한다.", () -> {
