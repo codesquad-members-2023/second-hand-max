@@ -8,10 +8,12 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
 
+import com.codesquad.secondhand.api.controller.auth.AuthController;
 import com.codesquad.secondhand.api.controller.category.CategoryController;
 import com.codesquad.secondhand.api.controller.region.RegionController;
 import com.codesquad.secondhand.api.controller.user.UserController;
 import com.codesquad.secondhand.api.controller.user_region.UserRegionController;
+import com.codesquad.secondhand.api.service.auth.AuthService;
 import com.codesquad.secondhand.api.service.auth.jwt.JwtService;
 import com.codesquad.secondhand.api.service.category.CategoryService;
 import com.codesquad.secondhand.api.service.image.ImageService;
@@ -27,7 +29,8 @@ import io.jsonwebtoken.Jwts;
 	RegionController.class,
 	UserController.class,
 	UserRegionController.class,
-	CategoryController.class
+	CategoryController.class,
+	AuthController.class
 })
 public abstract class ControllerTestSupport {
 
@@ -54,6 +57,9 @@ public abstract class ControllerTestSupport {
 
 	@MockBean
 	protected ImageService imageService;
+
+	@MockBean
+	protected AuthService authService;
 
 	public void mockingJwtService() {
 		given(jwtService.parse(Mockito.any())).willReturn(createMockClaims());
