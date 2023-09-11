@@ -10,7 +10,9 @@ import com.codesquad.secondhand.api.service.auth.oauth.KakaoClient;
 import com.codesquad.secondhand.api.service.auth.response.ReissueResponse;
 import com.codesquad.secondhand.api.service.auth.response.SignInResponse;
 import com.codesquad.secondhand.api.service.user.UserService;
+import com.codesquad.secondhand.api.service.user.request.UserCreateServiceRequest;
 import com.codesquad.secondhand.domain.provider.Provider;
+import com.codesquad.secondhand.domain.region.Region;
 import com.codesquad.secondhand.domain.user.User;
 import com.codesquad.secondhand.domain.user.UserRepository;
 import com.codesquad.secondhand.exception.auth.SignInFailedException;
@@ -54,7 +56,8 @@ public class AuthService {
 	public SignInResponse signByKakao(String code) {
 		String email = kakaoClient.requestUserInformation(code).getId() + "@fishprincess.site";
 		User user = userRepository.findByProviderIdAndEmail(Provider.ofKakao().getId(), email)
-			.orElseGet(() -> userService.createOAuthUser(Provider.ofKakao(), email));
+			.orElseGet(() -> userService.createUser(UserCreateServiceRequest.from(email, Provider.ofKakao(),
+				Region.ofDefault())));
 
 		return jwtService.issueTokens(user);
 	}

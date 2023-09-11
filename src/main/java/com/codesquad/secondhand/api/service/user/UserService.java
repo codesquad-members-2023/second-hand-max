@@ -1,9 +1,5 @@
 package com.codesquad.secondhand.api.service.user;
 
-import static com.codesquad.secondhand.domain.region.Region.*;
-
-import java.util.UUID;
-
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -11,8 +7,6 @@ import com.codesquad.secondhand.api.controller.user.response.UserInformationResp
 import com.codesquad.secondhand.api.service.user.request.UserCreateServiceRequest;
 import com.codesquad.secondhand.api.service.user.request.UserUpdateServiceRequest;
 import com.codesquad.secondhand.domain.image.Image;
-import com.codesquad.secondhand.domain.provider.Provider;
-import com.codesquad.secondhand.domain.region.Region;
 import com.codesquad.secondhand.domain.user.MyRegion;
 import com.codesquad.secondhand.domain.user.User;
 import com.codesquad.secondhand.domain.user.UserRepository;
@@ -29,44 +23,24 @@ public class UserService {
 	private final UserRepository userRepository;
 
 	@Transactional
-	public void createLocalUser(UserCreateServiceRequest request) {
-		Provider localProvider = Provider.ofLocal();
-		Region defaultRegion = new Region(DEFAULT_REGION_ID, DEFAULT_REGION_TITLE);
+	public User createUser(UserCreateServiceRequest request) {
 		if (userRepository.existsByNickname(request.getNickname())) {
 			throw new DuplicatedNicknameException();
 		}
-		if (userRepository.existsByProviderAndEmail(localProvider, request.getEmail())) {
+		if (userRepository.existsByProviderAndEmail(request.getProvider(), request.getEmail())) {
 			throw new DuplicatedEmailException();
 		}
 		User user = new User(
 			null,
 			new MyRegion(),
 			request.getImage(),
-			localProvider,
+			request.getProvider(),
 			null,
 			request.getNickname(),
 			request.getEmail(),
 			request.getPassword());
-		user.addUserRegion(defaultRegion);
-		userRepository.save(user);
-	}
-
-	@Transactional
-	public User createOAuthUser(Provider provider, String email) {
-		Region defaultRegion = new Region(DEFAULT_REGION_ID, DEFAULT_REGION_TITLE);
-		String nickname = UUID.randomUUID().toString().substring(0, 10);
-		User user = new User(
-			null,
-			new MyRegion(),
-			null,
-			provider,
-			null,
-			nickname,
-			email,
-			null);
-		user.addUserRegion(defaultRegion);
-		userRepository.save(user);
-		return user;
+		user.addUserRegion(request.getRegion());
+		return userRepository.save(user);
 	}
 
 	@Transactional(readOnly = true)
