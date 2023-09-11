@@ -1,12 +1,10 @@
 package com.codesquad.secondhand.api.controller.user;
 
-import static org.mockito.BDDMockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import java.nio.charset.StandardCharsets;
-import java.util.List;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -16,11 +14,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.mock.web.MockMultipartFile;
 
 import com.codesquad.secondhand.ControllerTestSupport;
-import com.codesquad.secondhand.FixtureFactory;
 import com.codesquad.secondhand.api.ResponseMessage;
 import com.codesquad.secondhand.api.controller.user.request.UserCreateRequest;
-import com.codesquad.secondhand.domain.region.Region;
-import com.codesquad.secondhand.domain.user.User;
 import com.fasterxml.jackson.core.JsonProcessingException;
 
 public class UserControllerTest extends ControllerTestSupport {
@@ -30,7 +25,6 @@ public class UserControllerTest extends ControllerTestSupport {
 	void createLocalUser() throws Exception {
 		// given
 		mockingJwtService();
-		mockingUserService();
 
 		UserCreateRequest request = new UserCreateRequest("nickname", "email@email.com", "password123!");
 
@@ -50,7 +44,6 @@ public class UserControllerTest extends ControllerTestSupport {
 	void createLocalUserWithInvalidNickname(String nickname) throws Exception {
 		// given
 		mockingJwtService();
-		mockingUserService();
 
 		UserCreateRequest request = new UserCreateRequest(nickname, "email@email.com", "password123!");
 
@@ -69,7 +62,6 @@ public class UserControllerTest extends ControllerTestSupport {
 	void createLocalUserWithInvalidEmail(String email) throws Exception {
 		// given
 		mockingJwtService();
-		mockingUserService();
 
 		UserCreateRequest request = new UserCreateRequest("nickname", email, "password123!");
 
@@ -88,7 +80,6 @@ public class UserControllerTest extends ControllerTestSupport {
 	void createLocalUserWithInvalidPassword(String password) throws Exception {
 		// given
 		mockingJwtService();
-		mockingUserService();
 
 		UserCreateRequest request = new UserCreateRequest("nickname", "email@email.com", password);
 
@@ -99,11 +90,6 @@ public class UserControllerTest extends ControllerTestSupport {
 			.andExpect(status().isBadRequest())
 			.andExpect(jsonPath("$.code").value(HttpStatus.BAD_REQUEST.value()))
 			.andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.getReasonPhrase()));
-	}
-
-	private void mockingUserService() {
-		User mockUser = FixtureFactory.createUserFixture(List.of(Region.ofDefault()));
-		given(userService.createUser(any())).willReturn(mockUser);
 	}
 
 	private MockMultipartFile mockingRequestMultipartFile(UserCreateRequest request) throws JsonProcessingException {
