@@ -7,9 +7,12 @@ import com.codesquad.secondhand.api.controller.user.response.UserInformationResp
 import com.codesquad.secondhand.api.service.user.request.UserCreateServiceRequest;
 import com.codesquad.secondhand.api.service.user.request.UserUpdateServiceRequest;
 import com.codesquad.secondhand.domain.image.Image;
+import com.codesquad.secondhand.domain.provider.Provider;
+import com.codesquad.secondhand.domain.region.Region;
 import com.codesquad.secondhand.domain.user.MyRegion;
 import com.codesquad.secondhand.domain.user.User;
 import com.codesquad.secondhand.domain.user.UserRepository;
+import com.codesquad.secondhand.exception.auth.SignInFailedException;
 import com.codesquad.secondhand.exception.user.DuplicatedEmailException;
 import com.codesquad.secondhand.exception.user.DuplicatedNicknameException;
 import com.codesquad.secondhand.exception.user.NoSuchUserException;
@@ -54,6 +57,24 @@ public class UserService {
 		User user = userRepository.findById(userId).orElseThrow(NoSuchUserException::new);
 		Image newImage = request.isImageChanged() ? request.getNewImage() : user.getProfile();
 		user.updateInformation(request.getNewNickname(), newImage);
+	}
+
+	@Transactional(readOnly = true)
+	public User findUser(Long id) {
+		return userRepository.findById(id).orElseThrow(NoSuchUserException::new);
+	}
+
+	@Transactional(readOnly = true)
+	public User findLocalUser(String email, String password) {
+		return userRepository.findByEmailAndPassword(email, password)
+			.orElseThrow(SignInFailedException::new);
+	}
+
+	@Transactional
+	public User findOrCreateUser(Provider provider, String email) {
+		return userRepository.findByProviderIdAndEmail(provider.getId(), email)
+			.orElseGet(() -> createUser(UserCreateServiceRequest.from(email, Provider.ofKakao(),
+				Region.ofDefault())));
 	}
 
 }
