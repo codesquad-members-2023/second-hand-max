@@ -16,6 +16,8 @@ import com.codesquad.secondhand.domain.user.User;
 
 public abstract class FixtureFactory {
 
+	public static final LocalDateTime LOCAL_DATE_TIME = LocalDateTime.now();
+
 	public static List<Region> createRegionFixtures(int size) {
 		return IntStream.rangeClosed(1, size)
 			.mapToObj(i -> new Region(null, "test region" + i))
@@ -55,7 +57,7 @@ public abstract class FixtureFactory {
 	}
 
 	public static Item createItemFixtures(User user, Category category, Region region, Status status) {
-		return new Item(user, category, region, status, LocalDateTime.now(), "title", "content", null);
+		return new Item(user, category, region, status, LOCAL_DATE_TIME, "title", "content", null);
 	}
 
 	public static List<Status> createStatusFixtures() {

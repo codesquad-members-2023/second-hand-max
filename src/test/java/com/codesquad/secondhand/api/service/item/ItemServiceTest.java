@@ -3,6 +3,7 @@ package com.codesquad.secondhand.api.service.item;
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -12,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.codesquad.secondhand.FixtureFactory;
 import com.codesquad.secondhand.IntegrationTestSupport;
+import com.codesquad.secondhand.api.controller.item.response.ItemDetailResponse;
 import com.codesquad.secondhand.api.service.item.request.ItemPostingServiceRequest;
 import com.codesquad.secondhand.domain.category.Category;
 import com.codesquad.secondhand.domain.category.CategoryRepository;
@@ -38,18 +40,25 @@ public class ItemServiceTest extends IntegrationTestSupport {
 	private static User user;
 	private static List<Image> images;
 	private static List<Status> statusList;
+
 	@Autowired
 	private ItemService itemService;
+
 	@Autowired
 	private UserRepository userRepository;
+
 	@Autowired
 	private RegionRepository regionRepository;
+
 	@Autowired
 	private CategoryRepository categoryRepository;
+
 	@Autowired
 	private StatusRepository statusRepository;
+
 	@Autowired
 	private ImageRepository imageRepository;
+
 	@Autowired
 	private ItemRepository itemRepository;
 
@@ -69,7 +78,6 @@ public class ItemServiceTest extends IntegrationTestSupport {
 
 		statusList = FixtureFactory.createStatusFixtures();
 		statusRepository.saveAll(statusList);
-
 	}
 
 	@DisplayName("새로운 상품 등록을 성공한다.")
@@ -150,6 +158,47 @@ public class ItemServiceTest extends IntegrationTestSupport {
 		assertThatThrownBy(() -> itemService.postItem(request, user.getId()))
 			.isInstanceOf(NoSuchUserRegionException.class)
 			.hasMessage("사용자 동네 목록에 없는 동네입니다");
+	}
+
+	@DisplayName("상품 상세 조회를 성공한다.")
+	@Test
+	void getItemDetail() {
+		// given
+		User seller = FixtureFactory.createUserFixtureWithRegions(List.of(regions.get(0)));
+		userRepository.save(seller);
+		Item item = FixtureFactory.createItemFixtures(seller, categories.get(0), regions.get(0), statusList.get(0));
+		item.addItemImages(images);
+		itemRepository.save(item);
+
+		// when
+		ItemDetailResponse postedItem = itemService.getItemDetail(1L, user.getId());
+
+		// then
+		assertAll(
+			() -> assertThat(postedItem.getTitle()).isEqualTo("title"),
+			() -> assertThat(postedItem.getStatus()).isEqualTo("판매중"),
+			() -> assertThat(postedItem.getContent()).isEqualTo("content"),
+			() -> assertThat(postedItem.getUpdatedAt()).isCloseTo(FixtureFactory.LOCAL_DATE_TIME, within(1, ChronoUnit.SECONDS)),
+			() -> assertThat(postedItem.getPrice()).isNull(),
+			() -> assertThat(postedItem.getCategory()).isEqualTo(categories.get(0).getTitle()),
+			() -> assertThat(postedItem.getSeller().getId()).isEqualTo(seller.getId()),
+			() -> assertThat(postedItem.getNumChat()).isEqualTo(0),
+			() -> assertThat(postedItem.getNumLikes()).isEqualTo(0),
+			() -> assertThat(postedItem.getNumViews()).isEqualTo(0),
+			() -> assertThat(postedItem.getImages()).hasSize(images.size())
+		);
+	}
+
+	@DisplayName("존재하지 않는 상품을 상세 조회하면 예외가 발생한다.")
+	@Test
+	void getItemDetailAndThrowNoSuchItemException() {
+		// given
+		Long wrongItemId = 999L;
+
+		// when & then
+		assertThatThrownBy(() -> itemService.getItemDetail(wrongItemId, user.getId()))
+			.isInstanceOf(NoSuchItemException.class)
+			.hasMessage("존재하지 않는 상품입니다");
 	}
 
 }
