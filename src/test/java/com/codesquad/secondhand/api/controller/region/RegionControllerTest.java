@@ -13,19 +13,20 @@ import com.codesquad.secondhand.api.ResponseMessage;
 
 class RegionControllerTest extends ControllerTestSupport {
 
-	@DisplayName("cursor를 query parameter로 받아서 조회에 성공하면 200을 응답한다.")
+	@DisplayName("page와 size를 받아서 조회에 성공하면 200을 응답한다.")
 	@Test
 	void listAllRegions() throws Exception {
 		// given
-		String cursor = "0";
+		mockingJwtService();
 
 		// when // then
 		mockMvc.perform(get("/api/regions")
-				.param("cursor", cursor))
+				.param("page", "0")
+				.param("size", "20"))
 			.andDo(print())
 			.andExpect(status().isOk())
 			.andExpect(jsonPath("$.code").value(HttpStatus.OK.value()))
-			.andExpect(jsonPath("$.status").value(HttpStatus.OK.name()))
+			.andExpect(jsonPath("$.status").value(HttpStatus.OK.getReasonPhrase()))
 			.andExpect(jsonPath("$.message").value(ResponseMessage.REGION_FETCH_SUCCESS.getMessage()));
 	}
 
