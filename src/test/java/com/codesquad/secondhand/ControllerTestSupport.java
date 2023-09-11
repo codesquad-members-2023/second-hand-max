@@ -10,6 +10,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import com.codesquad.secondhand.api.controller.auth.AuthController;
 import com.codesquad.secondhand.api.controller.category.CategoryController;
+import com.codesquad.secondhand.api.controller.item.ItemController;
 import com.codesquad.secondhand.api.controller.region.RegionController;
 import com.codesquad.secondhand.api.controller.user.UserController;
 import com.codesquad.secondhand.api.controller.user_region.UserRegionController;
@@ -17,6 +18,7 @@ import com.codesquad.secondhand.api.service.auth.AuthService;
 import com.codesquad.secondhand.api.service.auth.jwt.JwtService;
 import com.codesquad.secondhand.api.service.category.CategoryService;
 import com.codesquad.secondhand.api.service.image.ImageService;
+import com.codesquad.secondhand.api.service.item.ItemService;
 import com.codesquad.secondhand.api.service.region.RegionService;
 import com.codesquad.secondhand.api.service.user.UserService;
 import com.codesquad.secondhand.api.service.user_region.UserRegionService;
@@ -29,6 +31,8 @@ import io.jsonwebtoken.Jwts;
 	RegionController.class,
 	UserController.class,
 	UserRegionController.class,
+	CategoryController.class,
+	ItemController.class,
 	CategoryController.class,
 	AuthController.class
 })
@@ -50,13 +54,16 @@ public abstract class ControllerTestSupport {
 	protected CategoryService categoryService;
 
 	@MockBean
+	protected ItemService itemService;
+
+	@MockBean
+	protected ImageService imageService;
+
+	@MockBean
 	protected JwtService jwtService;
 
 	@MockBean
 	protected UserService userService;
-
-	@MockBean
-	protected ImageService imageService;
 
 	@MockBean
 	protected AuthService authService;

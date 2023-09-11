@@ -78,7 +78,7 @@ public class ItemService {
 		itemRepository.save(item);
 	}
 
-	// todo : isWishlisted & incrementView
+	// todo : incrementView
 	@Transactional(readOnly = true)
 	public ItemDetailResponse getItemDetail(Long itemId, Long userId) {
 		Item item = itemRepository.findDetailById(itemId).orElseThrow(NoSuchItemException::new);
