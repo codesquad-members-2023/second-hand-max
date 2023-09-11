@@ -48,9 +48,9 @@ public class ItemController {
 	}
 
 	@GetMapping("/{id}")
-	public ApiResponse<ItemDetailResponse> getItemDetail(@PathVariable Long id) {
+	public ApiResponse<ItemDetailResponse> getItemDetail(@PathVariable Long id, @SignIn SignInUser signInUser) {
 		return ApiResponse.of(HttpStatus.OK, ResponseMessage.ITEM_DETAIL_FETCH_SUCCESS.getMessage(),
-			itemService.getItemDetail(id));
+			itemService.getItemDetail(id, signInUser.getId()));
 	}
 
 }

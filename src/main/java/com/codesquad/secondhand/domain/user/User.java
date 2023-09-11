@@ -2,6 +2,7 @@ package com.codesquad.secondhand.domain.user;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Embedded;
@@ -78,6 +79,10 @@ public class User extends BaseTimeEntity {
 	public void updateInformation(String newNickname, Image newProfile) {
 		this.nickname = newNickname;
 		this.profile = newProfile;
+	}
+
+	public boolean isSameUserAs(Long userId){
+		return Objects.equals(this.id, userId);
 	}
 
 	// todo : 위치 확인

@@ -80,9 +80,9 @@ public class ItemService {
 
 	// todo : isWishlisted & incrementView
 	@Transactional(readOnly = true)
-	public ItemDetailResponse getItemDetail(Long itemId) {
+	public ItemDetailResponse getItemDetail(Long itemId, Long userId) {
 		Item item = itemRepository.findDetailById(itemId).orElseThrow(NoSuchItemException::new);
-		return ItemDetailResponse.from(item);
+		return ItemDetailResponse.from(item, userId);
 	}
 
 }

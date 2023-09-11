@@ -100,8 +100,13 @@ public class Item extends BaseTimeEntity {
 		return this.getChats().size();
 	}
 
-	public int getNumLike() {
+	public int getNumLikes() {
 		return this.getWishLists().size();
+	}
+
+	public boolean isInWishlist(Long userId) {
+		return wishLists.stream()
+			.anyMatch(w -> w.getUser().isSameUserAs(userId));
 	}
 
 	public void addItemImages(List<Image> images) {
