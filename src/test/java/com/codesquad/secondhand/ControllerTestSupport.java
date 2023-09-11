@@ -10,6 +10,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import com.codesquad.secondhand.api.controller.category.CategoryController;
 import com.codesquad.secondhand.api.controller.region.RegionController;
+import com.codesquad.secondhand.api.controller.user.UserController;
 import com.codesquad.secondhand.api.controller.user_region.UserRegionController;
 import com.codesquad.secondhand.api.service.auth.jwt.JwtService;
 import com.codesquad.secondhand.api.service.category.CategoryService;
@@ -24,6 +25,7 @@ import io.jsonwebtoken.Jwts;
 
 @WebMvcTest(controllers = {
 	RegionController.class,
+	UserController.class,
 	UserRegionController.class,
 	CategoryController.class
 })

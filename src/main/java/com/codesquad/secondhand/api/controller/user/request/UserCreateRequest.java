@@ -7,10 +7,12 @@ import com.codesquad.secondhand.domain.image.Image;
 import com.codesquad.secondhand.domain.provider.Provider;
 import com.codesquad.secondhand.domain.region.Region;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @NoArgsConstructor
+@AllArgsConstructor
 @Getter
 public class UserCreateRequest {
 
