@@ -3,6 +3,7 @@ package com.example.carrot.user.entity;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -11,8 +12,11 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import com.example.carrot.global.common.BaseAllTimeEntity;
+import com.example.carrot.global.exception.CustomException;
+import com.example.carrot.global.exception.StatusCode;
 import com.example.carrot.global.jwt.Jwt;
 import com.example.carrot.like.entity.Like;
+import com.example.carrot.location.entity.Location;
 import com.example.carrot.product.entity.Product;
 import com.example.carrot.user_location.entity.UserLocation;
 
@@ -41,18 +45,17 @@ public class User extends BaseAllTimeEntity {
 	@Column(nullable = false)
 	private String socialId;
 
-	@OneToMany(mappedBy = "user")
+	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
 	private List<UserLocation> userLocations = new ArrayList<>();
 
-	@OneToMany(mappedBy = "user")
+	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
 	private List<Like> likes = new ArrayList<>();
 
-	@OneToMany(mappedBy = "user")
+	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
 	private List<Product> products = new ArrayList<>();
 
 	@Builder
-	public User(Long userId, String nickName, String imageUrl, String refreshToken, String socialId) {
-		this.userId = userId;
+	public User(String nickName, String imageUrl, String refreshToken, String socialId) {
 		this.nickName = nickName;
 		this.imageUrl = imageUrl;
 		this.refreshToken = refreshToken;
@@ -61,5 +64,29 @@ public class User extends BaseAllTimeEntity {
 
 	public void updateRefreshToken(Jwt jwt) {
 		this.refreshToken = jwt.getRefreshToken();
+	}
+
+	public UserLocation deleteUserLocation(Location location) {
+		final int ONE = 1;
+
+		UserLocation deletedUserLocation = userLocations.stream()
+			.filter(userLocation -> userLocation.isSame(location))
+			.findFirst()
+			.orElseThrow(() -> new CustomException(StatusCode.NOT_FOUND_LOCATION));
+
+		userLocations.remove(deletedUserLocation);
+
+		if (userLocations.size() == ONE) {
+			userLocations.get(0).changeMain(true);
+		}
+
+		return deletedUserLocation;
+	}
+
+	public UserLocation findMainLocation() {
+		return userLocations.stream()
+			.filter(UserLocation::isMain)
+			.findFirst()
+			.orElseThrow(() -> new CustomException(StatusCode.NOT_FOUND_MAIN_LOCATION));
 	}
 }

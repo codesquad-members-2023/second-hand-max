@@ -36,16 +36,10 @@ public class UserLocation extends BaseCreatedTimeEntity {
 	private Location location;
 
 	@Builder
-	public UserLocation(Long userLocationId, boolean isMain, User user, Location location) {
-		this.userLocationId = userLocationId;
+	public UserLocation(boolean isMain, User user, Location location) {
 		this.isMain = isMain;
 		this.user = user;
 		this.location = location;
-	}
-
-	public void addUser(User user) {
-		this.user = user;
-		user.getUserLocations().add(this);
 	}
 
 	public static UserLocation of(User user, Location location, boolean isMain) {
@@ -56,5 +50,27 @@ public class UserLocation extends BaseCreatedTimeEntity {
 
 		userLocation.addUser(user);
 		return userLocation;
+	}
+
+	public void addUser(User user) {
+		this.user = user;
+		user.getUserLocations().add(this);
+	}
+
+	public UserLocation updateMainLocation(boolean isMain) {
+		this.isMain = isMain;
+		return this;
+	}
+
+	public boolean isSame(Location location) {
+		return this.location == location;
+	}
+
+	public void changeMain(boolean isMain) {
+		this.isMain = isMain;
+	}
+
+	public Long findLocationId() {
+		return this.location.getLocationId();
 	}
 }

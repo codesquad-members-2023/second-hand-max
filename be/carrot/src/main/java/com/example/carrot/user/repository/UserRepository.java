@@ -15,14 +15,13 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
 	Optional<User> findBySocialId(String socialId);
 
-	User save(User user);
-
 	boolean existsByNickName(String nickName);
 
 	Optional<User> findByRefreshToken(String refreshToken);
 
 	@Modifying
 	@Query("UPDATE User u SET u.refreshToken = null WHERE u.userId = :userId AND u.refreshToken = :refreshToken")
-	void updateRefreshTokenByUserIdAndRefreshToken(@Param("userId") Long userId, @Param("refreshToken") String refreshToken);
+	int updateRefreshTokenByUserIdAndRefreshToken(@Param("userId") Long userId,
+		@Param("refreshToken") String refreshToken);
 
 }
