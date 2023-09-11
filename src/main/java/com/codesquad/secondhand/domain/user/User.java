@@ -22,6 +22,7 @@ import com.codesquad.secondhand.domain.provider.Provider;
 import com.codesquad.secondhand.domain.region.Region;
 import com.codesquad.secondhand.domain.user_region.UserRegion;
 import com.codesquad.secondhand.domain.wishlist.WishList;
+import com.codesquad.secondhand.exception.auth.PermissionDeniedException;
 import com.codesquad.secondhand.exception.user_region.NoSuchUserRegionException;
 import com.codesquad.secondhand.util.BaseTimeEntity;
 
@@ -81,8 +82,14 @@ public class User extends BaseTimeEntity {
 		this.profile = newProfile;
 	}
 
-	public boolean isSameUserAs(Long userId){
-		return Objects.equals(this.id, userId);
+	public void validateSameUser(Long targetUserId) {
+		if(!isSameUserAs(targetUserId)) {
+			throw new PermissionDeniedException();
+		}
+	}
+
+	public boolean isSameUserAs(Long targetUserId){
+		return Objects.equals(this.id, targetUserId);
 	}
 
 	// todo : 위치 확인

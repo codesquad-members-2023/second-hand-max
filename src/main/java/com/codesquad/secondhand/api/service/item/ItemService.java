@@ -85,4 +85,12 @@ public class ItemService {
 		return ItemDetailResponse.from(item, userId);
 	}
 
+	// todo : 이미지 삭제 여부
+	@Transactional
+	public void deleteItem(Long itemId, Long userId) {
+		userRepository.findById(userId).orElseThrow(NoSuchUserException::new);
+		Item item = itemRepository.findDetailById(itemId).orElseThrow(NoSuchItemException::new);
+		item.delete(userId);
+	}
+
 }

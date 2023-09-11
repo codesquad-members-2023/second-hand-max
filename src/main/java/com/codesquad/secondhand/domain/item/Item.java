@@ -119,4 +119,9 @@ public class Item extends BaseTimeEntity {
 		detailShot.removeImage(image);
 	}
 
+	public void delete(Long targetUserId) {
+		this.user.validateSameUser(targetUserId);
+		this.isDeleted = true;
+	}
+
 }

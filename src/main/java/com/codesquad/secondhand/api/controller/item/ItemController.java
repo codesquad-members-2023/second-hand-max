@@ -2,6 +2,7 @@ package com.codesquad.secondhand.api.controller.item;
 
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -47,10 +48,17 @@ public class ItemController {
 		return ApiResponse.noData(HttpStatus.CREATED, ResponseMessage.ITEM_POST_SUCCESS.getMessage());
 	}
 
+	@ResponseStatus(HttpStatus.OK)
 	@GetMapping("/{id}")
 	public ApiResponse<ItemDetailResponse> getItemDetail(@PathVariable Long id, @SignIn SignInUser signInUser) {
 		return ApiResponse.of(HttpStatus.OK, ResponseMessage.ITEM_DETAIL_FETCH_SUCCESS.getMessage(),
 			itemService.getItemDetail(id, signInUser.getId()));
+	}
+
+	@DeleteMapping("/{id}")
+	public ApiResponse<Void> deleteItem(@PathVariable Long id, @SignIn SignInUser signInUser) {
+		itemService.deleteItem(id, signInUser.getId());
+		return ApiResponse.noData(HttpStatus.NO_CONTENT, ResponseMessage.ITEM_DELETE_SUCCESS.getMessage());
 	}
 
 }
