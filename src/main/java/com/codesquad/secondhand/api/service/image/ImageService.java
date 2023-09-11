@@ -74,7 +74,7 @@ public class ImageService {
 		}
 	}
 
-	private static ObjectMetadata generateObjectMetadata(MultipartFile multipartFile) throws IOException {
+	private ObjectMetadata generateObjectMetadata(MultipartFile multipartFile) throws IOException {
 		ObjectMetadata objectMetadata = new ObjectMetadata();
 		objectMetadata.setContentType(multipartFile.getContentType());
 		objectMetadata.setContentLength(multipartFile.getInputStream().available());
