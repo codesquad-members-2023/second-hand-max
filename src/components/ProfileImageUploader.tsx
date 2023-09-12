@@ -9,7 +9,7 @@ type Props = {
   initialImageSrc?: string;
 };
 
-const ProfileImageButton: React.FC<Props> = ({
+const ProfileImageUploader: React.FC<Props> = ({
   onFileChange,
   initialImageSrc,
 }) => {
@@ -93,4 +93,4 @@ const Image = styled.img`
   z-index: -2;
 `;
 
-export default ProfileImageButton;
+export default ProfileImageUploader;

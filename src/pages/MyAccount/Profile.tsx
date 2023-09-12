@@ -1,6 +1,6 @@
 import { css, styled } from 'styled-components';
 import Button from '@components/Button';
-import ProfileImageButton from '@components/ProfileImageButton';
+import ProfileImageUploader from '@components/ProfileImageUploader';
 import { useUserStore } from 'stores/useUserStore';
 import { useTokenStore } from 'stores/useTokenStore';
 import { signOutUser } from 'apis/auth';
@@ -30,7 +30,7 @@ const Profile: React.FC = () => {
       <h2 className="blind">프로필</h2>
 
       <UserProfile>
-        <ProfileImageButton
+        <ProfileImageUploader
           {...{ onFileChange, initialImageSrc: userStore.user?.profileUrl }}
         />
         <UserName>{userStore.user?.loginId}</UserName>

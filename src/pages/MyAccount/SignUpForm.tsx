@@ -5,7 +5,7 @@ import Button from '@components/Button';
 import Field from '@components/Field';
 import Icons from '@design/Icons';
 import TopBar from '@components/TopBar';
-import ProfileImageButton from '@components/ProfileImageButton';
+import ProfileImageUploader from '@components/ProfileImageUploader';
 import PATH from '@constants/PATH';
 import { InitOAuthType } from '@hooks/useOAuth';
 
@@ -46,7 +46,8 @@ const SignUpForm: React.FC<{ initOAuth: InitOAuthType }> = ({ initOAuth }) => {
         </Button>
       </Title>
 
-      <ProfileImageButton {...{ onFileChange }} />
+      <ProfileImageUploader {...{ onFileChange }} />
+
       <Field>
         <Field.Label id="id" text="아이디" />
         <Field.Input
