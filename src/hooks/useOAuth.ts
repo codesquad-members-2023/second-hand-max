@@ -19,34 +19,6 @@ const useOAuth = () => {
   const userStore = useUserStore();
   const tokenStore = useTokenStore();
 
-  const initOAuth = ({ action, id, file }: InitOAuthParams) => {
-    const onMessageReceive = ({ origin, data }: MessageEvent) => {
-      const isSameOrigin = origin === window.location.origin;
-      const { status, code } = data;
-
-      if (!isSameOrigin || status === 'error' || !id) {
-        throw new Error('비정상적인 접근입니다.');
-      }
-
-      if (action === 'sign-up') {
-        onSignUp(code, id, file);
-
-        return;
-      }
-
-      if (action === 'sign-in') {
-        onSignIn(code, id);
-
-        return;
-      }
-    };
-
-    const oauthUrl = `${import.meta.env.VITE_APP_OAUTH_URL}&state=${action}`;
-
-    window.addEventListener('message', onMessageReceive, { once: true });
-    window.open(oauthUrl, '_blank', 'popup');
-  };
-
   const onSignIn = async (code: string, id: string) => {
     const userData = await signInUser({ code, id });
     const isSuccess = userData.statusCode === 200;
@@ -72,6 +44,32 @@ const useOAuth = () => {
     }
 
     alert(userData.message);
+  };
+
+  const actionHandlerMap: Record<
+    Action,
+    (code: string, id: string, file?: File) => void
+  > = {
+    'sign-up': onSignUp,
+    'sign-in': onSignIn,
+  };
+
+  const initOAuth = ({ action, id, file }: InitOAuthParams) => {
+    const onMessageReceive = ({ origin, data }: MessageEvent) => {
+      const isSameOrigin = origin === window.location.origin;
+      const { status, code } = data;
+
+      if (!isSameOrigin || status === 'error' || !id) {
+        throw new Error('비정상적인 접근입니다.');
+      }
+
+      actionHandlerMap[action](code, id, file);
+    };
+
+    const oauthUrl = `${import.meta.env.VITE_APP_OAUTH_URL}&state=${action}`;
+
+    window.addEventListener('message', onMessageReceive, { once: true });
+    window.open(oauthUrl, '_blank', 'popup');
   };
 
   return { initOAuth };
