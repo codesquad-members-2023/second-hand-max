@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { css, styled } from 'styled-components';
 import Button from '@components/Button';
@@ -11,7 +11,7 @@ import { InitOAuthType } from '@hooks/useOAuth';
 
 const SignUpForm: React.FC<{ initOAuth: InitOAuthType }> = ({ initOAuth }) => {
   const [id, setId] = useState('');
-  const [file, setFile] = useState<File>();
+  const fileRef = useRef<File>();
   const navigate = useNavigate();
 
   const onIdChange = (id: string) => {
@@ -19,7 +19,7 @@ const SignUpForm: React.FC<{ initOAuth: InitOAuthType }> = ({ initOAuth }) => {
   };
 
   const onFileChange = (file: File) => {
-    setFile(file);
+    fileRef.current = file;
   };
 
   return (
@@ -40,7 +40,9 @@ const SignUpForm: React.FC<{ initOAuth: InitOAuthType }> = ({ initOAuth }) => {
           $flexible="Flexible"
           $type="Ghost"
           disabled={!id}
-          onClick={() => initOAuth({ action: 'sign-up', id, file })}
+          onClick={() =>
+            initOAuth({ action: 'sign-up', id, file: fileRef.current })
+          }
         >
           완료
         </Button>
