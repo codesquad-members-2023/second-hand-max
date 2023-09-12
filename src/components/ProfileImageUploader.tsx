@@ -11,7 +11,7 @@ type Props = {
 
 const ProfileImageUploader: React.FC<Props> = ({ imageSrc, onImageChange }) => {
   return (
-    <CircularProfileImage $hasImage={!!imageSrc}>
+    <CircularProfileImage>
       <Icons.Camera />
       <input
         type="file"
@@ -24,8 +24,8 @@ const ProfileImageUploader: React.FC<Props> = ({ imageSrc, onImageChange }) => {
   );
 };
 
-const CircularProfileImage = styled(Button)<{ $hasImage: boolean }>`
-  ${({ theme: { colors, radius }, $hasImage }) => css`
+const CircularProfileImage = styled(Button)`
+  ${({ theme: { colors, radius } }) => css`
     position: relative;
     width: 80px;
     height: 80px;
@@ -47,19 +47,16 @@ const CircularProfileImage = styled(Button)<{ $hasImage: boolean }>`
       z-index: 2;
     }
 
-    ${$hasImage &&
-    css`
-      &::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background-color: ${colors.neutral.overlay};
-        z-index: -1;
-      }
-    `}
+    &::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: ${colors.neutral.overlay};
+      z-index: -1;
+    }
   `}
 `;
 
