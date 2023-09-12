@@ -83,23 +83,21 @@ public class User extends BaseTimeEntity {
 	}
 
 	public void validateSameUser(Long targetUserId) {
-		if(!isSameUserAs(targetUserId)) {
+		if (!isSameUserAs(targetUserId)) {
 			throw new PermissionDeniedException();
 		}
 	}
 
-	public boolean isSameUserAs(Long targetUserId){
+	public boolean isSameUserAs(Long targetUserId) {
 		return Objects.equals(this.id, targetUserId);
 	}
 
-	// todo : 위치 확인
 	public void validateHasRegion(Region region) {
-		boolean hasRegion = myRegion.listAll()
+		myRegion.listAll()
 			.stream()
-			.anyMatch(userRegion -> userRegion.getRegion().equals(region));
-		if(!hasRegion) {
-			throw new NoSuchUserRegionException();
-		}
+			.filter(userRegion -> userRegion.findRegionId().equals(region.getId()))
+			.findAny()
+			.orElseThrow(NoSuchUserRegionException::new);
 	}
 
 }
