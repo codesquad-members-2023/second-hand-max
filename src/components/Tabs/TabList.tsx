@@ -6,15 +6,15 @@ import Tab from './Tab';
 
 const TabList: React.FC = () => {
   return (
-    <StyledNav>
-      <TabUl>
+    <TabsNav>
+      <Tabs>
         {tabs.map(({ id, ...tabProps }) => (
-          <TabLi key={id}>
+          <ListItem key={id}>
             <Tab {...tabProps} />
-          </TabLi>
+          </ListItem>
         ))}
-      </TabUl>
-    </StyledNav>
+      </Tabs>
+    </TabsNav>
   );
 };
 
@@ -51,18 +51,18 @@ const tabs = [
   },
 ];
 
-const StyledNav = styled.nav`
+const TabsNav = styled.nav`
   width: 100%;
   padding: 0 16px;
   user-select: none;
 `;
 
-const TabUl = styled.ul`
+const Tabs = styled.ul`
   display: flex;
   justify-content: space-between;
 `;
 
-const TabLi = styled.li`
+const ListItem = styled.li`
   width: 48px;
   height: 48px;
 `;
