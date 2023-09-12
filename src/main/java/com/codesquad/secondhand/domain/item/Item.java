@@ -111,17 +111,32 @@ public class Item extends BaseTimeEntity {
 
 	public void addItemImages(List<Image> images) {
 		for (Image image : images) {
-			detailShot.addImage(new ItemImage(null, this, image));
+			detailShot.addItemImage(new ItemImage(null, this, image));
 		}
 	}
 
 	public void removeItemImage(Image image) {
-		detailShot.removeImage(image);
+		detailShot.removeItemImage(image);
 	}
 
-	public void delete(Long targetUserId) {
-		this.user.validateSameUser(targetUserId);
+	public void removeAllItemImages() {
+		this.detailShot = new DetailShot();
+	}
+
+	public void delete(Long loginUserId) {
+		this.user.validateSameUser(loginUserId);
 		this.isDeleted = true;
+	}
+
+	public void update(Long loginUserId, String title, Integer price, String content, List<Image> images,
+		Category category, Region region) {
+		this.user.validateSameUser(loginUserId);
+		this.title = title;
+		this.price = price;
+		this.content = content;
+		this.category = category;
+		this.region = region;
+		addItemImages(images);
 	}
 
 }

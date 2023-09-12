@@ -14,7 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.codesquad.secondhand.FixtureFactory;
 import com.codesquad.secondhand.IntegrationTestSupport;
 import com.codesquad.secondhand.api.controller.item.response.ItemDetailResponse;
-import com.codesquad.secondhand.api.service.item.request.ItemPostingServiceRequest;
+import com.codesquad.secondhand.api.service.item.request.ItemPostServiceRequest;
 import com.codesquad.secondhand.domain.category.Category;
 import com.codesquad.secondhand.domain.category.CategoryRepository;
 import com.codesquad.secondhand.domain.image.Image;
@@ -84,7 +84,7 @@ public class ItemServiceTest extends IntegrationTestSupport {
 	@Test
 	void postItem() {
 		// given
-		ItemPostingServiceRequest request = new ItemPostingServiceRequest("title", null, "content", images,
+		ItemPostServiceRequest request = new ItemPostServiceRequest("title", null, "content", images,
 			1L, 1L);
 
 		// when
@@ -108,7 +108,7 @@ public class ItemServiceTest extends IntegrationTestSupport {
 	void postItemAndThrowUserException() {
 		// given
 		Long wrongUserId = 999L;
-		ItemPostingServiceRequest request = new ItemPostingServiceRequest("title", null, "content", images,
+		ItemPostServiceRequest request = new ItemPostServiceRequest("title", null, "content", images,
 			1L, 1L);
 
 		// when & then
@@ -123,7 +123,7 @@ public class ItemServiceTest extends IntegrationTestSupport {
 	void postItemAndThrowCategoryException() {
 		// given
 		Long wrongCategoryId = 999L;
-		ItemPostingServiceRequest request = new ItemPostingServiceRequest("title", null, "content", images,
+		ItemPostServiceRequest request = new ItemPostServiceRequest("title", null, "content", images,
 			wrongCategoryId, 1L);
 
 		// when & then
@@ -137,7 +137,7 @@ public class ItemServiceTest extends IntegrationTestSupport {
 	void postItemAndThrowRegionException() {
 		// given
 		Long wrongRegionId = 999L;
-		ItemPostingServiceRequest request = new ItemPostingServiceRequest("title", null, "content", images,
+		ItemPostServiceRequest request = new ItemPostServiceRequest("title", null, "content", images,
 			1L, wrongRegionId);
 
 		// when & then
@@ -151,7 +151,7 @@ public class ItemServiceTest extends IntegrationTestSupport {
 	void postItemAndThrowMyRegionException() {
 		// given
 		Long notMyRegionId = 3L;
-		ItemPostingServiceRequest request = new ItemPostingServiceRequest("title", null, "content", images,
+		ItemPostServiceRequest request = new ItemPostServiceRequest("title", null, "content", images,
 			1L, notMyRegionId);
 
 		// when & then
