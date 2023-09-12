@@ -17,12 +17,12 @@ public class ItemResponse {
 	private LocalDateTime updatedAt;
 	private Integer price;
 	private Long numChat;
-	private Long numLike;
+	private Long numLikes;
 
 	@QueryProjection
 	public ItemResponse(Long id, String title, String region, String status, String imageUrl,
 		LocalDateTime createdAt,
-		LocalDateTime updatedAt, Integer price, Long numChat, Long numLike) {
+		LocalDateTime updatedAt, Integer price, Long numChat, Long numLikes) {
 		this.id = id;
 		this.title = title;
 		this.region = region;
@@ -32,7 +32,7 @@ public class ItemResponse {
 		this.updatedAt = updatedAt;
 		this.price = price;
 		this.numChat = numChat;
-		this.numLike = numLike;
+		this.numLikes = numLikes;
 	}
 
 }

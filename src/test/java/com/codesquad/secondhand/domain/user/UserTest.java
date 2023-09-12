@@ -15,6 +15,7 @@ import com.codesquad.secondhand.domain.image.Image;
 import com.codesquad.secondhand.domain.image.ImageRepository;
 import com.codesquad.secondhand.domain.region.Region;
 import com.codesquad.secondhand.domain.region.RegionRepository;
+import com.codesquad.secondhand.exception.user_region.NoSuchUserRegionException;
 
 public class UserTest extends IntegrationTestSupport {
 
@@ -68,6 +69,21 @@ public class UserTest extends IntegrationTestSupport {
 			() -> assertThat(user.getNickname()).isEqualTo("newNickname"),
 			() -> assertThat(user.getProfile()).isEqualTo(savedImage)
 		);
+	}
+
+	@DisplayName("사용자의 동네가 아닌 다른 동네에 새로운 상품을 등록하는 경우 예외가 발생한다.")
+	@Test
+	void  postItem() {
+		//given
+		List<Region> regions = FixtureFactory.createRegionFixtures(3);
+		regionRepository.saveAll(regions);
+		User seller = FixtureFactory.createUserFixture(List.of(regions.get(0), regions.get(1)));
+		userRepository.save(seller);
+		Region region = regions.get(2);
+
+		assertThatThrownBy(() -> seller.validateHasRegion(region))
+			.isInstanceOf(NoSuchUserRegionException.class)
+			.hasMessage("사용자 동네 목록에 없는 동네입니다");
 	}
 
 }

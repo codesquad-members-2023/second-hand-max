@@ -49,7 +49,7 @@ class UserRegionControllerTest extends ControllerTestSupport {
 			.andExpect(jsonPath("$.message").value(ResponseMessage.USER_REGION_CREATE_SUCCESS.getMessage()));
 	}
 
-	@DisplayName("사용자 동네 삭제에 성공하면 204를 응답한다.")
+	@DisplayName("사용자 동네 삭제에 성공하면 200을 응답한다.")
 	@Test
 	void deleteUserRegion() throws Exception {
 		// // given
@@ -58,7 +58,7 @@ class UserRegionControllerTest extends ControllerTestSupport {
 		// when // then
 		mockMvc.perform(delete("/api/users/regions/1"))
 			.andDo(print())
-			.andExpect(status().isNoContent());
+			.andExpect(status().isOk());
 	}
 
 }

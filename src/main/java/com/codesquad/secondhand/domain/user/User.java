@@ -2,6 +2,7 @@ package com.codesquad.secondhand.domain.user;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Embedded;
@@ -21,6 +22,8 @@ import com.codesquad.secondhand.domain.provider.Provider;
 import com.codesquad.secondhand.domain.region.Region;
 import com.codesquad.secondhand.domain.user_region.UserRegion;
 import com.codesquad.secondhand.domain.wishlist.WishList;
+import com.codesquad.secondhand.exception.auth.PermissionDeniedException;
+import com.codesquad.secondhand.exception.user_region.NoSuchUserRegionException;
 import com.codesquad.secondhand.util.BaseTimeEntity;
 
 import lombok.AccessLevel;
@@ -77,6 +80,26 @@ public class User extends BaseTimeEntity {
 	public void updateInformation(String newNickname, Image newProfile) {
 		this.nickname = newNickname;
 		this.profile = newProfile;
+	}
+
+	public void validateSameUser(Long targetUserId) {
+		if(!isSameUserAs(targetUserId)) {
+			throw new PermissionDeniedException();
+		}
+	}
+
+	public boolean isSameUserAs(Long targetUserId){
+		return Objects.equals(this.id, targetUserId);
+	}
+
+	// todo : 위치 확인
+	public void validateHasRegion(Region region) {
+		boolean hasRegion = myRegion.listAll()
+			.stream()
+			.anyMatch(userRegion -> userRegion.getRegion().equals(region));
+		if(!hasRegion) {
+			throw new NoSuchUserRegionException();
+		}
 	}
 
 }

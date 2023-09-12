@@ -3,6 +3,8 @@ package com.codesquad.secondhand.api.service.image;
 import static com.codesquad.secondhand.domain.image.ImageExtension.*;
 
 import java.io.IOException;
+import java.util.Collections;
+import java.util.List;
 import java.util.Objects;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -38,6 +40,11 @@ public class ImageService {
 	@Transactional
 	public Image createImage(MultipartFile file, String directory) {
 		return imageRepository.save(new Image(null, upload(file, directory)));
+	}
+
+	@Transactional(readOnly = true)
+	public List<Image> findImagesByIds(List<Long> imageIds) {
+		return Collections.unmodifiableList(imageRepository.findAllById(imageIds));
 	}
 
 	private String upload(MultipartFile multipartFile, String directory) {
