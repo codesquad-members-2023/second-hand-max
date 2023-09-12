@@ -67,10 +67,10 @@ public class ItemServiceTest extends IntegrationTestSupport {
 		regions = FixtureFactory.createRegionFixtures(3);
 		regionRepository.saveAll(regions);
 
-		loginUser = FixtureFactory.createUserFixtureWithRegions(List.of(regions.get(0), regions.get(1)));
+		loginUser = FixtureFactory.createUserFixture(List.of(regions.get(0), regions.get(1)));
 		userRepository.save(loginUser);
 
-		categories = FixtureFactory.createCategoryFixture(3);
+		categories = FixtureFactory.createCategoryFixtures(3);
 		categoryRepository.saveAll(categories);
 
 		images = FixtureFactory.createImageFixtures(3);
@@ -164,7 +164,7 @@ public class ItemServiceTest extends IntegrationTestSupport {
 	@Test
 	void getItemDetail() {
 		// given
-		User seller = FixtureFactory.createUserFixtureWithRegions(List.of(regions.get(0)));
+		User seller = FixtureFactory.createUserFixture(List.of(regions.get(0)));
 		userRepository.save(seller);
 		Item item = FixtureFactory.createItemFixtures(seller, categories.get(0), regions.get(0), statusList.get(0));
 		item.addItemImages(images);
@@ -221,7 +221,7 @@ public class ItemServiceTest extends IntegrationTestSupport {
 	@Test
 	void deleteItemAndThrowPermissionDeniedException() {
 		// given
-		User otheruser = FixtureFactory.createUserFixtureWithRegions(List.of(regions.get(0)));
+		User otheruser = FixtureFactory.createUserFixture(List.of(regions.get(0)));
 		userRepository.save(otheruser);
 		Item item = FixtureFactory.createItemFixtures(otheruser, categories.get(0), regions.get(0), statusList.get(0));
 		itemRepository.save(item);

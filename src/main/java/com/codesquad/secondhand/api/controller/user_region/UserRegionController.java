@@ -43,11 +43,11 @@ public class UserRegionController {
 		return ApiResponse.noData(HttpStatus.CREATED, ResponseMessage.USER_REGION_CREATE_SUCCESS.getMessage());
 	}
 
-	@ResponseStatus(HttpStatus.NO_CONTENT)
+	@ResponseStatus(HttpStatus.OK)
 	@DeleteMapping("/{id}")
 	public ApiResponse<Void> deleteUserRegion(@PathVariable Long id, @SignIn SignInUser signInUser) {
 		userRegionService.deleteUserRegion(signInUser.getId(), id);
-		return ApiResponse.noData(HttpStatus.NO_CONTENT, ResponseMessage.USER_REGION_DELETE_SUCCESS.getMessage());
+		return ApiResponse.noData(HttpStatus.OK, ResponseMessage.USER_REGION_DELETE_SUCCESS.getMessage());
 	}
 
 }

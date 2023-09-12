@@ -3,7 +3,6 @@ package com.codesquad.secondhand.domain.user;
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 
-import java.util.Collection;
 import java.util.List;
 
 import org.junit.jupiter.api.DisplayName;
@@ -16,9 +15,6 @@ import com.codesquad.secondhand.domain.image.Image;
 import com.codesquad.secondhand.domain.image.ImageRepository;
 import com.codesquad.secondhand.domain.region.Region;
 import com.codesquad.secondhand.domain.region.RegionRepository;
-import com.codesquad.secondhand.exception.user_region.DuplicatedUserRegionException;
-import com.codesquad.secondhand.exception.user_region.ExceedUserRegionLimitException;
-import com.codesquad.secondhand.exception.user_region.MinimumUserRegionViolationException;
 import com.codesquad.secondhand.exception.user_region.NoSuchUserRegionException;
 
 public class UserTest extends IntegrationTestSupport {
@@ -75,26 +71,19 @@ public class UserTest extends IntegrationTestSupport {
 		);
 	}
 
-	@DisplayName("새로운 상품 등록 시나리오")
-	@TestFactory
-	Collection<DynamicTest> postItem() {
+	@DisplayName("사용자의 동네가 아닌 다른 동네에 새로운 상품을 등록하는 경우 예외가 발생한다.")
+	@Test
+	void  postItem() {
 		//given
 		List<Region> regions = FixtureFactory.createRegionFixtures(3);
 		regionRepository.saveAll(regions);
-		User seller = FixtureFactory.createUserFixtureWithRegions(List.of(regions.get(0), regions.get(1)));
+		User seller = FixtureFactory.createUserFixture(List.of(regions.get(0), regions.get(1)));
 		userRepository.save(seller);
+		Region region = regions.get(2);
 
-		return List.of(
-			DynamicTest.dynamicTest("사용자의 동네가 아닌 다른 동네에 새로운 상품을 등록하는 경우 예외가 발생한다.", () -> {
-				//given
-				Region region = regions.get(2);
-
-				//when & then
-				assertThatThrownBy(() -> seller.validateHasRegion(region))
-					.isInstanceOf(NoSuchUserRegionException.class)
-					.hasMessage("사용자 동네 목록에 없는 동네입니다");
-			})
-		);
+		assertThatThrownBy(() -> seller.validateHasRegion(region))
+			.isInstanceOf(NoSuchUserRegionException.class)
+			.hasMessage("사용자 동네 목록에 없는 동네입니다");
 	}
 
 }

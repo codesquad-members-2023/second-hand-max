@@ -8,10 +8,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import java.time.LocalDateTime;
 import java.util.List;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 import org.springframework.http.MediaType;
 
 import com.codesquad.secondhand.ControllerTestSupport;
@@ -21,29 +19,16 @@ import com.codesquad.secondhand.api.controller.item.response.ItemSellerResponse;
 import com.codesquad.secondhand.domain.image.Image;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwts;
-
 public class ItemControllerTest extends ControllerTestSupport {
 
 	private static final String HEADER_NAME = "Authorization";
 	private static final String HEADER_VALUE = "Bearer test-access-token";
 
-	@BeforeEach
-	void mockingJwtService() {
-		given(jwtService.parse(Mockito.any())).willReturn(createMockClaims());
-	}
-
-	private Claims createMockClaims() {
-		Claims claims = Jwts.claims();
-		claims.put("id", 1L);
-		return claims;
-	}
-
 	@DisplayName("새로운 상품을 등록하고 201을 응답한다.")
 	@Test
 	void postItem() throws Exception {
 		// given
+		mockingJwtService();
 		ItemPostingRequest request = new ItemPostingRequest("title", null, "content", List.of(1L, 2L), 1L, 1L);
 
 		// when
@@ -65,6 +50,7 @@ public class ItemControllerTest extends ControllerTestSupport {
 	@Test
 	void getItemDetail() throws Exception {
 		// given
+		mockingJwtService();
 		Long itemId = 1L;
 		ItemSellerResponse sellerResponse = new ItemSellerResponse(1L, "nickname");
 		ItemDetailResponse itemResponse = new ItemDetailResponse(1L, "title", "판매중", "content", LocalDateTime.now(),
