@@ -1,6 +1,6 @@
 import { BASE_URL } from '@constants/BASE_URL';
 import { useTokenStore } from 'stores/useTokenStore';
-import { updateAccessToken } from './api';
+import { updateAccessToken } from './auth';
 
 export const fetchData = async (path: string, options?: RequestInit) => {
   const response = await fetch(BASE_URL + path, options);

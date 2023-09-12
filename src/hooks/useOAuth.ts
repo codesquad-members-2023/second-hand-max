@@ -1,8 +1,8 @@
 import { useNavigate } from 'react-router-dom';
 import PATH from '@constants/PATH';
-import { signInUser, signUpUser } from 'apis/api';
 import { useUserStore } from 'stores/useUserStore';
 import { useTokenStore } from 'stores/useTokenStore';
+import { signInUser, signUpUser } from 'apis/auth';
 
 type Action = 'sign-up' | 'sign-in';
 

@@ -1,9 +1,9 @@
 import { css, styled } from 'styled-components';
 import Button from '@components/Button';
 import ProfileImageButton from '@components/ProfileImageButton';
-import { signOutUser } from 'apis/api';
 import { useUserStore } from 'stores/useUserStore';
 import { useTokenStore } from 'stores/useTokenStore';
+import { signOutUser } from 'apis/auth';
 
 const Profile: React.FC = () => {
   const tokenStore = useTokenStore();

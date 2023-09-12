@@ -1,5 +1,5 @@
 import { LOCAL_STORAGE_KEY } from '@constants/LOCAL_STORAGE_KEY';
-import { Tokens } from 'apis/types';
+import { Tokens } from 'types';
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 

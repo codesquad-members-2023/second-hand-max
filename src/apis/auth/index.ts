@@ -1,35 +1,11 @@
-import { BASE_URL } from '@constants/BASE_URL';
-import { fetchData } from './fetchData';
-import { AccessToken, Tokens, User } from './types';
+import { fetchData } from 'apis/fetchData';
+import {
+  SignInUserResponse,
+  SignUpUserResponse,
+  UpdateAccessTokenResponse,
+} from './types';
 import { useTokenStore } from 'stores/useTokenStore';
-
-type SignUpUserSuccess = {
-  statusCode: 201;
-  message: string;
-  data: null;
-};
-
-type SignUpUserFailure =
-  | {
-      statusCode: 400;
-      message: '잘못된 인가 코드입니다.';
-      data: null;
-    }
-  | {
-      statusCode: 400;
-      message: '유효하지 않은 입력형식입니다.';
-      data: {
-        field: string;
-        defaultMessage: string;
-      }[];
-    }
-  | {
-      statusCode: 409;
-      message: string;
-      data: null;
-    };
-
-type SignUpUserResponse = SignUpUserSuccess | SignUpUserFailure;
+import { BASE_URL } from '@constants/BASE_URL';
 
 export const signUpUser = async ({
   code,
@@ -56,23 +32,6 @@ export const signUpUser = async ({
 
   return response.json();
 };
-
-type SignInUserFailure = {
-  statusCode: 401;
-  message: string;
-  data: null;
-};
-
-type SignInUserSuccess = {
-  statusCode: 200;
-  message: string;
-  data: {
-    jwt: Tokens;
-    user: User;
-  };
-};
-
-type SignInUserResponse = SignInUserFailure | SignInUserSuccess;
 
 export const signInUser = async ({
   code,
@@ -111,24 +70,6 @@ export const signOutUser = () => {
   });
 };
 
-type UpdateAccessTokenFailure = {
-  statusCode: 400;
-  message: string;
-  data: null;
-};
-
-type UpdateAccessTokenSuccess = {
-  statusCode: 200;
-  message: string;
-  data: {
-    jwt: AccessToken;
-  };
-};
-
-type UpdateAccessTokenResponse =
-  | UpdateAccessTokenFailure
-  | UpdateAccessTokenSuccess;
-
 export const updateAccessToken = async (
   refreshToken: string,
 ): Promise<UpdateAccessTokenResponse> => {
@@ -141,8 +82,4 @@ export const updateAccessToken = async (
   });
 
   return response.json();
-};
-
-export const getRegions = () => {
-  return fetchData('/auth/regions');
 };
