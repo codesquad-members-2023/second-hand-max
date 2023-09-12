@@ -9,7 +9,7 @@ import com.codesquad.secondhand.domain.provider.Provider;
 
 public interface UserRepository extends JpaRepository<User, Long> {
 
-	@Query(value = "SELECT u FROM User AS u LEFT JOIN fetch u.myRegion.userRegions AS ur LEFT JOIN fetch ur.region WHERE u.id = :userId")
+	@Query(value = "SELECT u FROM User AS u LEFT JOIN fetch u.myRegion.userRegions AS ur LEFT JOIN fetch ur.region LEFT JOIN FETCH u.selectedRegion WHERE u.id = :userId")
 	Optional<User> findCompleteUserById(Long userId);
 
 	Optional<User> findByEmailAndPassword(String email, String password);

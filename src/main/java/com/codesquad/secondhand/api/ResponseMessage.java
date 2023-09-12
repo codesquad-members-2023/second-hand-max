@@ -20,6 +20,7 @@ public enum ResponseMessage {
 	// User
 	USER_REGION_FETCH_SUCCESS("나의 동네 조회를 성공하였습니다"),
 	USER_REGION_CREATE_SUCCESS("나의 동네 등록을 성공하였습니다"),
+	USER_REGION_SELECT_SUCCESS("나의 동네 선택을 성공하였습니다"),
 	USER_REGION_DELETE_SUCCESS("나의 동네 삭제를 성공하였습니다"),
 	USER_CREATE_SUCCESS("회원가입을 성공하였습니다"),
 	USER_SIGN_IN_SUCCESS("로그인을 성공하였습니다"),

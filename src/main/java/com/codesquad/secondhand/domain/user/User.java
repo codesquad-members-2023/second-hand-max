@@ -23,7 +23,6 @@ import com.codesquad.secondhand.domain.region.Region;
 import com.codesquad.secondhand.domain.user_region.UserRegion;
 import com.codesquad.secondhand.domain.wishlist.WishList;
 import com.codesquad.secondhand.exception.auth.PermissionDeniedException;
-import com.codesquad.secondhand.exception.user_region.NoSuchUserRegionException;
 import com.codesquad.secondhand.util.BaseTimeEntity;
 
 import lombok.AccessLevel;
@@ -61,6 +60,10 @@ public class User extends BaseTimeEntity {
 	private String email;
 	private String password;
 
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "selected_region_id")
+	private Region selectedRegion;
+
 	public String findProfileUrl() {
 		return profile == null ? null : profile.getImageUrl();
 	}
@@ -75,6 +78,11 @@ public class User extends BaseTimeEntity {
 
 	public void removeUserRegion(Region region) {
 		myRegion.removeRegion(region);
+	}
+
+	public void updateSelectedRegion(Region region) {
+		myRegion.validateUserRegion(region);
+		selectedRegion = region;
 	}
 
 	public void updateInformation(String newNickname, Image newProfile) {
@@ -93,11 +101,7 @@ public class User extends BaseTimeEntity {
 	}
 
 	public void validateHasRegion(Region region) {
-		myRegion.listAll()
-			.stream()
-			.filter(userRegion -> userRegion.findRegionId().equals(region.getId()))
-			.findAny()
-			.orElseThrow(NoSuchUserRegionException::new);
+		myRegion.validateUserRegion(region);
 	}
 
 }
