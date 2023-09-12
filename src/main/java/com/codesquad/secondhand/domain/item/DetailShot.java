@@ -27,11 +27,11 @@ public class DetailShot {
 			.collect(Collectors.toUnmodifiableList());
 	}
 
-	public void addImage(ItemImage itemImage) {
+	public void addItemImage(ItemImage itemImage) {
 		itemImages.add(itemImage);
 	}
 
-	public void removeImage(Image image) {
+	public void removeItemImage(Image image) {
 		itemImages.remove(validateItemImage(image));
 	}
 
