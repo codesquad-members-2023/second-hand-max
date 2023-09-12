@@ -13,7 +13,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 
 import com.codesquad.secondhand.ControllerTestSupport;
-import com.codesquad.secondhand.api.controller.item.request.ItemPostingRequest;
+import com.codesquad.secondhand.api.controller.item.request.ItemPostRequest;
 import com.codesquad.secondhand.api.controller.item.response.ItemDetailResponse;
 import com.codesquad.secondhand.api.controller.item.response.ItemSellerResponse;
 import com.codesquad.secondhand.domain.image.Image;
@@ -29,7 +29,7 @@ public class ItemControllerTest extends ControllerTestSupport {
 	void postItem() throws Exception {
 		// given
 		mockingJwtService();
-		ItemPostingRequest request = new ItemPostingRequest("title", null, "content", List.of(1L, 2L), 1L, 1L);
+		ItemPostRequest request = new ItemPostRequest("title", null, "content", List.of(1L, 2L), 1L, 1L);
 
 		// when
 		ObjectMapper objectMapper = new ObjectMapper();
