@@ -2,15 +2,15 @@ import { styled } from 'styled-components';
 import { Routes, Route } from 'react-router-dom';
 import PATH from '@constants/PATH';
 import TopBar from '@components/TopBar';
-import Profile from './Profile';
 import SignInForm from './SignInForm';
 import SignUpForm from './SignUpForm';
 import useOAuth from '@hooks/useOAuth';
-import { useTokenStore } from 'stores/useTokenStore';
+import Profile from './Profile';
+import { useUserAuthStore } from 'stores/useUserAuthStore';
 
 const MyAccount: React.FC = () => {
   const { initOAuth } = useOAuth();
-  const { tokens } = useTokenStore();
+  const tokens = useUserAuthStore(({ tokens }) => tokens);
   const isLogin = !!tokens;
 
   return (

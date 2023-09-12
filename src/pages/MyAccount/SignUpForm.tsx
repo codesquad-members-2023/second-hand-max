@@ -5,21 +5,18 @@ import Button from '@components/Button';
 import Field from '@components/Field';
 import Icons from '@design/Icons';
 import TopBar from '@components/TopBar';
-import ProfileImageButton from '@components/ProfileImageButton';
+import ProfileImageUploader from '@components/ProfileImageUploader';
 import PATH from '@constants/PATH';
 import { InitOAuthType } from '@hooks/useOAuth';
+import { useImageFileHandler } from '@hooks/useImageFileHandler';
 
 const SignUpForm: React.FC<{ initOAuth: InitOAuthType }> = ({ initOAuth }) => {
   const [id, setId] = useState('');
-  const [file, setFile] = useState<File>();
+  const { imageSrc, file, onImageChange } = useImageFileHandler();
   const navigate = useNavigate();
 
   const onIdChange = (id: string) => {
     setId(id);
-  };
-
-  const onFileChange = (file: File) => {
-    setFile(file);
   };
 
   return (
@@ -40,13 +37,16 @@ const SignUpForm: React.FC<{ initOAuth: InitOAuthType }> = ({ initOAuth }) => {
           $flexible="Flexible"
           $type="Ghost"
           disabled={!id}
-          onClick={() => initOAuth({ action: 'sign-up', id, file })}
+          onClick={() => {
+            initOAuth({ action: 'sign-up', id, file });
+          }}
         >
           완료
         </Button>
       </Title>
 
-      <ProfileImageButton {...{ onFileChange }} />
+      <ProfileImageUploader {...{ imageSrc, onImageChange }} />
+
       <Field>
         <Field.Label id="id" text="아이디" />
         <Field.Input

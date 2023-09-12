@@ -1,35 +1,11 @@
+import { fetchData } from 'apis/fetchData';
+import {
+  SignInUserResponse,
+  SignUpUserResponse,
+  UpdateAccessTokenResponse,
+} from './types';
 import { BASE_URL } from '@constants/BASE_URL';
-import { fetchData } from './fetchData';
-import { AccessToken, Tokens, User } from './types';
-import { useTokenStore } from 'stores/useTokenStore';
-
-type SignUpUserSuccess = {
-  statusCode: 201;
-  message: string;
-  data: null;
-};
-
-type SignUpUserFailure =
-  | {
-      statusCode: 400;
-      message: '잘못된 인가 코드입니다.';
-      data: null;
-    }
-  | {
-      statusCode: 400;
-      message: '유효하지 않은 입력형식입니다.';
-      data: {
-        field: string;
-        defaultMessage: string;
-      }[];
-    }
-  | {
-      statusCode: 409;
-      message: string;
-      data: null;
-    };
-
-type SignUpUserResponse = SignUpUserSuccess | SignUpUserFailure;
+import { useUserAuthStore } from 'stores/useUserAuthStore';
 
 export const signUpUser = async ({
   code,
@@ -57,23 +33,6 @@ export const signUpUser = async ({
   return response.json();
 };
 
-type SignInUserFailure = {
-  statusCode: 401;
-  message: string;
-  data: null;
-};
-
-type SignInUserSuccess = {
-  statusCode: 200;
-  message: string;
-  data: {
-    jwt: Tokens;
-    user: User;
-  };
-};
-
-type SignInUserResponse = SignInUserFailure | SignInUserSuccess;
-
 export const signInUser = async ({
   code,
   id,
@@ -95,10 +54,10 @@ export const signInUser = async ({
 };
 
 export const signOutUser = () => {
-  const tokens = useTokenStore.getState().tokens;
+  const { tokens } = useUserAuthStore.getState();
 
   if (!tokens) {
-    throw new Error('로컬스토리지에 access token이 없습니다.');
+    throw new Error('로컬스토리지에 token이 없습니다.');
   }
 
   const { accessToken } = tokens;
@@ -110,24 +69,6 @@ export const signOutUser = () => {
     },
   });
 };
-
-type UpdateAccessTokenFailure = {
-  statusCode: 400;
-  message: string;
-  data: null;
-};
-
-type UpdateAccessTokenSuccess = {
-  statusCode: 200;
-  message: string;
-  data: {
-    jwt: AccessToken;
-  };
-};
-
-type UpdateAccessTokenResponse =
-  | UpdateAccessTokenFailure
-  | UpdateAccessTokenSuccess;
 
 export const updateAccessToken = async (
   refreshToken: string,
@@ -141,8 +82,4 @@ export const updateAccessToken = async (
   });
 
   return response.json();
-};
-
-export const getRegions = () => {
-  return fetchData('/auth/regions');
 };
