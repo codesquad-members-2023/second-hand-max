@@ -43,6 +43,13 @@ public class UserRegionService {
 	}
 
 	@Transactional
+	public void selectUserRegion(Long userId, Long regionId) {
+		User user = userRepository.findCompleteUserById(userId).orElseThrow(NoSuchUserException::new);
+		Region region = regionRepository.findById(regionId).orElseThrow(NoSuchRegionException::new);
+		user.updateSelectedRegion(region);
+	}
+
+	@Transactional
 	public void deleteUserRegion(Long userId, Long regionId) {
 		User user = userRepository.findCompleteUserById(userId).orElseThrow(NoSuchUserException::new);
 		Region region = regionRepository.findById(regionId).orElseThrow(NoSuchRegionException::new);
