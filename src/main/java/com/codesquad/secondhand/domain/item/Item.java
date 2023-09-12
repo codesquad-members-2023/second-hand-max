@@ -76,7 +76,6 @@ public class Item extends BaseTimeEntity {
 	private Long views;
 	private boolean isDeleted;
 
-	// todo : 정적 팩토리 메서드? Build 패턴?
 	public Item(User user, Category category, Region region, Status status,
 		LocalDateTime updatedAt, String title, String content, Integer price) {
 		this.user = user;
@@ -119,10 +118,6 @@ public class Item extends BaseTimeEntity {
 		detailShot.removeItemImage(image);
 	}
 
-	public void removeAllItemImages() {
-		this.detailShot = new DetailShot();
-	}
-
 	public void delete(Long loginUserId) {
 		this.user.validateSameUser(loginUserId);
 		this.isDeleted = true;
@@ -136,6 +131,7 @@ public class Item extends BaseTimeEntity {
 		this.content = content;
 		this.category = category;
 		this.region = region;
+		this.detailShot.clear();
 		addItemImages(images);
 	}
 

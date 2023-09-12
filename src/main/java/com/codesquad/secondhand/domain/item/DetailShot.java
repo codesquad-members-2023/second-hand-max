@@ -35,6 +35,10 @@ public class DetailShot {
 		itemImages.remove(validateItemImage(image));
 	}
 
+	public void clear() {
+		itemImages.clear();
+	}
+
 	private ItemImage validateItemImage(Image image) {
 		return itemImages.stream()
 			.filter(i -> i.findImageId().equals(image.getId()))

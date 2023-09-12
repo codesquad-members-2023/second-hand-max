@@ -95,15 +95,10 @@ public class ItemService {
 		Category category = categoryRepository.findById(request.getCategoryId())
 			.orElseThrow(NoSuchCategoryException::new);
 
-		removeAllItemImages(item);
+		itemImageRepository.deleteAllByItemId(item.getId());
 		item.update(userId, request.getTitle(), request.getPrice(), request.getContent(), request.getImages(), category,
 			region);
 		return new ItemUpdateResponse(item.getId());
-	}
-
-	private void removeAllItemImages(Item item) {
-		item.removeAllItemImages();
-		itemImageRepository.deleteAllByItemId(item.getId());
 	}
 
 }
