@@ -1,16 +1,15 @@
 import { css, styled } from 'styled-components';
 import Button from '@components/Button';
 import ProfileImageUploader from '@components/ProfileImageUploader';
-import { useUserStore } from 'stores/useUserStore';
-import { useTokenStore } from 'stores/useTokenStore';
 import { signOutUser } from 'apis/auth';
 import { useImageFileHandler } from '@hooks/useImageFileHandler';
 import { useEffect } from 'react';
+import { useUserAuthStore } from 'stores/useUserAuthStore';
 
 const Profile: React.FC = () => {
-  const tokenStore = useTokenStore();
-  const userStore = useUserStore();
-  const initialImageSrc = userStore.user?.profileUrl;
+  const userAuthReset = useUserAuthStore(({ reset }) => reset);
+  const user = useUserAuthStore(({ user }) => user);
+  const initialImageSrc = user?.profileUrl;
   const { imageSrc, file, onImageChange } =
     useImageFileHandler(initialImageSrc);
 
@@ -25,8 +24,7 @@ const Profile: React.FC = () => {
       console.error(error);
     }
 
-    tokenStore.reset();
-    userStore.reset();
+    userAuthReset();
     alert('로그아웃 되었습니다.');
   };
 
@@ -36,7 +34,7 @@ const Profile: React.FC = () => {
 
       <UserProfile>
         <ProfileImageUploader {...{ imageSrc, onImageChange }} />
-        <UserName>{userStore.user?.loginId}</UserName>
+        <UserName>{user?.loginId}</UserName>
       </UserProfile>
 
       <Button

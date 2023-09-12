@@ -1,8 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 import PATH from '@constants/PATH';
-import { useUserStore } from 'stores/useUserStore';
-import { useTokenStore } from 'stores/useTokenStore';
 import { signInUser, signUpUser } from 'apis/auth';
+import { useUserAuthStore } from 'stores/useUserAuthStore';
 
 type Action = 'sign-up' | 'sign-in';
 
@@ -16,8 +15,7 @@ export type InitOAuthType = (params: InitOAuthParams) => void;
 
 const useOAuth = () => {
   const navigate = useNavigate();
-  const userStore = useUserStore();
-  const tokenStore = useTokenStore();
+  const setUserAuth = useUserAuthStore(({ setUserAuth }) => setUserAuth);
 
   const onSignIn = async (code: string, id: string) => {
     const userData = await signInUser({ code, id });
@@ -25,9 +23,7 @@ const useOAuth = () => {
 
     if (isSuccess) {
       const { jwt: tokens, user } = userData.data;
-
-      tokenStore.setTokens(tokens);
-      userStore.setUser(user);
+      setUserAuth({ user, tokens });
 
       navigate(`${PATH.BASE}`);
     }

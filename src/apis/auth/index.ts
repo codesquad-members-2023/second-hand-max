@@ -4,8 +4,8 @@ import {
   SignUpUserResponse,
   UpdateAccessTokenResponse,
 } from './types';
-import { useTokenStore } from 'stores/useTokenStore';
 import { BASE_URL } from '@constants/BASE_URL';
+import { useUserAuthStore } from 'stores/useUserAuthStore';
 
 export const signUpUser = async ({
   code,
@@ -54,10 +54,10 @@ export const signInUser = async ({
 };
 
 export const signOutUser = () => {
-  const tokens = useTokenStore.getState().tokens;
+  const { tokens } = useUserAuthStore.getState();
 
   if (!tokens) {
-    throw new Error('로컬스토리지에 access token이 없습니다.');
+    throw new Error('로컬스토리지에 token이 없습니다.');
   }
 
   const { accessToken } = tokens;
