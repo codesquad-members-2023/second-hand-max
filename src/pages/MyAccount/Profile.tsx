@@ -29,7 +29,7 @@ const Profile: React.FC = () => {
 
       <UserProfile>
         <ProfileImageUploader {...{ imageSrc, onImageChange }} />
-        <UserName>{user?.loginId}</UserName>
+        <UserName>{user?.loginId || '사용자 이름'}</UserName>
       </UserProfile>
 
       <Button

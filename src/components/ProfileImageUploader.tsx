@@ -2,6 +2,7 @@ import { css, styled } from 'styled-components';
 import Icons from '@design/Icons';
 import Button from './Button';
 import ACCEPTED_EXTENSIONS from '@constants/ACCEPTED_EXTENSIONS';
+import defaultProfileImage from '@assets/default-profile-image.png';
 
 type Props = {
   imageSrc?: string;
@@ -18,7 +19,7 @@ const ProfileImageUploader: React.FC<Props> = ({ imageSrc, onImageChange }) => {
         accept={ACCEPTED_EXTENSIONS.PROFILE_IMAGE}
         onChange={onImageChange}
       />
-      {imageSrc && <Image src={imageSrc} alt="프로필 이미지" />}
+      {<Image src={imageSrc || defaultProfileImage} alt="프로필 이미지" />}
     </CircularProfileImage>
   );
 };
