@@ -37,7 +37,7 @@ public class ItemServiceTest extends IntegrationTestSupport {
 
 	private static List<Region> regions;
 	private static List<Category> categories;
-	private static User user;
+	private static User loginUser;
 	private static List<Image> images;
 	private static List<Status> statusList;
 
@@ -67,8 +67,8 @@ public class ItemServiceTest extends IntegrationTestSupport {
 		regions = FixtureFactory.createRegionFixtures(3);
 		regionRepository.saveAll(regions);
 
-		user = FixtureFactory.createUserFixtureWithRegions(List.of(regions.get(0), regions.get(1)));
-		userRepository.save(user);
+		loginUser = FixtureFactory.createUserFixtureWithRegions(List.of(regions.get(0), regions.get(1)));
+		userRepository.save(loginUser);
 
 		categories = FixtureFactory.createCategoryFixture(3);
 		categoryRepository.saveAll(categories);
@@ -88,12 +88,12 @@ public class ItemServiceTest extends IntegrationTestSupport {
 			1L, 1L);
 
 		// when
-		itemService.postItem(request, user.getId());
+		itemService.postItem(request, loginUser.getId());
 		Item postedItem = itemRepository.findDetailById(1L).orElseThrow(NoSuchItemException::new);
 
 		// then
 		assertAll(
-			() -> assertThat(postedItem.getUser().getId()).isEqualTo(user.getId()),
+			() -> assertThat(postedItem.getUser().getId()).isEqualTo(loginUser.getId()),
 			() -> assertThat(postedItem.getTitle()).isEqualTo("title"),
 			() -> assertThat(postedItem.getPrice()).isNull(),
 			() -> assertThat(postedItem.getContent()).isEqualTo("content"),
@@ -127,7 +127,7 @@ public class ItemServiceTest extends IntegrationTestSupport {
 			wrongCategoryId, 1L);
 
 		// when & then
-		assertThatThrownBy(() -> itemService.postItem(request, user.getId()))
+		assertThatThrownBy(() -> itemService.postItem(request, loginUser.getId()))
 			.isInstanceOf(NoSuchCategoryException.class)
 			.hasMessage("존재하지 않는 카테고리입니다");
 	}
@@ -141,7 +141,7 @@ public class ItemServiceTest extends IntegrationTestSupport {
 			1L, wrongRegionId);
 
 		// when & then
-		assertThatThrownBy(() -> itemService.postItem(request, user.getId()))
+		assertThatThrownBy(() -> itemService.postItem(request, loginUser.getId()))
 			.isInstanceOf(NoSuchRegionException.class)
 			.hasMessage("존재하지 않는 동네입니다");
 	}
@@ -155,7 +155,7 @@ public class ItemServiceTest extends IntegrationTestSupport {
 			1L, notMyRegionId);
 
 		// when & then
-		assertThatThrownBy(() -> itemService.postItem(request, user.getId()))
+		assertThatThrownBy(() -> itemService.postItem(request, loginUser.getId()))
 			.isInstanceOf(NoSuchUserRegionException.class)
 			.hasMessage("사용자 동네 목록에 없는 동네입니다");
 	}
@@ -171,14 +171,15 @@ public class ItemServiceTest extends IntegrationTestSupport {
 		itemRepository.save(item);
 
 		// when
-		ItemDetailResponse postedItem = itemService.getItemDetail(1L, user.getId());
+		ItemDetailResponse postedItem = itemService.getItemDetail(1L, loginUser.getId());
 
 		// then
 		assertAll(
 			() -> assertThat(postedItem.getTitle()).isEqualTo("title"),
 			() -> assertThat(postedItem.getStatus()).isEqualTo("판매중"),
 			() -> assertThat(postedItem.getContent()).isEqualTo("content"),
-			() -> assertThat(postedItem.getUpdatedAt()).isCloseTo(FixtureFactory.LOCAL_DATE_TIME, within(1, ChronoUnit.SECONDS)),
+			() -> assertThat(postedItem.getUpdatedAt()).isCloseTo(item.getUpdatedAt(),
+				within(1, ChronoUnit.SECONDS)),
 			() -> assertThat(postedItem.getPrice()).isNull(),
 			() -> assertThat(postedItem.getCategory()).isEqualTo(categories.get(0).getTitle()),
 			() -> assertThat(postedItem.getSeller().getId()).isEqualTo(seller.getId()),
@@ -196,9 +197,37 @@ public class ItemServiceTest extends IntegrationTestSupport {
 		Long wrongItemId = 999L;
 
 		// when & then
-		assertThatThrownBy(() -> itemService.getItemDetail(wrongItemId, user.getId()))
+		assertThatThrownBy(() -> itemService.getItemDetail(wrongItemId, loginUser.getId()))
 			.isInstanceOf(NoSuchItemException.class)
 			.hasMessage("존재하지 않는 상품입니다");
+	}
+
+	@DisplayName("상품 삭제를 성공한다.")
+	@Test
+	void deleteItem() {
+		// given
+		Item item = FixtureFactory.createItemFixtures(loginUser, categories.get(0), regions.get(0), statusList.get(0));
+		itemRepository.save(item);
+
+		// when
+		itemService.deleteItem(1L, loginUser.getId());
+
+		// then
+		Item deletedItem = itemRepository.findById(1L).orElseThrow(NoSuchItemException::new);
+		assertThat(deletedItem.isDeleted()).isEqualTo(true);
+	}
+
+	@DisplayName("다른 사용자의 상품을 삭제하면 예외가 발생한다.")
+	@Test
+	void deleteItemAndThrowPermissionDeniedException() {
+		// given
+		User otheruser = FixtureFactory.createUserFixtureWithRegions(List.of(regions.get(0)));
+		userRepository.save(otheruser);
+		Item item = FixtureFactory.createItemFixtures(otheruser, categories.get(0), regions.get(0), statusList.get(0));
+		itemRepository.save(item);
+
+		// when & then
+		assertThatThrownBy(() -> itemService.deleteItem(1L, loginUser.getId()));
 	}
 
 }
