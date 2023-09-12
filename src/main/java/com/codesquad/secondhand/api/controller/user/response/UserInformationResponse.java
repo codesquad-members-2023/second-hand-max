@@ -15,7 +15,7 @@ public class UserInformationResponse {
 
 	public static UserInformationResponse of(User user) {
 		return new UserInformationResponse(user.getId(), user.getNickname(),
-			user.getProfileUrl());
+			user.findProfileUrl());
 	}
 
 }

@@ -16,7 +16,10 @@ public class CategoryControllerTest extends ControllerTestSupport {
 	@DisplayName("카테고리 목록 조회를 성공하고 200OK를 반환환다")
 	@Test
 	void listAllCategories() throws Exception {
-		//when & then
+		// given
+		mockingJwtService();
+
+		// when & then
 		mockMvc.perform(get("/api/categories"))
 			.andDo(print())
 			.andExpect(status().isOk())

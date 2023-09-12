@@ -21,6 +21,8 @@ import com.codesquad.secondhand.api.controller.user.request.UserUpdateRequest;
 import com.codesquad.secondhand.api.controller.user.response.UserInformationResponse;
 import com.codesquad.secondhand.api.service.image.ImageService;
 import com.codesquad.secondhand.api.service.user.UserService;
+import com.codesquad.secondhand.domain.provider.Provider;
+import com.codesquad.secondhand.domain.region.Region;
 
 import lombok.RequiredArgsConstructor;
 
@@ -38,8 +40,9 @@ public class UserController {
 	@PostMapping()
 	public ApiResponse<Void> createLocalUser(@RequestPart(required = false) MultipartFile image,
 		@Valid @RequestPart UserCreateRequest request) {
-		userService.createLocalUser(
-			request.toService(image == null ? null : imageService.createImage(image, USER_IMAGE_DIRECTORY)));
+		userService.createUser(
+			request.toService(image == null ? null : imageService.createImage(image, USER_IMAGE_DIRECTORY),
+				Provider.ofLocal(), Region.ofDefault()));
 		return ApiResponse.noData(HttpStatus.CREATED, ResponseMessage.USER_CREATE_SUCCESS.getMessage());
 	}
 

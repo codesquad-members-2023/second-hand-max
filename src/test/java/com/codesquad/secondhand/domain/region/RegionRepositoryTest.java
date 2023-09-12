@@ -12,7 +12,6 @@ import org.springframework.data.domain.Slice;
 
 import com.codesquad.secondhand.FixtureFactory;
 import com.codesquad.secondhand.IntegrationTestSupport;
-import com.codesquad.secondhand.domain.user_region.UserRegionRepository;
 
 class RegionRepositoryTest extends IntegrationTestSupport {
 
@@ -20,9 +19,6 @@ class RegionRepositoryTest extends IntegrationTestSupport {
 
 	@Autowired
 	private RegionRepository regionRepository;
-
-	@Autowired
-	private UserRegionRepository userRegionRepository;
 
 	@DisplayName("Pageable 객체를 받아서 해당 page의 동네 목록을 size개씩 반환한다.")
 	@CsvSource(value = {"0,20", "1,20"})

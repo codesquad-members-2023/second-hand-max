@@ -58,7 +58,7 @@ public class User extends BaseTimeEntity {
 	private String email;
 	private String password;
 
-	public String getProfileUrl() {
+	public String findProfileUrl() {
 		return profile == null ? null : profile.getImageUrl();
 	}
 
@@ -74,7 +74,7 @@ public class User extends BaseTimeEntity {
 		myRegion.removeRegion(region);
 	}
 
-	public void updateInfo(String newNickname, Image newProfile) {
+	public void updateInformation(String newNickname, Image newProfile) {
 		this.nickname = newNickname;
 		this.profile = newProfile;
 	}

@@ -27,4 +27,8 @@ public class Region {
 
 	private String title;
 
+	public static final Region ofDefault() {
+		return new Region(DEFAULT_REGION_ID, DEFAULT_REGION_TITLE);
+	}
+
 }

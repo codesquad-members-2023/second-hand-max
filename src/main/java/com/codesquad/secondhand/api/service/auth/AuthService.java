@@ -12,9 +12,6 @@ import com.codesquad.secondhand.api.service.auth.response.SignInResponse;
 import com.codesquad.secondhand.api.service.user.UserService;
 import com.codesquad.secondhand.domain.provider.Provider;
 import com.codesquad.secondhand.domain.user.User;
-import com.codesquad.secondhand.domain.user.UserRepository;
-import com.codesquad.secondhand.exception.auth.SignInFailedException;
-import com.codesquad.secondhand.exception.user.NoSuchUserException;
 
 import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
@@ -23,17 +20,13 @@ import lombok.RequiredArgsConstructor;
 @Service
 public class AuthService {
 
-	private final UserRepository userRepository;
 	private final UserService userService;
 	private final JwtService jwtService;
 	private final KakaoClient kakaoClient;
 
 	@Transactional
 	public SignInResponse signIn(SignInRequest request) {
-		User user = userRepository.findByEmailAndPassword(request.getEmail(), request.getPassword())
-			.orElseThrow(SignInFailedException::new);
-
-		return jwtService.issueTokens(user);
+		return jwtService.issueTokens(userService.findLocalUser(request.getEmail(), request.getPassword()));
 	}
 
 	@Transactional
@@ -44,7 +37,7 @@ public class AuthService {
 	@Transactional
 	public ReissueResponse reissue(String refreshToken) {
 		Claims claims = jwtService.parse(refreshToken);
-		User user = userRepository.findById(claims.get("id", Long.class)).orElseThrow(NoSuchUserException::new);
+		User user = userService.findUser(claims.get("id", Long.class));
 		jwtService.validateRefreshToken(user, refreshToken);
 
 		return new ReissueResponse(jwtService.reissueAccessToken(user));
@@ -53,8 +46,7 @@ public class AuthService {
 	@Transactional
 	public SignInResponse signByKakao(String code) {
 		String email = kakaoClient.requestUserInformation(code).getId() + "@fishprincess.site";
-		User user = userRepository.findByProviderIdAndEmail(Provider.ofKakao().getId(), email)
-			.orElseGet(() -> userService.createOAuthUser(Provider.ofKakao(), email));
+		User user = userService.findOrCreateUser(Provider.ofKakao(), email);
 
 		return jwtService.issueTokens(user);
 	}

@@ -32,9 +32,8 @@ public class ImageService {
 	@Value("${cloud.aws.s3.bucket}")
 	private String bucket;
 
-	private final AmazonS3Client amazonS3Client;
-
 	private final ImageRepository imageRepository;
+	private final AmazonS3Client amazonS3Client;
 
 	@Transactional
 	public Image createImage(MultipartFile file, String directory) {
@@ -75,7 +74,7 @@ public class ImageService {
 		}
 	}
 
-	private static ObjectMetadata generateObjectMetadata(MultipartFile multipartFile) throws IOException {
+	private ObjectMetadata generateObjectMetadata(MultipartFile multipartFile) throws IOException {
 		ObjectMetadata objectMetadata = new ObjectMetadata();
 		objectMetadata.setContentType(multipartFile.getContentType());
 		objectMetadata.setContentLength(multipartFile.getInputStream().available());

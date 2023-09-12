@@ -8,13 +8,15 @@ import javax.persistence.Table;
 
 import lombok.Getter;
 
-@Table(name = "status")
 @Getter
 @Entity
+@Table(name = "status")
 public class Status {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
+
 	private String type;
+
 }

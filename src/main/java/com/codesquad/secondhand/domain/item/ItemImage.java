@@ -16,8 +16,8 @@ import com.codesquad.secondhand.util.BaseTimeEntity;
 import lombok.Getter;
 
 @Getter
-@Table(name = "item_image")
 @Entity
+@Table(name = "item_image")
 public class ItemImage extends BaseTimeEntity {
 
 	@Id

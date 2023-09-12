@@ -1,6 +1,10 @@
 package com.codesquad.secondhand.api.service.user.request;
 
+import java.util.UUID;
+
 import com.codesquad.secondhand.domain.image.Image;
+import com.codesquad.secondhand.domain.provider.Provider;
+import com.codesquad.secondhand.domain.region.Region;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -13,5 +17,12 @@ public class UserCreateServiceRequest {
 	private String email;
 	private String password;
 	private Image image;
+	private Provider provider;
+	private Region region;
+
+	public static UserCreateServiceRequest from(String email, Provider provider, Region region) {
+		String nickname = UUID.randomUUID().toString().substring(0, 10);
+		return new UserCreateServiceRequest(nickname, email, null, null, provider, region);
+	}
 
 }
