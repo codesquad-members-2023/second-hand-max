@@ -38,14 +38,14 @@ public abstract class FixtureFactory {
 
 	public static User createUserFixture(List<Region> regions) {
 		User user = new User(null, new MyRegion(), null, Provider.ofLocal(), null, "nickname", "test@email.com",
-			"password123!", null);
+			"password123!", regions.get(0));
 		regions.forEach(user::addUserRegion);
 		return user;
 	}
 
 	public static User createUserFixture(List<Region> regions, String nickname, String email) {
 		User user = new User(null, new MyRegion(), null, Provider.ofLocal(), null, nickname, email,
-			"password123!", null);
+			"password123!", regions.get(0));
 		regions.forEach(user::addUserRegion);
 		return user;
 	}
