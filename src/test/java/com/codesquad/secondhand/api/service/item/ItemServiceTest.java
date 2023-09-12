@@ -4,17 +4,21 @@ import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.time.temporal.ChronoUnit;
+import java.util.Collection;
 import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.codesquad.secondhand.FixtureFactory;
 import com.codesquad.secondhand.IntegrationTestSupport;
 import com.codesquad.secondhand.api.controller.item.response.ItemDetailResponse;
 import com.codesquad.secondhand.api.service.item.request.ItemPostServiceRequest;
+import com.codesquad.secondhand.api.service.item.request.ItemUpdateServiceRequest;
 import com.codesquad.secondhand.domain.category.Category;
 import com.codesquad.secondhand.domain.category.CategoryRepository;
 import com.codesquad.secondhand.domain.image.Image;
@@ -230,4 +234,50 @@ public class ItemServiceTest extends IntegrationTestSupport {
 		assertThatThrownBy(() -> itemService.deleteItem(1L, loginUser.getId()));
 	}
 
+	@DisplayName("상품 수정 시나리오")
+	@TestFactory
+	Collection<DynamicTest> updateItem() {
+		// given
+		Item myItem = FixtureFactory.createItemFixtures(loginUser, categories.get(0), regions.get(0),
+			statusList.get(0));
+		itemRepository.save(myItem);
+		myItem.addItemImages(images);
+
+		return List.of(
+			DynamicTest.dynamicTest("새로운 내용 및 모든 이미지 삭제가 반영되도록 상품 수정을 성공한다.", () -> {
+				// given
+				ItemUpdateServiceRequest request = new ItemUpdateServiceRequest(1L, "new title", 100, "new content",
+					null, 1L, 1L);
+
+				// when
+				itemService.updateItem(request, loginUser.getId());
+
+				// then
+				Item updatedItem = itemRepository.findDetailById(1L).get();
+				assertThat(updatedItem.getTitle()).isEqualTo("new title");
+				assertThat(updatedItem.getPrice()).isEqualTo(100);
+				assertThat(updatedItem.getContent()).isEqualTo("new content");
+				assertThat(updatedItem.getDetailShot().listAllImages()).isEmpty();
+				assertThat(updatedItem.getCategory().getId()).isEqualTo(1L);
+				assertThat(updatedItem.getRegion().getId()).isEqualTo(1L);
+			}),
+			DynamicTest.dynamicTest("새로운 내용 및 새로운 이미지가 반영되도록 상품 수정을 성공한다.", () -> {
+				// given
+				ItemUpdateServiceRequest request = new ItemUpdateServiceRequest(1L, "new title2", 200, "new content2",
+					images, 2L, 2L);
+
+				// when
+				itemService.updateItem(request, loginUser.getId());
+
+				// then
+				Item updatedItem = itemRepository.findDetailById(1L).get();
+				assertThat(updatedItem.getTitle()).isEqualTo("new title2");
+				assertThat(updatedItem.getPrice()).isEqualTo(200);
+				assertThat(updatedItem.getContent()).isEqualTo("new content2");
+				assertThat(updatedItem.getDetailShot().listAllImages()).hasSize(3);
+				assertThat(updatedItem.getCategory().getId()).isEqualTo(2L);
+				assertThat(updatedItem.getRegion().getId()).isEqualTo(2L);
+			})
+		);
+	}
 }

@@ -81,6 +81,7 @@ public class ItemTest extends IntegrationTestSupport {
 	Collection<DynamicTest> removeItemImage() {
 		//given
 		Item newItem = FixtureFactory.createItemFixture(loginUser, categories.get(0), regions.get(0),
+
 			statusList.get(0));
 		List<Image> itemImages = FixtureFactory.createImageFixtures(2);
 		imageRepository.saveAll(itemImages);
@@ -142,4 +143,54 @@ public class ItemTest extends IntegrationTestSupport {
 			})
 		);
 	}
+
+	@DisplayName("상품 수정 시나리오")
+	@TestFactory
+	Collection<DynamicTest> updateItem() {
+		// given
+		Item myItem = FixtureFactory.createItemFixture(loginUser, categories.get(0), regions.get(0),
+			statusList.get(0));
+		itemRepository.save(myItem);
+		List<Image> itemImages = FixtureFactory.createImageFixtures(2);
+		imageRepository.saveAll(itemImages);
+		myItem.addItemImages(itemImages);
+
+		return List.of(
+			DynamicTest.dynamicTest("새로운 내용 반영 및 모든 이미지가 삭제되도록 수정한다.", () -> {
+				// given
+				String newTitle = "new Title";
+				Integer newPrice = 100;
+				String newContent = "new Content";
+
+				// when
+				myItem.update(loginUser.getId(), newTitle, newPrice, newContent, null, categories.get(0),
+					regions.get(0));
+
+				// then
+				assertThat(myItem.getTitle()).isEqualTo("new Title");
+				assertThat(myItem.getContent()).isEqualTo("new Content");
+				assertThat(myItem.getPrice()).isEqualTo(100);
+				assertThat(myItem.getDetailShot().listAllImages()).isEmpty();
+			}),
+			DynamicTest.dynamicTest("새로운 내용 및 새로운 이미지가 반영되도록 수정한다.", () -> {
+				// given
+				String newTitle2 = "new Title2";
+				Integer newPrice2 = 200;
+				String newContent2 = "new Content2";
+				List<Image> newItemImages = FixtureFactory.createImageFixtures(5);
+				imageRepository.saveAll(newItemImages);
+
+				// when
+				myItem.update(loginUser.getId(), newTitle2, newPrice2, newContent2, newItemImages, categories.get(0),
+					regions.get(0));
+
+				// then
+				assertThat(myItem.getTitle()).isEqualTo("new Title2");
+				assertThat(myItem.getContent()).isEqualTo("new Content2");
+				assertThat(myItem.getPrice()).isEqualTo(200);
+				assertThat(myItem.getDetailShot().listAllImages()).hasSize(5);
+			})
+		);
+	}
+
 }
