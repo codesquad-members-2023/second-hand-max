@@ -18,12 +18,7 @@ const Profile: React.FC = () => {
   }, [file]);
 
   const onLogout = () => {
-    try {
-      signOutUser();
-    } catch (error) {
-      console.error(error);
-    }
-
+    signOutUser();
     userAuthReset();
     alert('로그아웃 되었습니다.');
   };
