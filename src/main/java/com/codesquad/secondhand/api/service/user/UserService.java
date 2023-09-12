@@ -9,7 +9,6 @@ import com.codesquad.secondhand.api.service.user.request.UserUpdateServiceReques
 import com.codesquad.secondhand.domain.image.Image;
 import com.codesquad.secondhand.domain.provider.Provider;
 import com.codesquad.secondhand.domain.region.Region;
-import com.codesquad.secondhand.domain.user.MyRegion;
 import com.codesquad.secondhand.domain.user.User;
 import com.codesquad.secondhand.domain.user.UserRepository;
 import com.codesquad.secondhand.exception.auth.SignInFailedException;
@@ -33,16 +32,9 @@ public class UserService {
 		if (userRepository.existsByProviderAndEmail(request.getProvider(), request.getEmail())) {
 			throw new DuplicatedEmailException();
 		}
-		User user = new User(
-			null,
-			new MyRegion(),
-			request.getImage(),
-			request.getProvider(),
-			null,
-			request.getNickname(),
-			request.getEmail(),
-			request.getPassword());
+		User user = request.toEntity();
 		user.addUserRegion(request.getRegion());
+		user.updateSelectedRegion(request.getRegion());
 		return userRepository.save(user);
 	}
 

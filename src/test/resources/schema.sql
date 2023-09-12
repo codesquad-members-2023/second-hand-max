@@ -17,6 +17,13 @@ CREATE TABLE `image`
     PRIMARY KEY (`id`)
 );
 
+CREATE TABLE region
+(
+    id    BIGINT AUTO_INCREMENT,
+    title VARCHAR(30) NOT NULL,
+    PRIMARY KEY (`id`)
+);
+
 CREATE TABLE user
 (
     id          BIGINT AUTO_INCREMENT,
@@ -26,9 +33,11 @@ CREATE TABLE user
     password    VARCHAR(150),
     created_at  TIMESTAMP    NOT NULL,
     provider_id BIGINT       NOT NULL,
+    selected_region_id    BIGINT,
     PRIMARY KEY (`id`),
     FOREIGN KEY (image_id) REFERENCES image (id),
-    FOREIGN KEY (provider_id) REFERENCES provider (id)
+    FOREIGN KEY (provider_id) REFERENCES provider (id),
+    FOREIGN KEY (selected_region_id) REFERENCES region (id)
 );
 
 CREATE TABLE refresh_token
@@ -52,13 +61,6 @@ CREATE TABLE status
 (
     id   BIGINT AUTO_INCREMENT,
     type VARCHAR(20) NOT NULL,
-    PRIMARY KEY (`id`)
-);
-
-CREATE TABLE region
-(
-    id    BIGINT AUTO_INCREMENT,
-    title VARCHAR(30) NOT NULL,
     PRIMARY KEY (`id`)
 );
 

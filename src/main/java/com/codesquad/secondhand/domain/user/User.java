@@ -23,7 +23,6 @@ import com.codesquad.secondhand.domain.region.Region;
 import com.codesquad.secondhand.domain.user_region.UserRegion;
 import com.codesquad.secondhand.domain.wishlist.WishList;
 import com.codesquad.secondhand.exception.auth.PermissionDeniedException;
-import com.codesquad.secondhand.exception.user_region.NoSuchUserRegionException;
 import com.codesquad.secondhand.util.BaseTimeEntity;
 
 import lombok.AccessLevel;
@@ -61,6 +60,10 @@ public class User extends BaseTimeEntity {
 	private String email;
 	private String password;
 
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "selected_region_id")
+	private Region selectedRegion;
+
 	public String findProfileUrl() {
 		return profile == null ? null : profile.getImageUrl();
 	}
@@ -77,29 +80,28 @@ public class User extends BaseTimeEntity {
 		myRegion.removeRegion(region);
 	}
 
+	public void updateSelectedRegion(Region region) {
+		myRegion.validateUserRegion(region);
+		selectedRegion = region;
+	}
+
 	public void updateInformation(String newNickname, Image newProfile) {
 		this.nickname = newNickname;
 		this.profile = newProfile;
 	}
 
 	public void validateSameUser(Long targetUserId) {
-		if(!isSameUserAs(targetUserId)) {
+		if (!isSameUserAs(targetUserId)) {
 			throw new PermissionDeniedException();
 		}
 	}
 
-	public boolean isSameUserAs(Long targetUserId){
+	public boolean isSameUserAs(Long targetUserId) {
 		return Objects.equals(this.id, targetUserId);
 	}
 
-	// todo : 위치 확인
 	public void validateHasRegion(Region region) {
-		boolean hasRegion = myRegion.listAll()
-			.stream()
-			.anyMatch(userRegion -> userRegion.getRegion().equals(region));
-		if(!hasRegion) {
-			throw new NoSuchUserRegionException();
-		}
+		myRegion.validateUserRegion(region);
 	}
 
 }
