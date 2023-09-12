@@ -55,10 +55,11 @@ public class ItemController {
 			itemService.getItemDetail(id, signInUser.getId()));
 	}
 
+	@ResponseStatus(HttpStatus.OK)
 	@DeleteMapping("/{id}")
 	public ApiResponse<Void> deleteItem(@PathVariable Long id, @SignIn SignInUser signInUser) {
 		itemService.deleteItem(id, signInUser.getId());
-		return ApiResponse.noData(HttpStatus.NO_CONTENT, ResponseMessage.ITEM_DELETE_SUCCESS.getMessage());
+		return ApiResponse.noData(HttpStatus.OK, ResponseMessage.ITEM_DELETE_SUCCESS.getMessage());
 	}
 
 }
