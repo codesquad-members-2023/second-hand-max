@@ -1,36 +1,14 @@
-import { useMemo, useState } from 'react';
 import { css, styled } from 'styled-components';
 import Icons from '@design/Icons';
 import Button from './Button';
 import ACCEPTED_EXTENSIONS from '@constants/ACCEPTED_EXTENSIONS';
 
 type Props = {
-  onFileChange: (file: File) => void;
-  initialImageSrc?: string;
+  imageSrc?: string;
+  onImageChange: ({ target }: React.ChangeEvent<HTMLInputElement>) => void;
 };
 
-const ProfileImageUploader: React.FC<Props> = ({
-  onFileChange,
-  initialImageSrc,
-}) => {
-  const [imageSrc, setImageSrc] = useState(initialImageSrc);
-  const reader = useMemo(() => new FileReader(), []);
-
-  const onImageChange = ({ target }: React.ChangeEvent<HTMLInputElement>) => {
-    const file = target.files?.[0];
-
-    if (file) {
-      reader.onload = ({ target }) => {
-        if (target?.result) {
-          setImageSrc(target.result as string);
-        }
-      };
-
-      reader.readAsDataURL(file);
-      onFileChange(file);
-    }
-  };
-
+const ProfileImageUploader: React.FC<Props> = ({ imageSrc, onImageChange }) => {
   return (
     <CircularProfileImage $hasImage={!!imageSrc}>
       <Icons.Camera />

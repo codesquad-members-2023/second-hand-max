@@ -4,14 +4,19 @@ import ProfileImageUploader from '@components/ProfileImageUploader';
 import { useUserStore } from 'stores/useUserStore';
 import { useTokenStore } from 'stores/useTokenStore';
 import { signOutUser } from 'apis/auth';
+import { useImageFileHandler } from '@hooks/useImageFileHandler';
+import { useEffect } from 'react';
 
 const Profile: React.FC = () => {
   const tokenStore = useTokenStore();
   const userStore = useUserStore();
+  const initialImageSrc = userStore.user?.profileUrl;
+  const { imageSrc, file, onImageChange } =
+    useImageFileHandler(initialImageSrc);
 
-  const onFileChange = () => {
-    // TODO: 프로필 사진 변경 핸들러 구현하기
-  };
+  useEffect(() => {
+    // TODO: 프로필 이미지 변경 요청
+  }, [file]);
 
   const onLogout = () => {
     try {
@@ -30,9 +35,7 @@ const Profile: React.FC = () => {
       <h2 className="blind">프로필</h2>
 
       <UserProfile>
-        <ProfileImageUploader
-          {...{ onFileChange, initialImageSrc: userStore.user?.profileUrl }}
-        />
+        <ProfileImageUploader {...{ imageSrc, onImageChange }} />
         <UserName>{userStore.user?.loginId}</UserName>
       </UserProfile>
 
