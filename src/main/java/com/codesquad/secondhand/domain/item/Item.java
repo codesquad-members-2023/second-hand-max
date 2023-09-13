@@ -113,8 +113,8 @@ public class Item extends BaseTimeEntity {
 	}
 
 	public void addItemImages(List<Image> images) {
-		for (Image image : images) {
-			detailShot.addItemImage(new ItemImage(null, this, image));
+		if (images != null && !images.isEmpty()) {
+			images.forEach(image -> detailShot.addItemImage(new ItemImage(null, this, image)));
 		}
 	}
 

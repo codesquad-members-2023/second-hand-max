@@ -4,6 +4,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 public interface WishlistRepository extends JpaRepository<Wishlist, Long> {
 
@@ -13,7 +14,7 @@ public interface WishlistRepository extends JpaRepository<Wishlist, Long> {
 		+ "JOIN fetch wi.status "
 		+ "LEFT JOIN fetch wi.detailShot.itemImages "
 		+ "WHERE w.user.id = :userId "
-		+ "AND wi.isDeleted = 0 ")
-	Slice<Wishlist> findSliceByUserId(Pageable pageable, Long userId);
+		+ "AND wi.isDeleted = false")
+	Slice<Wishlist> findSliceByUserId(Pageable pageable, @Param("userId") Long userId);
 
 }
