@@ -18,6 +18,7 @@ import com.codesquad.secondhand.FixtureFactory;
 import com.codesquad.secondhand.IntegrationTestSupport;
 import com.codesquad.secondhand.api.controller.item.response.ItemDetailResponse;
 import com.codesquad.secondhand.api.service.item.request.ItemPostServiceRequest;
+import com.codesquad.secondhand.api.service.item.request.ItemStatusUpdateServiceRequest;
 import com.codesquad.secondhand.api.service.item.request.ItemUpdateServiceRequest;
 import com.codesquad.secondhand.domain.category.Category;
 import com.codesquad.secondhand.domain.category.CategoryRepository;
@@ -31,6 +32,7 @@ import com.codesquad.secondhand.domain.status.Status;
 import com.codesquad.secondhand.domain.status.StatusRepository;
 import com.codesquad.secondhand.domain.user.User;
 import com.codesquad.secondhand.domain.user.UserRepository;
+import com.codesquad.secondhand.exception.auth.PermissionDeniedException;
 import com.codesquad.secondhand.exception.category.NoSuchCategoryException;
 import com.codesquad.secondhand.exception.item.NoSuchItemException;
 import com.codesquad.secondhand.exception.region.NoSuchRegionException;
@@ -254,12 +256,14 @@ public class ItemServiceTest extends IntegrationTestSupport {
 
 				// then
 				Item updatedItem = itemRepository.findDetailById(1L).get();
-				assertThat(updatedItem.getTitle()).isEqualTo("new title");
-				assertThat(updatedItem.getPrice()).isEqualTo(100);
-				assertThat(updatedItem.getContent()).isEqualTo("new content");
-				assertThat(updatedItem.getDetailShot().listAllImages()).isEmpty();
-				assertThat(updatedItem.getCategory().getId()).isEqualTo(1L);
-				assertThat(updatedItem.getRegion().getId()).isEqualTo(1L);
+				assertAll(
+					() -> assertThat(updatedItem.getTitle()).isEqualTo("new title"),
+					() -> assertThat(updatedItem.getPrice()).isEqualTo(100),
+					() -> assertThat(updatedItem.getContent()).isEqualTo("new content"),
+					() -> assertThat(updatedItem.listImage()).isEmpty(),
+					() -> assertThat(updatedItem.getCategory().getId()).isEqualTo(1L),
+					() -> assertThat(updatedItem.getRegion().getId()).isEqualTo(1L)
+				);
 			}),
 			DynamicTest.dynamicTest("새로운 내용 및 새로운 이미지가 반영되도록 상품 수정을 성공한다.", () -> {
 				// given
@@ -271,13 +275,53 @@ public class ItemServiceTest extends IntegrationTestSupport {
 
 				// then
 				Item updatedItem = itemRepository.findDetailById(1L).get();
-				assertThat(updatedItem.getTitle()).isEqualTo("new title2");
-				assertThat(updatedItem.getPrice()).isEqualTo(200);
-				assertThat(updatedItem.getContent()).isEqualTo("new content2");
-				assertThat(updatedItem.getDetailShot().listAllImages()).hasSize(3);
-				assertThat(updatedItem.getCategory().getId()).isEqualTo(2L);
-				assertThat(updatedItem.getRegion().getId()).isEqualTo(2L);
+				assertAll(
+					() -> assertThat(updatedItem.getTitle()).isEqualTo("new title2"),
+					() -> assertThat(updatedItem.getPrice()).isEqualTo(200),
+					() -> assertThat(updatedItem.getContent()).isEqualTo("new content2"),
+					() -> assertThat(updatedItem.listImage()).hasSize(3),
+					() -> assertThat(updatedItem.getCategory().getId()).isEqualTo(2L),
+					() -> assertThat(updatedItem.getRegion().getId()).isEqualTo(2L)
+				);
 			})
 		);
 	}
+
+	@DisplayName("상품 상태 수정을 성공한다.")
+	@Test
+	void updateItemStatus() {
+		// given
+		Item myItem = FixtureFactory.createItemFixtures(loginUser, categories.get(0), regions.get(0),
+			statusList.get(0));
+		itemRepository.save(myItem);
+		ItemStatusUpdateServiceRequest request = new ItemStatusUpdateServiceRequest(1L, 3L);
+
+		// when
+		itemService.updateItemStatus(request, loginUser.getId());
+
+		// then
+		Item updatedItem = itemRepository.findDetailById(1L).get();
+		assertAll(
+			() -> assertThat(updatedItem.getStatus().getId()).isEqualTo(3L),
+			() -> assertThat(updatedItem.getStatus().getType()).isEqualTo("예약중")
+		);
+	}
+
+	@DisplayName("다른 사람의 상풍 상태 수정 시 예외를 발생한다.")
+	@Test
+	void updateItemStatusAndThrowPermissionDeniedException() {
+		// given
+		User otheruser = FixtureFactory.createUserFixture(List.of(regions.get(0)));
+		userRepository.save(otheruser);
+		Item notMyItem = FixtureFactory.createItemFixtures(otheruser, categories.get(0), regions.get(0),
+			statusList.get(0));
+		itemRepository.save(notMyItem);
+		ItemStatusUpdateServiceRequest request = new ItemStatusUpdateServiceRequest(1L, 3L);
+
+		// when & then
+		assertThatThrownBy(() -> itemService.updateItemStatus(request, loginUser.getId()))
+			.isInstanceOf(PermissionDeniedException.class)
+			.hasMessage("허가되지 않은 접근입니다");
+	}
+
 }

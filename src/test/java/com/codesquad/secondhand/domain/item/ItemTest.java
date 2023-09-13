@@ -1,6 +1,7 @@
 package com.codesquad.secondhand.domain.item;
 
 import static org.assertj.core.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.Collection;
 import java.util.List;
@@ -167,10 +168,12 @@ public class ItemTest extends IntegrationTestSupport {
 					regions.get(0));
 
 				// then
-				assertThat(myItem.getTitle()).isEqualTo("new Title");
-				assertThat(myItem.getContent()).isEqualTo("new Content");
-				assertThat(myItem.getPrice()).isEqualTo(100);
-				assertThat(myItem.getDetailShot().listAllImages()).isEmpty();
+				assertAll(
+					() -> assertThat(myItem.getTitle()).isEqualTo("new Title"),
+					() -> assertThat(myItem.getContent()).isEqualTo("new Content"),
+					() -> assertThat(myItem.getPrice()).isEqualTo(100),
+					() -> assertThat(myItem.listImage()).isEmpty()
+				);
 			}),
 			DynamicTest.dynamicTest("새로운 내용 및 새로운 이미지가 반영되도록 수정한다.", () -> {
 				// given
@@ -185,10 +188,45 @@ public class ItemTest extends IntegrationTestSupport {
 					regions.get(0));
 
 				// then
-				assertThat(myItem.getTitle()).isEqualTo("new Title2");
-				assertThat(myItem.getContent()).isEqualTo("new Content2");
-				assertThat(myItem.getPrice()).isEqualTo(200);
-				assertThat(myItem.getDetailShot().listAllImages()).hasSize(5);
+				assertAll(
+					() -> assertThat(myItem.getTitle()).isEqualTo("new Title2"),
+					() -> assertThat(myItem.getContent()).isEqualTo("new Content2"),
+					() -> assertThat(myItem.getPrice()).isEqualTo(200),
+					() -> assertThat(myItem.listImage()).hasSize(5)
+				);
+			})
+		);
+	}
+
+	@DisplayName("상품 상태 변경 시나리오")
+	@TestFactory
+	Collection<DynamicTest> updateStatus() {
+		// given
+		Item myItem = FixtureFactory.createItemFixtures(loginUser, categories.get(0), regions.get(0),
+			statusList.get(0));
+		itemRepository.save(myItem);
+		Status status = statusList.get(1);
+
+		return List.of(
+			DynamicTest.dynamicTest("로그인한 사용자의 상품 상태 변경을 성공한다.", () -> {
+				// when
+				myItem.updateStatus(loginUser.getId(), status);
+
+				// then
+				assertAll(
+					() -> assertThat(myItem.getStatus().getId()).isEqualTo(2L),
+					() -> assertThat(myItem.getStatus().getType()).isEqualTo("판매완료")
+				);
+			}),
+			DynamicTest.dynamicTest("다른 사람의 상품 상태 변경 시 예외가 발생한다.", () -> {
+				// given
+				User otherUser = FixtureFactory.createUserFixture(regions);
+				userRepository.save(otherUser);
+
+				// when & then
+				assertThatThrownBy(() -> myItem.updateStatus(otherUser.getId(), status))
+					.isInstanceOf(PermissionDeniedException.class)
+					.hasMessage("허가되지 않은 접근입니다");
 			})
 		);
 	}
