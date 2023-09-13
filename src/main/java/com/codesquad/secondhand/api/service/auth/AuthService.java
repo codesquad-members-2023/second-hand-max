@@ -31,7 +31,7 @@ public class AuthService {
 
 	@Transactional
 	public void signOut(SignInUser signInUser) {
-		jwtService.deleteRefreshToken(signInUser);
+		jwtService.deleteRefreshToken(signInUser.getId());
 	}
 
 	@Transactional

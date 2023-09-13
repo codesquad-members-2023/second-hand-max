@@ -6,10 +6,9 @@ import java.util.Date;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.codesquad.secondhand.annotation.SignInUser;
 import com.codesquad.secondhand.api.service.auth.response.SignInResponse;
+import com.codesquad.secondhand.domain.auth.RedisAuthRepository;
 import com.codesquad.secondhand.domain.auth.RefreshToken;
-import com.codesquad.secondhand.domain.auth.RefreshTokenRepository;
 import com.codesquad.secondhand.domain.user.User;
 import com.codesquad.secondhand.exception.auth.ExpiredTokenException;
 import com.codesquad.secondhand.exception.auth.InvalidTokenException;
@@ -34,21 +33,23 @@ public class JwtService {
 	private static final Duration REFRESH_TOKEN_DURATION = Duration.ofDays(14);
 
 	private final JwtProperties jwtProperties;
-	private final RefreshTokenRepository refreshTokenRepository;
+	private final RedisAuthRepository redisAuthRepository;
 
 	@Transactional
 	public SignInResponse issueTokens(User user) {
 		String accessToken = generateToken(user, ACCESS_TOKEN_DURATION);
 		String refreshToken = generateToken(user, REFRESH_TOKEN_DURATION);
-		RefreshToken previousRefreshToken = refreshTokenRepository.findByUserId(user.getId())
-			.orElseGet(() -> refreshTokenRepository.save(new RefreshToken(null, user, refreshToken)));
-		previousRefreshToken.updateToken(refreshToken);
+		redisAuthRepository.saveRefreshToken(new RefreshToken(user.getId(), refreshToken));
 
 		return new SignInResponse(accessToken, refreshToken);
 	}
 
 	public String reissueAccessToken(User user) {
 		return generateToken(user, ACCESS_TOKEN_DURATION);
+	}
+
+	public void deleteRefreshToken(Long userId) {
+		redisAuthRepository.deleteRefreshTokenByUserId(userId);
 	}
 
 	public Claims parse(String authorizationHeader) {
@@ -67,15 +68,33 @@ public class JwtService {
 		}
 	}
 
-	public void validateRefreshToken(User user, String refreshToken) {
-		if (!refreshTokenRepository.existsByUserIdAndToken(user.getId(), extract(refreshToken))) {
+	public void validateAccessToken(String accessToken) {
+		if (redisAuthRepository.hasKeyInBlacklist(extract(accessToken))) {
 			throw new InvalidTokenException();
 		}
 	}
 
-	@Transactional
-	public void deleteRefreshToken(SignInUser user) {
-		refreshTokenRepository.deleteByUserId(user.getId());
+	public void validateRefreshToken(User user, String refreshToken) {
+		RefreshToken token = redisAuthRepository.findByUserId(user.getId())
+			.orElseThrow(ExpiredTokenException::new);
+
+		if (!token.getRefreshToken().equals(extract(refreshToken))) {
+			throw new InvalidTokenException();
+		}
+	}
+
+	public void saveAccessTokenInBlacklist(String authorizationHeader) {
+		String accessToken = extract(authorizationHeader);
+		redisAuthRepository.saveInvalidAccessToken(accessToken, extractExpiration(accessToken));
+	}
+
+	private Long extractExpiration(String accessToken) {
+		Date expiration = Jwts.parser()
+			.setSigningKey(jwtProperties.getSecretKey())
+			.parseClaimsJws(accessToken)
+			.getBody().getExpiration();
+
+		return expiration.getTime() - new Date().getTime();
 	}
 
 	private String generateToken(User user, Duration expiry) {
