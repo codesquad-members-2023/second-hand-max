@@ -57,7 +57,7 @@ class AuthControllerTest extends ControllerTestSupport {
 			.andExpect(status().isOk())
 			.andExpect(jsonPath("$.code").value(HttpStatus.OK.value()))
 			.andExpect(jsonPath("$.status").value(HttpStatus.OK.getReasonPhrase()))
-			.andExpect(jsonPath("$.message").value(ResponseMessage.USER_SIGN_OUT_SUCCESS.getMessage()));
+			.andExpect(jsonPath("$.message").value(ResponseMessage.REISSUE_ACCESS_TOKEN_SUCCESS.getMessage()));
 	}
 
 	@DisplayName("code를 받아 로그인 요청에 성공하면 200 OK를 응답합니다.")
