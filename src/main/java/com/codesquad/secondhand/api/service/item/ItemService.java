@@ -46,7 +46,7 @@ public class ItemService {
 	private final QueryItemRepository queryItemRepository;
 
 	@Transactional(readOnly = true)
-	public ItemSliceResponse listOfItems(Long categoryId, Long regionId, Pageable pageable) {
+	public ItemSliceResponse findFilteredItemList(Long categoryId, Long regionId, Pageable pageable) {
 		Slice<Item> responses = queryItemRepository.filteredByCategoryIdAndRegionId(categoryId, regionId,
 			pageable);
 

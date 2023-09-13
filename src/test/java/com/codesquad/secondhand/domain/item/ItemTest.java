@@ -82,7 +82,6 @@ public class ItemTest extends IntegrationTestSupport {
 	Collection<DynamicTest> removeItemImage() {
 		//given
 		Item newItem = FixtureFactory.createItemFixture(loginUser, categories.get(0), regions.get(0),
-
 			statusList.get(0));
 		List<Image> itemImages = FixtureFactory.createImageFixtures(2);
 		imageRepository.saveAll(itemImages);

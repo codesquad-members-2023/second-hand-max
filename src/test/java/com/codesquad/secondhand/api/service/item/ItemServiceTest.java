@@ -13,6 +13,8 @@ import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
 import com.codesquad.secondhand.FixtureFactory;
 import com.codesquad.secondhand.IntegrationTestSupport;
@@ -20,6 +22,7 @@ import com.codesquad.secondhand.api.controller.item.response.ItemDetailResponse;
 import com.codesquad.secondhand.api.service.item.request.ItemPostServiceRequest;
 import com.codesquad.secondhand.api.service.item.request.ItemStatusUpdateServiceRequest;
 import com.codesquad.secondhand.api.service.item.request.ItemUpdateServiceRequest;
+import com.codesquad.secondhand.api.service.item.response.ItemSliceResponse;
 import com.codesquad.secondhand.domain.category.Category;
 import com.codesquad.secondhand.domain.category.CategoryRepository;
 import com.codesquad.secondhand.domain.image.Image;
@@ -76,7 +79,7 @@ public class ItemServiceTest extends IntegrationTestSupport {
 		loginUser = FixtureFactory.createUserFixture(List.of(regions.get(0), regions.get(1)));
 		userRepository.save(loginUser);
 
-		categories = FixtureFactory.createCategoryFixtures(3);
+		categories = FixtureFactory.createCategoryFixtures(5);
 		categoryRepository.saveAll(categories);
 
 		images = FixtureFactory.createImageFixtures(3);
@@ -84,6 +87,64 @@ public class ItemServiceTest extends IntegrationTestSupport {
 
 		statusList = FixtureFactory.createStatusFixtures();
 		statusRepository.saveAll(statusList);
+	}
+
+	@DisplayName("지역별 카테고리별 상품 목록 조회 시나리오")
+	@TestFactory
+	Collection<DynamicTest> findFilteredItemList() {
+		// given
+		List<Item> items1 = FixtureFactory.createItemFixtures(6, loginUser, categories.get(1), regions.get(0),
+			statusList.get(0));
+		List<Item> items2 = FixtureFactory.createItemFixtures(8, loginUser, categories.get(2), regions.get(0),
+			statusList.get(1));
+		itemRepository.saveAll(items1);
+		itemRepository.saveAll(items2);
+		Pageable pageable = PageRequest.of(0, 10);
+
+		return List.of(
+			DynamicTest.dynamicTest("1번 지역 및 전체 카테고리에 해당하는 상품 목록 조회를 성공한다.", () -> {
+				// given
+				Long categoryId = 1L;
+				Long regionId = 1L;
+
+				// when
+				ItemSliceResponse response = itemService.findFilteredItemList(categoryId, regionId, pageable);
+
+				// then
+				assertAll(
+					() -> assertThat(response.isHasMore()).isTrue(),
+					() -> assertThat(response.getItems()).hasSize(10)
+				);
+			}),
+			DynamicTest.dynamicTest("1번 지역 및 2번 카테고리에 해당하는 상품 목록 조회를 성공한다.", () -> {
+				// given
+				Long categoryId = 2L;
+				Long regionId = 1L;
+
+				// when
+				ItemSliceResponse response = itemService.findFilteredItemList(categoryId, regionId, pageable);
+
+				// then
+				assertAll(
+					() -> assertThat(response.isHasMore()).isFalse(),
+					() -> assertThat(response.getItems()).hasSize(6)
+				);
+			}),
+			DynamicTest.dynamicTest("1번 지역 및 3번 카테고리에 해당하는 상품 목록 조회를 성공한다.", () -> {
+				// given
+				Long categoryId = 3L;
+				Long regionId = 1L;
+
+				// when
+				ItemSliceResponse response = itemService.findFilteredItemList(categoryId, regionId, pageable);
+
+				// then
+				assertAll(
+					() -> assertThat(response.isHasMore()).isFalse(),
+					() -> assertThat(response.getItems()).hasSize(8)
+				);
+			})
+		);
 	}
 
 	@DisplayName("새로운 상품 등록을 성공한다.")
@@ -240,7 +301,7 @@ public class ItemServiceTest extends IntegrationTestSupport {
 	@TestFactory
 	Collection<DynamicTest> updateItem() {
 		// given
-		Item myItem = FixtureFactory.createItemFixtures(loginUser, categories.get(0), regions.get(0),
+		Item myItem = FixtureFactory.createItemFixture(loginUser, categories.get(0), regions.get(0),
 			statusList.get(0));
 		itemRepository.save(myItem);
 		myItem.addItemImages(images);
@@ -291,7 +352,7 @@ public class ItemServiceTest extends IntegrationTestSupport {
 	@Test
 	void updateItemStatus() {
 		// given
-		Item myItem = FixtureFactory.createItemFixtures(loginUser, categories.get(0), regions.get(0),
+		Item myItem = FixtureFactory.createItemFixture(loginUser, categories.get(0), regions.get(0),
 			statusList.get(0));
 		itemRepository.save(myItem);
 		ItemStatusUpdateServiceRequest request = new ItemStatusUpdateServiceRequest(1L, 3L);
@@ -313,7 +374,7 @@ public class ItemServiceTest extends IntegrationTestSupport {
 		// given
 		User otheruser = FixtureFactory.createUserFixture(List.of(regions.get(0)));
 		userRepository.save(otheruser);
-		Item notMyItem = FixtureFactory.createItemFixtures(otheruser, categories.get(0), regions.get(0),
+		Item notMyItem = FixtureFactory.createItemFixture(otheruser, categories.get(0), regions.get(0),
 			statusList.get(0));
 		itemRepository.save(notMyItem);
 		ItemStatusUpdateServiceRequest request = new ItemStatusUpdateServiceRequest(1L, 3L);

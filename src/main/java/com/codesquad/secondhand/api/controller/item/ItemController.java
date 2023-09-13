@@ -43,7 +43,7 @@ public class ItemController {
 	public ApiResponse<ItemSliceResponse> listFilteredItems(Pageable pageable,
 		@RequestParam Long category, @RequestParam Long region) {
 		return ApiResponse.of(HttpStatus.OK, ResponseMessage.ITEM_FETCH_SUCCESS.getMessage(),
-			itemService.listOfItems(category, region, pageable));
+			itemService.findFilteredItemList(category, region, pageable));
 	}
 
 	@ResponseStatus(HttpStatus.CREATED)

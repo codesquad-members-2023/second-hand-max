@@ -85,6 +85,7 @@ public class UserService {
 				Region.ofDefault())));
 	}
 
+	// todo : 존재하지 않는 statusId에 대한 valid 넣을지 말지 결정
 	@Transactional(readOnly = true)
 	public ItemTransactionSliceResponse findUserTransactionList(Long userId, List<Long> statusIds, Pageable pageable) {
 		Slice<Item> responses = queryItemRepository.filteredByUserIdAndStatusIds(userId, statusIds, pageable);
