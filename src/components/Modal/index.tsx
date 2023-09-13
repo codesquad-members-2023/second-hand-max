@@ -13,12 +13,12 @@ export const ModalOutlet: React.FC<{
     ({ isAddRegionModalOpen }) => isAddRegionModalOpen,
   );
 
+  const portalRoot = parentElement ?? document.body;
+
   return (
     <>
-      {isRegionModalOpen &&
-        createPortal(<RegionModal />, parentElement ?? document.body)}
-      {isAddRegionModalOpen &&
-        createPortal(<AddRegionModal />, parentElement ?? document.body)}
+      {isRegionModalOpen && createPortal(<RegionModal />, portalRoot)}
+      {isAddRegionModalOpen && createPortal(<AddRegionModal />, portalRoot)}
     </>
   );
 };
