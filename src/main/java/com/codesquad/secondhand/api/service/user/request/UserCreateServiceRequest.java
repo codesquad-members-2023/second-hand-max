@@ -6,6 +6,7 @@ import com.codesquad.secondhand.domain.image.Image;
 import com.codesquad.secondhand.domain.provider.Provider;
 import com.codesquad.secondhand.domain.region.Region;
 import com.codesquad.secondhand.domain.user.MyRegion;
+import com.codesquad.secondhand.domain.user.MyWishlist;
 import com.codesquad.secondhand.domain.user.User;
 
 import lombok.AllArgsConstructor;
@@ -28,7 +29,7 @@ public class UserCreateServiceRequest {
 	}
 
 	public User toEntity() {
-		return new User(null, new MyRegion(), image, provider, null, nickname, email, password, null);
+		return new User(null, new MyRegion(), image, provider, new MyWishlist(), nickname, email, password, null);
 	}
 
 }

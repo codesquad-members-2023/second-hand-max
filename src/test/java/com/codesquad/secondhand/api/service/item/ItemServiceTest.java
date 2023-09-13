@@ -166,7 +166,7 @@ public class ItemServiceTest extends IntegrationTestSupport {
 		// given
 		User seller = FixtureFactory.createUserFixture(List.of(regions.get(0)));
 		userRepository.save(seller);
-		Item item = FixtureFactory.createItemFixtures(seller, categories.get(0), regions.get(0), statusList.get(0));
+		Item item = FixtureFactory.createItemFixture(seller, categories.get(0), regions.get(0), statusList.get(0));
 		item.addItemImages(images);
 		itemRepository.save(item);
 
@@ -206,7 +206,7 @@ public class ItemServiceTest extends IntegrationTestSupport {
 	@Test
 	void deleteItem() {
 		// given
-		Item item = FixtureFactory.createItemFixtures(loginUser, categories.get(0), regions.get(0), statusList.get(0));
+		Item item = FixtureFactory.createItemFixture(loginUser, categories.get(0), regions.get(0), statusList.get(0));
 		itemRepository.save(item);
 
 		// when
@@ -223,7 +223,7 @@ public class ItemServiceTest extends IntegrationTestSupport {
 		// given
 		User otheruser = FixtureFactory.createUserFixture(List.of(regions.get(0)));
 		userRepository.save(otheruser);
-		Item item = FixtureFactory.createItemFixtures(otheruser, categories.get(0), regions.get(0), statusList.get(0));
+		Item item = FixtureFactory.createItemFixture(otheruser, categories.get(0), regions.get(0), statusList.get(0));
 		itemRepository.save(item);
 
 		// when & then

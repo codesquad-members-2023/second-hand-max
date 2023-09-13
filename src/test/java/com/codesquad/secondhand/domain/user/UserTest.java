@@ -11,14 +11,25 @@ import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
 import com.codesquad.secondhand.FixtureFactory;
 import com.codesquad.secondhand.IntegrationTestSupport;
+import com.codesquad.secondhand.domain.category.Category;
+import com.codesquad.secondhand.domain.category.CategoryRepository;
 import com.codesquad.secondhand.domain.image.Image;
 import com.codesquad.secondhand.domain.image.ImageRepository;
+import com.codesquad.secondhand.domain.item.Item;
+import com.codesquad.secondhand.domain.item.ItemRepository;
 import com.codesquad.secondhand.domain.region.Region;
 import com.codesquad.secondhand.domain.region.RegionRepository;
+import com.codesquad.secondhand.domain.status.Status;
+import com.codesquad.secondhand.domain.status.StatusRepository;
+import com.codesquad.secondhand.domain.wishlist.WishlistRepository;
 import com.codesquad.secondhand.exception.user_region.NoSuchUserRegionException;
+import com.codesquad.secondhand.exception.wishlist.DuplicatedWishlistException;
+import com.codesquad.secondhand.exception.wishlist.NoSuchWishlistException;
 
 public class UserTest extends IntegrationTestSupport {
 
@@ -30,6 +41,18 @@ public class UserTest extends IntegrationTestSupport {
 
 	@Autowired
 	private ImageRepository imageRepository;
+
+	@Autowired
+	private CategoryRepository categoryRepository;
+
+	@Autowired
+	private StatusRepository statusRepository;
+
+	@Autowired
+	private ItemRepository itemRepository;
+
+	@Autowired
+	private WishlistRepository wishlistRepository;
 
 	@DisplayName("사용자를 등록한다.")
 	@Test
@@ -74,40 +97,6 @@ public class UserTest extends IntegrationTestSupport {
 		);
 	}
 
-	@DisplayName("사용자 동네 선택 시나리오")
-	@TestFactory
-	Collection<DynamicTest> updateSelectedRegion() {
-		// given
-		List<Region> regions = FixtureFactory.createRegionFixtures(2);
-		regionRepository.saveAll(regions);
-
-		User user = FixtureFactory.createUserFixture(List.of(regions.get(0)));
-		User savedUser = userRepository.save(user);
-
-		return List.of(
-			DynamicTest.dynamicTest("사용자 등록 시 기본 동네를 자동으로 선택한다.", () -> {
-				// when & then
-				assertThat(savedUser.getSelectedRegion()).isEqualTo(regions.get(0));
-			}),
-			DynamicTest.dynamicTest("사용자 동네에 없는 동네를 선택하려고 시도하는 경우 에러가 발생한다.", () -> {
-				// when & then
-				assertThatThrownBy(() -> savedUser.updateSelectedRegion(regions.get(1)))
-					.isInstanceOf(NoSuchUserRegionException.class)
-					.hasMessage("사용자 동네 목록에 없는 동네입니다");
-			}),
-			DynamicTest.dynamicTest("사용자 목록에 있는 동네를 선택할 수 있다.", () -> {
-				// given
-				user.addUserRegion(regions.get(1));
-
-				// when
-				savedUser.updateSelectedRegion(regions.get(1));
-
-				//then
-				assertThat(savedUser.getSelectedRegion()).isEqualTo(regions.get(1));
-			})
-		);
-	}
-
 	@DisplayName("사용자의 동네가 아닌 다른 동네에 새로운 상품을 등록하는 경우 예외가 발생한다.")
 	@Test
 	void postItem() {
@@ -121,6 +110,74 @@ public class UserTest extends IntegrationTestSupport {
 		assertThatThrownBy(() -> seller.validateHasRegion(region))
 			.isInstanceOf(NoSuchUserRegionException.class)
 			.hasMessage("사용자 동네 목록에 없는 동네입니다");
+	}
+
+	@DisplayName("사용자 관심 목록 시나리오")
+	@TestFactory
+	Collection<DynamicTest> wishlist() {
+		// given
+		List<Region> regions = FixtureFactory.createRegionFixtures(3);
+		regionRepository.saveAll(regions);
+
+		User user = FixtureFactory.createUserFixture(List.of(regions.get(0)));
+		User savedUser = userRepository.save(user);
+
+		List<Category> categories = FixtureFactory.createCategoryFixtures(3);
+		categoryRepository.saveAll(categories);
+
+		List<Status> statuses = FixtureFactory.createStatusFixtures();
+		statusRepository.saveAll(statuses);
+
+		Item item1 = FixtureFactory.createItemFixture(user, categories.get(0), regions.get(0), statuses.get(0));
+		Item item2 = FixtureFactory.createItemFixture(user, categories.get(1), regions.get(1), statuses.get(1));
+		Item item3 = FixtureFactory.createItemFixture(user, categories.get(2), regions.get(2), statuses.get(2));
+		List<Item> items = itemRepository.saveAll(List.of(item1, item2, item3));
+
+		return List.of(
+			DynamicTest.dynamicTest("관심 목록에 상품을 등록한다.", () -> {
+				// when
+				user.addWishlist(items.get(0));
+
+				// then
+				assertThat(user.getMyWishlist().listAll()).hasSize(1);
+			}),
+			DynamicTest.dynamicTest("중복된 상품을 관심 목록에 등록하려고 시도하는 경우 예외가 발생한다.", () -> {
+				// when & then
+				assertThatThrownBy(() -> user.addWishlist(items.get(0)))
+					.isInstanceOf(DuplicatedWishlistException.class)
+					.hasMessage("이미 관심 목록에 담은 상품입니다");
+			}),
+			DynamicTest.dynamicTest("중복되지 않은 상품을 관심 목록에 등록하는데 성공한다.", () -> {
+				// when
+				user.addWishlist(items.get(1));
+
+				//then
+				assertThat(user.getMyWishlist().listAll()).hasSize(2);
+			}),
+			DynamicTest.dynamicTest("상품을 관심 목록에서 삭제한다.", () -> {
+				// when
+				user.removeWishlist(items.get(1));
+
+				//then
+				assertThat(user.getMyWishlist().listAll()).hasSize(1);
+			}),
+			DynamicTest.dynamicTest("관심 목록에 없는 상품을 삭제하려고 시도하는 경우 예외가 발생한다.", () -> {
+				// when & then
+				assertThatThrownBy(() -> user.removeWishlist(items.get(1)))
+					.isInstanceOf(NoSuchWishlistException.class)
+					.hasMessage("관심 목록에 없는 상품입니다");
+			}),
+			DynamicTest.dynamicTest("아이템을 삭제하면 관심 목록에서도 삭제된다.", () -> {
+				// given
+				Pageable pageable = PageRequest.of(0, 20);
+
+				// when
+				items.get(0).delete(user.getId());
+
+				//then
+				assertThat(wishlistRepository.findSliceByUserId(pageable, user.getId())).isEmpty();
+			})
+		);
 	}
 
 }

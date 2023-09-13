@@ -5,7 +5,7 @@ import static com.codesquad.secondhand.domain.image.QImage.*;
 import static com.codesquad.secondhand.domain.item.QItem.*;
 import static com.codesquad.secondhand.domain.item_image.QItemImage.*;
 import static com.codesquad.secondhand.domain.region.QRegion.*;
-import static com.codesquad.secondhand.domain.wishlist.QWishList.*;
+import static com.codesquad.secondhand.domain.wishlist.QWishlist.*;
 
 import java.util.List;
 
@@ -40,7 +40,7 @@ public class QueryItemRepository {
 				item.updatedAt,
 				item.price,
 				chat.countDistinct(),
-				wishList.countDistinct()
+				wishlist.countDistinct()
 
 			))
 			.from(item)
@@ -52,7 +52,7 @@ public class QueryItemRepository {
 			.leftJoin(item.detailShot.itemImages, itemImage)
 			.leftJoin(itemImage.image, image)
 			.leftJoin(item.chats, chat)
-			.leftJoin(item.wishLists, wishList)
+			.leftJoin(item.wishLists, wishlist)
 			.groupBy(
 				item.id,
 				item.title,
@@ -79,7 +79,7 @@ public class QueryItemRepository {
 
 	private Slice<ItemResponse> checkLastPage(int pageSize, List<ItemResponse> itemList) {
 		boolean hasNext = false;
-		if(itemList.size() > pageSize) {
+		if (itemList.size() > pageSize) {
 			hasNext = true;
 			itemList.remove(pageSize);
 		}

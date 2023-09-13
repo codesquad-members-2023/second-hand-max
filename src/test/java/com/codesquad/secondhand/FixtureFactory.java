@@ -12,6 +12,7 @@ import com.codesquad.secondhand.domain.provider.Provider;
 import com.codesquad.secondhand.domain.region.Region;
 import com.codesquad.secondhand.domain.status.Status;
 import com.codesquad.secondhand.domain.user.MyRegion;
+import com.codesquad.secondhand.domain.user.MyWishlist;
 import com.codesquad.secondhand.domain.user.User;
 
 public abstract class FixtureFactory {
@@ -37,14 +38,8 @@ public abstract class FixtureFactory {
 	}
 
 	public static User createUserFixture(List<Region> regions) {
-		User user = new User(null, new MyRegion(), null, Provider.ofLocal(), null, "nickname", "test@email.com",
-			"password123!", regions.get(0));
-		regions.forEach(user::addUserRegion);
-		return user;
-	}
-
-	public static User createUserFixture(List<Region> regions, String nickname, String email) {
-		User user = new User(null, new MyRegion(), null, Provider.ofLocal(), null, nickname, email,
+		User user = new User(null, new MyRegion(), null, Provider.ofLocal(), new MyWishlist(), "nickname",
+			"test@email.com",
 			"password123!", regions.get(0));
 		regions.forEach(user::addUserRegion);
 		return user;
@@ -56,7 +51,7 @@ public abstract class FixtureFactory {
 			.collect(Collectors.toList());
 	}
 
-	public static Item createItemFixtures(User user, Category category, Region region, Status status) {
+	public static Item createItemFixture(User user, Category category, Region region, Status status) {
 		return new Item(user, category, region, status, LOCAL_DATE_TIME, "title", "content", null);
 	}
 

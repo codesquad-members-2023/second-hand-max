@@ -25,7 +25,7 @@ import com.codesquad.secondhand.domain.item_image.ItemImage;
 import com.codesquad.secondhand.domain.region.Region;
 import com.codesquad.secondhand.domain.status.Status;
 import com.codesquad.secondhand.domain.user.User;
-import com.codesquad.secondhand.domain.wishlist.WishList;
+import com.codesquad.secondhand.domain.wishlist.Wishlist;
 import com.codesquad.secondhand.util.BaseTimeEntity;
 
 import lombok.AccessLevel;
@@ -62,7 +62,7 @@ public class Item extends BaseTimeEntity {
 	private DetailShot detailShot;
 
 	@OneToMany(mappedBy = "item", cascade = CascadeType.ALL)
-	private List<WishList> wishLists = new ArrayList<>();
+	private List<Wishlist> wishLists = new ArrayList<>();
 
 	@OneToMany(mappedBy = "item")
 	private List<Chat> chats = new ArrayList<>();
@@ -110,7 +110,7 @@ public class Item extends BaseTimeEntity {
 	}
 
 	public void addItemImages(List<Image> images) {
-		for(Image image : images) {
+		for (Image image : images) {
 			detailShot.addImage(new ItemImage(null, this, image));
 		}
 	}
