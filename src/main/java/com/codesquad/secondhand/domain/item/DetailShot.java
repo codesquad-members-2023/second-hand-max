@@ -10,6 +10,7 @@ import javax.persistence.OneToMany;
 
 import com.codesquad.secondhand.domain.image.Image;
 import com.codesquad.secondhand.domain.item_image.ItemImage;
+import com.codesquad.secondhand.exception.image.NoSuchImageException;
 import com.codesquad.secondhand.exception.item_image.NoSuchItemImageException;
 
 import lombok.NoArgsConstructor;
@@ -25,6 +26,17 @@ public class DetailShot {
 		return itemImages.stream()
 			.map(ItemImage::getImage)
 			.collect(Collectors.toUnmodifiableList());
+	}
+
+	public String getThumbnailUrl() {
+		if (itemImages.isEmpty()) {
+			return null;
+		}
+		return itemImages.stream()
+			.findFirst()
+			.map(ItemImage::getImage)
+			.orElseThrow(NoSuchImageException::new)
+			.getImageUrl();
 	}
 
 	public void addItemImage(ItemImage itemImage) {

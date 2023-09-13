@@ -1,7 +1,5 @@
 package com.codesquad.secondhand.api.service.item;
 
-import java.util.List;
-
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
@@ -49,11 +47,10 @@ public class ItemService {
 
 	@Transactional(readOnly = true)
 	public ItemSliceResponse listOfItems(Long categoryId, Long regionId, Pageable pageable) {
-		Slice<ItemResponse> responses = queryItemRepository.filteredListByCategoryAndRegion(categoryId, regionId,
+		Slice<Item> responses = queryItemRepository.filteredByCategoryIdAndRegionId(categoryId, regionId,
 			pageable);
-		List<ItemResponse> itemList = responses.getContent();
 
-		return new ItemSliceResponse(responses.hasNext(), itemList);
+		return new ItemSliceResponse(responses.hasNext(), ItemResponse.from(responses.getContent()));
 	}
 
 	@Transactional
@@ -92,7 +89,6 @@ public class ItemService {
 		Category category = categoryRepository.findById(request.getCategoryId())
 			.orElseThrow(NoSuchCategoryException::new);
 
-		// deleteAllItemImages(item);
 		item.update(userId, request.getTitle(), request.getPrice(), request.getContent(), request.getImages(), category,
 			region);
 		return new ItemUpdateResponse(item.getId());

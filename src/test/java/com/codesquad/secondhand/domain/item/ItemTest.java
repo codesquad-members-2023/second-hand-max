@@ -202,7 +202,7 @@ public class ItemTest extends IntegrationTestSupport {
 	@TestFactory
 	Collection<DynamicTest> updateStatus() {
 		// given
-		Item myItem = FixtureFactory.createItemFixtures(loginUser, categories.get(0), regions.get(0),
+		Item myItem = FixtureFactory.createItemFixture(loginUser, categories.get(0), regions.get(0),
 			statusList.get(0));
 		itemRepository.save(myItem);
 		Status status = statusList.get(1);

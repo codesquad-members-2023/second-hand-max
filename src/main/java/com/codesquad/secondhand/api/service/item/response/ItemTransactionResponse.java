@@ -11,36 +11,30 @@ import lombok.Getter;
 
 @AllArgsConstructor
 @Getter
-public class ItemResponse {
+public class ItemTransactionResponse {
+
 	private Long id;
 	private String title;
 	private String region;
-	private String status;
 	private String thumbnail;
-	private LocalDateTime createdAt;
 	private LocalDateTime updatedAt;
 	private Integer price;
-	private int numChat;
-	private int numLikes;
 
-	public static ItemResponse from(Item item) {
-		return new ItemResponse(
+	public static ItemTransactionResponse from(Item item) {
+		return new ItemTransactionResponse(
 			item.getId(),
 			item.getTitle(),
 			item.getRegion().getTitle(),
-			item.getStatus().getType(),
 			item.getThumbnailUrl(),
-			item.getCreatedAt(),
 			item.getUpdatedAt(),
-			item.getPrice(),
-			item.getNumChat(),
-			item.getNumLikes()
+			item.getPrice()
 		);
 	}
 
-	public static List<ItemResponse> from(List<Item> items) {
+	public static List<ItemTransactionResponse> from(List<Item> items) {
 		return items.stream()
-			.map(ItemResponse::from)
+			.map(ItemTransactionResponse::from)
 			.collect(Collectors.toUnmodifiableList());
 	}
+
 }

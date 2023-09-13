@@ -1,12 +1,20 @@
 package com.codesquad.secondhand.api.service.user;
 
+import java.util.List;
+
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.codesquad.secondhand.api.controller.user.response.UserInformationResponse;
+import com.codesquad.secondhand.api.service.item.response.ItemTransactionResponse;
+import com.codesquad.secondhand.api.service.item.response.ItemTransactionSliceResponse;
 import com.codesquad.secondhand.api.service.user.request.UserCreateServiceRequest;
 import com.codesquad.secondhand.api.service.user.request.UserUpdateServiceRequest;
 import com.codesquad.secondhand.domain.image.Image;
+import com.codesquad.secondhand.domain.item.Item;
+import com.codesquad.secondhand.domain.item.QueryItemRepository;
 import com.codesquad.secondhand.domain.provider.Provider;
 import com.codesquad.secondhand.domain.region.Region;
 import com.codesquad.secondhand.domain.user.User;
@@ -25,6 +33,7 @@ public class UserService {
 
 	private final UserRepository userRepository;
 	private final PasswordEncoder passwordEncoder;
+	private final QueryItemRepository queryItemRepository;
 
 	@Transactional
 	public User createUser(UserCreateServiceRequest request) {
@@ -74,6 +83,14 @@ public class UserService {
 		return userRepository.findByProviderIdAndEmail(provider.getId(), email)
 			.orElseGet(() -> createUser(UserCreateServiceRequest.from(email, Provider.ofKakao(),
 				Region.ofDefault())));
+	}
+
+	@Transactional(readOnly = true)
+	public ItemTransactionSliceResponse findUserTransactionList(Long userId, List<Long> statusIds, Pageable pageable) {
+		Slice<Item> responses = queryItemRepository.filteredByUserIdAndStatusIds(userId, statusIds, pageable);
+
+		return new ItemTransactionSliceResponse(responses.hasNext(),
+			ItemTransactionResponse.from(responses.getContent()));
 	}
 
 }

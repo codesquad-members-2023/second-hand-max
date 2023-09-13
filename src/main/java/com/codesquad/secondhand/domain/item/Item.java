@@ -108,6 +108,10 @@ public class Item extends BaseTimeEntity {
 			.anyMatch(w -> w.getUser().isSameUserAs(userId));
 	}
 
+	public String getThumbnailUrl() {
+		return detailShot.getThumbnailUrl();
+	}
+
 	public void addItemImages(List<Image> images) {
 		for (Image image : images) {
 			detailShot.addItemImage(new ItemImage(null, this, image));

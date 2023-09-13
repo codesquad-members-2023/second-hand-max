@@ -29,6 +29,7 @@ public enum ResponseMessage {
 	USER_SIGN_OUT_SUCCESS("로그아웃을 성공하였습니다"),
 	USER_INFORMATION_FETCH_SUCCESS("사용자 정보 조회를 성공하였습니다"),
 	USER_INFORMATION_UPDATE_SUCCESS("사용자 정보 수정을 성공하였습니다"),
+	USER_TRANSACTION_FETCH_SUCCESS("판매내역 조회를 성공하였습니다"),
 
 	// Image
 	MAXIMUM_UPLOAD_SIZE_EXCEEDED("업로드 가능한 파일의 최대 크기를 초과했습니다"),
