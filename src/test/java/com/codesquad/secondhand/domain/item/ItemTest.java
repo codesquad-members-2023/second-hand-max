@@ -62,7 +62,7 @@ public class ItemTest extends IntegrationTestSupport {
 	@Test
 	void addItemImage() {
 		// given
-		Item newItem = FixtureFactory.createItemFixtures(loginUser, categories.get(0), regions.get(0),
+		Item newItem = FixtureFactory.createItemFixture(loginUser, categories.get(0), regions.get(0),
 			statusList.get(0));
 		itemRepository.save(newItem);
 
@@ -76,12 +76,12 @@ public class ItemTest extends IntegrationTestSupport {
 		assertThat(newItem.listImage()).hasSize(images.size());
 	}
 
-
 	@DisplayName("상품 이미지 삭제 시나리오")
 	@TestFactory
 	Collection<DynamicTest> removeItemImage() {
 		//given
-		Item newItem = FixtureFactory.createItemFixtures(loginUser, categories.get(0), regions.get(0), statusList.get(0));
+		Item newItem = FixtureFactory.createItemFixture(loginUser, categories.get(0), regions.get(0),
+			statusList.get(0));
 		List<Image> itemImages = FixtureFactory.createImageFixtures(2);
 		imageRepository.saveAll(itemImages);
 		List<Image> otherImage = FixtureFactory.createImageFixtures(1);
@@ -119,10 +119,10 @@ public class ItemTest extends IntegrationTestSupport {
 		// given
 		User otherUser = FixtureFactory.createUserFixture(regions);
 		userRepository.save(otherUser);
-		Item myItem = FixtureFactory.createItemFixtures(loginUser, categories.get(0), regions.get(0),
+		Item myItem = FixtureFactory.createItemFixture(loginUser, categories.get(0), regions.get(0),
 			statusList.get(0));
 		itemRepository.save(myItem);
-		Item otherItem = FixtureFactory.createItemFixtures(otherUser, categories.get(0), regions.get(0),
+		Item otherItem = FixtureFactory.createItemFixture(otherUser, categories.get(0), regions.get(0),
 			statusList.get(0));
 		itemRepository.save(otherItem);
 
