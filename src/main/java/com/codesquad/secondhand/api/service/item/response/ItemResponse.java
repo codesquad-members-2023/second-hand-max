@@ -16,6 +16,7 @@ public class ItemResponse {
 	private String title;
 	private String region;
 	private String status;
+	private Long sellerId;
 	private String thumbnail;
 	private LocalDateTime createdAt;
 	private LocalDateTime updatedAt;
@@ -29,6 +30,7 @@ public class ItemResponse {
 			item.getTitle(),
 			item.getRegion().getTitle(),
 			item.getStatus().getType(),
+			item.getUser().getId(),
 			item.getThumbnailUrl(),
 			item.getCreatedAt(),
 			item.getUpdatedAt(),
