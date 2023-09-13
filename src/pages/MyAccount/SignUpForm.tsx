@@ -9,9 +9,13 @@ import ProfileImageUploader from '@components/ProfileImageUploader';
 import PATH from '@constants/PATH';
 import { InitOAuthType } from '@hooks/useOAuth';
 import { useImageFileHandler } from '@hooks/useImageFileHandler';
+import { useModalStore } from 'stores/useModalStore';
 
 const SignUpForm: React.FC<{ initOAuth: InitOAuthType }> = ({ initOAuth }) => {
   const [id, setId] = useState('');
+  const setIsRegionModalOpen = useModalStore(
+    ({ setIsRegionModalOpen }) => setIsRegionModalOpen,
+  );
   const { imageSrc, file, onImageChange } = useImageFileHandler();
   const navigate = useNavigate();
 
@@ -59,7 +63,12 @@ const SignUpForm: React.FC<{ initOAuth: InitOAuthType }> = ({ initOAuth }) => {
           }}
         />
       </Field>
-      <Button className="add-region-button" $flexible="Fixed" $type="Outline">
+      <Button
+        className="add-region-button"
+        $flexible="Fixed"
+        $type="Outline"
+        onClick={() => setIsRegionModalOpen(true)}
+      >
         <Icons.Plus />
         <span>위치 추가</span>
       </Button>

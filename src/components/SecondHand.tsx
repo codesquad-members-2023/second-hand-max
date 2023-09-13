@@ -1,10 +1,20 @@
 import { css, styled } from 'styled-components';
 import Tabs from './Tabs/index';
+import { ModalOutlet } from './Modal';
+import { useEffect, useRef, useState } from 'react';
 
 const SecondHand: React.FC = () => {
+  const viewBoxRef = useRef<HTMLDivElement | null>(null);
+  const [viewBox, setViewBox] = useState<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    setViewBox(viewBoxRef.current);
+  }, []);
+
   return (
-    <ViewBox>
+    <ViewBox ref={viewBoxRef}>
       <Tabs />
+      <ModalOutlet parentElement={viewBox} />
     </ViewBox>
   );
 };

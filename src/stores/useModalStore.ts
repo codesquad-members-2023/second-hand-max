@@ -2,8 +2,7 @@ import { create } from 'zustand';
 
 type ModalStore = {
   isRegionModalOpen: boolean;
-  regionModalOpen: () => void;
-  regionModalClose: () => void;
+  setIsRegionModalOpen: (isOpen: boolean) => void;
 };
 
 const initialState = {
@@ -12,6 +11,5 @@ const initialState = {
 
 export const useModalStore = create<ModalStore>()((set) => ({
   ...initialState,
-  regionModalOpen: () => set(() => ({ isRegionModalOpen: true })),
-  regionModalClose: () => set(() => ({ isRegionModalOpen: false })),
+  setIsRegionModalOpen: (isOpen) => set(() => ({ isRegionModalOpen: isOpen })),
 }));
