@@ -18,12 +18,14 @@ import com.codesquad.secondhand.annotation.SignIn;
 import com.codesquad.secondhand.annotation.SignInUser;
 import com.codesquad.secondhand.api.ApiResponse;
 import com.codesquad.secondhand.api.ResponseMessage;
-import com.codesquad.secondhand.api.controller.item.request.ItemUpdateRequest;
 import com.codesquad.secondhand.api.controller.item.request.ItemPostRequest;
+import com.codesquad.secondhand.api.controller.item.request.ItemStatusUpdateRequest;
+import com.codesquad.secondhand.api.controller.item.request.ItemUpdateRequest;
 import com.codesquad.secondhand.api.controller.item.response.ItemDetailResponse;
 import com.codesquad.secondhand.api.service.image.ImageService;
 import com.codesquad.secondhand.api.service.item.ItemService;
 import com.codesquad.secondhand.api.service.item.response.ItemSliceResponse;
+import com.codesquad.secondhand.api.service.item.response.ItemStatusUpdateResponse;
 import com.codesquad.secondhand.api.service.item.response.ItemUpdateResponse;
 
 import lombok.RequiredArgsConstructor;
@@ -70,15 +72,16 @@ public class ItemController {
 	@PutMapping("/{id}")
 	public ApiResponse<ItemUpdateResponse> updateItem(@PathVariable Long id, @RequestBody ItemUpdateRequest request,
 		@SignIn SignInUser signInUser) {
-		//사진 싹 지울까?
 		ItemUpdateResponse response = itemService.updateItem(
 			request.toService(id, imageService.findImagesByIds(request.getImageIds())), signInUser.getId());
 		return ApiResponse.of(HttpStatus.OK, ResponseMessage.ITEM_UPDATE_SUCCESS.getMessage(), response);
 	}
 
 	@PatchMapping("/{id}")
-	public void updateItemState(@PathVariable Long id) {
-
+	public ApiResponse<ItemStatusUpdateResponse> updateItemState(@PathVariable Long id,
+		@RequestBody ItemStatusUpdateRequest request, @SignIn SignInUser signInUser) {
+		return ApiResponse.of(HttpStatus.OK, ResponseMessage.ITEM_STATUS_UPDATE_SUCCESS.getMessage(),
+			itemService.updateItemStatus(request.toService(id), signInUser.getId()));
 	}
 
 }

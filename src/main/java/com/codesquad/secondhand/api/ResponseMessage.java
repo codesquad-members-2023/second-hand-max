@@ -17,6 +17,7 @@ public enum ResponseMessage {
 	ITEM_POST_SUCCESS("상품 등록을 성공하였습니다"),
 	ITEM_DELETE_SUCCESS("상품 삭제를 성공하였습니다"),
 	ITEM_UPDATE_SUCCESS("상품 수정을 성공하였습니다"),
+	ITEM_STATUS_UPDATE_SUCCESS("상품 상태 수정을 성공하였습니다"),
 
 	// User
 	USER_REGION_FETCH_SUCCESS("나의 동네 조회를 성공하였습니다"),

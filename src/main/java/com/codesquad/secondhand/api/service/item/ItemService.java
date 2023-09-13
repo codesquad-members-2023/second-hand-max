@@ -9,16 +9,17 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.codesquad.secondhand.api.controller.item.response.ItemDetailResponse;
 import com.codesquad.secondhand.api.service.item.request.ItemPostServiceRequest;
+import com.codesquad.secondhand.api.service.item.request.ItemStatusUpdateServiceRequest;
 import com.codesquad.secondhand.api.service.item.request.ItemUpdateServiceRequest;
 import com.codesquad.secondhand.api.service.item.response.ItemResponse;
 import com.codesquad.secondhand.api.service.item.response.ItemSliceResponse;
+import com.codesquad.secondhand.api.service.item.response.ItemStatusUpdateResponse;
 import com.codesquad.secondhand.api.service.item.response.ItemUpdateResponse;
 import com.codesquad.secondhand.domain.category.Category;
 import com.codesquad.secondhand.domain.category.CategoryRepository;
 import com.codesquad.secondhand.domain.item.Item;
 import com.codesquad.secondhand.domain.item.ItemRepository;
 import com.codesquad.secondhand.domain.item.QueryItemRepository;
-import com.codesquad.secondhand.domain.item_image.ItemImageRepository;
 import com.codesquad.secondhand.domain.region.Region;
 import com.codesquad.secondhand.domain.region.RegionRepository;
 import com.codesquad.secondhand.domain.status.Status;
@@ -38,8 +39,6 @@ import lombok.RequiredArgsConstructor;
 public class ItemService {
 
 	private static final Long FOR_SALE_ID = 1L;
-	private static final Long SOLD_OUT_ID = 2L;
-	private static final Long RESERVATION_ID = 3L;
 
 	private final ItemRepository itemRepository;
 	private final UserRepository userRepository;
@@ -47,11 +46,11 @@ public class ItemService {
 	private final RegionRepository regionRepository;
 	private final StatusRepository statusRepository;
 	private final QueryItemRepository queryItemRepository;
-	private final ItemImageRepository itemImageRepository;
 
 	@Transactional(readOnly = true)
 	public ItemSliceResponse listOfItems(Long categoryId, Long regionId, Pageable pageable) {
-		Slice<ItemResponse> responses = queryItemRepository.filteredListByCategoryAndRegion(categoryId, regionId, pageable);
+		Slice<ItemResponse> responses = queryItemRepository.filteredListByCategoryAndRegion(categoryId, regionId,
+			pageable);
 		List<ItemResponse> itemList = responses.getContent();
 
 		return new ItemSliceResponse(responses.hasNext(), itemList);
@@ -89,16 +88,22 @@ public class ItemService {
 	@Transactional
 	public ItemUpdateResponse updateItem(ItemUpdateServiceRequest request, Long userId) {
 		Item item = itemRepository.findDetailById(request.getId()).orElseThrow(NoSuchItemException::new);
-		User loginUser = userRepository.findById(userId).orElseThrow(NoSuchUserException::new);
 		Region region = regionRepository.findById(request.getRegionId()).orElseThrow(NoSuchRegionException::new);
-		loginUser.validateHasRegion(region);
 		Category category = categoryRepository.findById(request.getCategoryId())
 			.orElseThrow(NoSuchCategoryException::new);
 
-		itemImageRepository.deleteAllByItemId(item.getId());
+		// deleteAllItemImages(item);
 		item.update(userId, request.getTitle(), request.getPrice(), request.getContent(), request.getImages(), category,
 			region);
 		return new ItemUpdateResponse(item.getId());
+	}
+
+	@Transactional
+	public ItemStatusUpdateResponse updateItemStatus(ItemStatusUpdateServiceRequest request, Long userId) {
+		Item item = itemRepository.findDetailById(request.getItemId()).orElseThrow(NoSuchItemException::new);
+		Status status = statusRepository.findById(request.getStatus()).orElseThrow(NoSuchStatusException::new);
+		item.updateStatus(userId, status);
+		return new ItemStatusUpdateResponse(item.getId());
 	}
 
 }

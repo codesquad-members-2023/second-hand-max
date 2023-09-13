@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
-public class ItemUpdateResponse {
+public class ItemStatusUpdateResponse {
 
 	private Long itemId;
 
