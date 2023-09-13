@@ -111,4 +111,38 @@ class UserRegionTest extends IntegrationTestSupport {
 		);
 	}
 
+	@DisplayName("사용자 동네 선택 시나리오")
+	@TestFactory
+	Collection<DynamicTest> updateSelectedRegion() {
+		// given
+		List<Region> regions = FixtureFactory.createRegionFixtures(2);
+		regionRepository.saveAll(regions);
+
+		User user = FixtureFactory.createUserFixture(List.of(regions.get(0)));
+		User savedUser = userRepository.save(user);
+
+		return List.of(
+			DynamicTest.dynamicTest("사용자 등록 시 기본 동네를 자동으로 선택한다.", () -> {
+				// when & then
+				assertThat(savedUser.getSelectedRegion()).isEqualTo(regions.get(0));
+			}),
+			DynamicTest.dynamicTest("사용자 동네에 없는 동네를 선택하려고 시도하는 경우 에러가 발생한다.", () -> {
+				// when & then
+				assertThatThrownBy(() -> savedUser.updateSelectedRegion(regions.get(1)))
+					.isInstanceOf(NoSuchUserRegionException.class)
+					.hasMessage("사용자 동네 목록에 없는 동네입니다");
+			}),
+			DynamicTest.dynamicTest("사용자 목록에 있는 동네를 선택할 수 있다.", () -> {
+				// given
+				user.addUserRegion(regions.get(1));
+
+				// when
+				savedUser.updateSelectedRegion(regions.get(1));
+
+				//then
+				assertThat(savedUser.getSelectedRegion()).isEqualTo(regions.get(1));
+			})
+		);
+	}
+
 }
