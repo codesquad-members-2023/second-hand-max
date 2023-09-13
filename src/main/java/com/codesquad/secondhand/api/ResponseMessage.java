@@ -29,7 +29,12 @@ public enum ResponseMessage {
 	USER_INFORMATION_UPDATE_SUCCESS("사용자 정보 수정을 성공하였습니다"),
 
 	// Image
-	MAXIMUM_UPLOAD_SIZE_EXCEEDED("업로드 가능한 파일의 최대 크기를 초과했습니다");
+	MAXIMUM_UPLOAD_SIZE_EXCEEDED("업로드 가능한 파일의 최대 크기를 초과했습니다"),
+
+	// Wishlist
+	WISHLIST_FETCH_SUCCESS("관심목록 조회를 성공하였습니다"),
+	WISHLIST_CREATE_SUCCESS("관심목록 추가를 성공하였습니다"),
+	WISHLIST_DELETE_SUCCESS("관심목록 삭제를 성공하였습니다");
 
 	private final String message;
 
