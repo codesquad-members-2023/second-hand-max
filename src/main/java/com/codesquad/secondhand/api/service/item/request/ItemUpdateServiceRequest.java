@@ -9,8 +9,9 @@ import lombok.Getter;
 
 @AllArgsConstructor
 @Getter
-public class ItemPostingServiceRequest {
+public class ItemUpdateServiceRequest {
 
+	private Long id;
 	private String title;
 	private Integer price;
 	private String content;

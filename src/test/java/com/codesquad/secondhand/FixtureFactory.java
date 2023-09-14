@@ -55,6 +55,13 @@ public abstract class FixtureFactory {
 		return new Item(user, category, region, status, LOCAL_DATE_TIME, "title", "content", null);
 	}
 
+	public static List<Item> createItemFixtures(int size, User user, Category category, Region region, Status status) {
+		return IntStream.rangeClosed(1, size)
+			.mapToObj(i -> new Item(user, category, region, status, LOCAL_DATE_TIME, "title" + i,
+				"content" + i, null))
+			.collect(Collectors.toList());
+	}
+
 	public static List<Status> createStatusFixtures() {
 		Status forSale = new Status(1L, "판매중");
 		Status soleOut = new Status(2L, "판매완료");

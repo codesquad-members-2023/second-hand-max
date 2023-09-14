@@ -44,6 +44,7 @@ class AuthServiceTest extends IntegrationTestSupport {
 	@Autowired
 	private RefreshTokenRepository refreshTokenRepository;
 
+	// todo : 오류 수정
 	@DisplayName("사용자 로그인 로그아웃 시나리오")
 	@TestFactory
 	Collection<DynamicTest> signInAndOut() {

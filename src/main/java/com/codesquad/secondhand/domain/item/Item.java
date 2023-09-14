@@ -76,7 +76,6 @@ public class Item extends BaseTimeEntity {
 	private Long views;
 	private boolean isDeleted;
 
-	// todo : 정적 팩토리 메서드? Build 패턴?
 	public Item(User user, Category category, Region region, Status status,
 		LocalDateTime updatedAt, String title, String content, Integer price) {
 		this.user = user;
@@ -109,19 +108,41 @@ public class Item extends BaseTimeEntity {
 			.anyMatch(w -> w.getUser().isSameUserAs(userId));
 	}
 
+	public String getThumbnailUrl() {
+		return detailShot.getThumbnailUrl();
+	}
+
 	public void addItemImages(List<Image> images) {
-		for (Image image : images) {
-			detailShot.addImage(new ItemImage(null, this, image));
+		if (images != null && !images.isEmpty()) {
+			images.forEach(image -> detailShot.addItemImage(new ItemImage(null, this, image)));
 		}
 	}
 
 	public void removeItemImage(Image image) {
-		detailShot.removeImage(image);
+		detailShot.removeItemImage(image);
 	}
 
-	public void delete(Long targetUserId) {
-		this.user.validateSameUser(targetUserId);
+	public void delete(Long userId) {
+		this.user.validateSameUser(userId);
 		this.isDeleted = true;
+	}
+
+	public void update(Long userId, String title, Integer price, String content, List<Image> images,
+		Category category, Region region) {
+		this.user.validateSameUser(userId);
+		this.user.validateHasRegion(region);
+		this.title = title;
+		this.price = price;
+		this.content = content;
+		this.category = category;
+		this.region = region;
+		detailShot.clear();
+		addItemImages(images);
+	}
+
+	public void updateStatus(Long userId, Status status) {
+		this.user.validateSameUser(userId);
+		this.status = status;
 	}
 
 }
