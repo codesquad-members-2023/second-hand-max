@@ -368,7 +368,7 @@ public class ItemServiceTest extends IntegrationTestSupport {
 		);
 	}
 
-	@DisplayName("다른 사람의 상풍 상태 수정 시 예외를 발생한다.")
+	@DisplayName("다른 사람의 상품 상태 수정 시 예외를 발생한다.")
 	@Test
 	void updateItemStatusAndThrowPermissionDeniedException() {
 		// given

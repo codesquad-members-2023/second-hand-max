@@ -77,6 +77,7 @@ public class ItemController {
 		return ApiResponse.of(HttpStatus.OK, ResponseMessage.ITEM_UPDATE_SUCCESS.getMessage(), response);
 	}
 
+	@ResponseStatus(HttpStatus.OK)
 	@PatchMapping("/{id}")
 	public ApiResponse<ItemStatusUpdateResponse> updateItemState(@PathVariable Long id,
 		@RequestBody ItemStatusUpdateRequest request, @SignIn SignInUser signInUser) {
