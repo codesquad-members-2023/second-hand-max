@@ -15,6 +15,7 @@ import com.codesquad.secondhand.exception.auth.SignInFailedException;
 import com.codesquad.secondhand.exception.user.DuplicatedEmailException;
 import com.codesquad.secondhand.exception.user.DuplicatedNicknameException;
 import com.codesquad.secondhand.exception.user.NoSuchUserException;
+import com.codesquad.secondhand.util.PasswordEncoder;
 
 import lombok.RequiredArgsConstructor;
 
@@ -23,6 +24,7 @@ import lombok.RequiredArgsConstructor;
 public class UserService {
 
 	private final UserRepository userRepository;
+	private final PasswordEncoder passwordEncoder;
 
 	@Transactional
 	public User createUser(UserCreateServiceRequest request) {
@@ -32,6 +34,7 @@ public class UserService {
 		if (userRepository.existsByProviderAndEmail(request.getProvider(), request.getEmail())) {
 			throw new DuplicatedEmailException();
 		}
+		request.encodePassword(passwordEncoder.encrypt(request.getPassword()));
 		User user = request.toEntity();
 		user.addUserRegion(request.getRegion());
 		user.updateSelectedRegion(request.getRegion());
@@ -58,8 +61,12 @@ public class UserService {
 
 	@Transactional(readOnly = true)
 	public User findLocalUser(String email, String password) {
-		return userRepository.findByEmailAndPassword(email, password)
-			.orElseThrow(SignInFailedException::new);
+		User user = userRepository.findByProviderIdAndEmail(Provider.ofLocal().getId(), email)
+			.orElseThrow(NoSuchUserException::new);
+		if (passwordEncoder.isMatch(password, user.getPassword())) {
+			return user;
+		}
+		throw new SignInFailedException();
 	}
 
 	@Transactional

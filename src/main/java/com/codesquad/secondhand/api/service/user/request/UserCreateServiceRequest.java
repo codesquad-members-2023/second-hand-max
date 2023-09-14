@@ -32,4 +32,8 @@ public class UserCreateServiceRequest {
 		return new User(null, new MyRegion(), image, provider, new MyWishlist(), nickname, email, password, null);
 	}
 
+	public void encodePassword(String encodedPassword) {
+		this.password = encodedPassword;
+	}
+
 }
