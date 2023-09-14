@@ -1,8 +1,13 @@
 import Button from '@components/Button';
 import { css, styled } from 'styled-components';
+import { Address } from 'types/region';
 
-export const RegionList: React.FC = () => {
-  const dummys = [
+type Props = {
+  onClick: (address: Address) => void;
+};
+
+export const RegionList: React.FC<Props> = ({ onClick }) => {
+  const dummys: Address[] = [
     {
       addressId: 1,
       fullAddressName: '부천시 소사구 괴안동',
@@ -24,7 +29,9 @@ export const RegionList: React.FC = () => {
     <Regions>
       {dummys.map((region) => (
         <Region key={region.addressId}>
-          <RegionButton>{region.fullAddressName}</RegionButton>
+          <RegionButton onClick={() => onClick(region)}>
+            {region.fullAddressName}
+          </RegionButton>
         </Region>
       ))}
     </Regions>
@@ -37,10 +44,8 @@ const Regions = styled.ul`
 
 const Region = styled.li`
   ${({ theme: { colors } }) => css`
-    border-bottom: 0.8px solid ${colors.neutral.border};
-
-    &:last-child {
-      border-bottom: 0px;
+    &:not(:last-child) {
+      border-bottom: 0.8px solid ${colors.neutral.border};
     }
   `}
 `;

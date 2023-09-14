@@ -1,7 +1,6 @@
 import { useModalStore } from 'stores/useModalStore';
 import { RegionModal } from './RegionModal';
 import { createPortal } from 'react-dom';
-import { AddRegionModal } from './RegionModal/AddRegionModal';
 
 export const ModalOutlet: React.FC<{
   parentElement: HTMLDivElement | null;
@@ -9,16 +8,8 @@ export const ModalOutlet: React.FC<{
   const isRegionModalOpen = useModalStore(
     ({ isRegionModalOpen }) => isRegionModalOpen,
   );
-  const isAddRegionModalOpen = useModalStore(
-    ({ isAddRegionModalOpen }) => isAddRegionModalOpen,
-  );
 
   const portalRoot = parentElement ?? document.body;
 
-  return (
-    <>
-      {isRegionModalOpen && createPortal(<RegionModal />, portalRoot)}
-      {isAddRegionModalOpen && createPortal(<AddRegionModal />, portalRoot)}
-    </>
-  );
+  return <>{isRegionModalOpen && createPortal(<RegionModal />, portalRoot)}</>;
 };

@@ -64,10 +64,8 @@ const Container = styled.li`
     display: flex;
     gap: 16px;
 
-    border-bottom: 1px solid ${colors.neutral.border};
-
-    &:last-child {
-      border: 0;
+    &:not(:last-child) {
+      border-bottom: 1px solid ${colors.neutral.border};
     }
 
     & > figure {

@@ -1,17 +1,15 @@
 import Button from '@components/Button';
 import TopBar from '@components/TopBar';
 import PATH from '@constants/PATH';
-import { InitOAuthType } from '@hooks/useOAuth';
 import { useNavigate } from 'react-router-dom';
 import { css, styled } from 'styled-components';
 
 type Props = {
-  id: string;
-  file?: File;
-  initOAuth: InitOAuthType;
+  canSubmit: boolean;
+  onSubmit: () => void;
 };
 
-export const SignUpFormTitle: React.FC<Props> = ({ id, file, initOAuth }) => {
+export const SignUpFormTitle: React.FC<Props> = ({ canSubmit, onSubmit }) => {
   const navigate = useNavigate();
 
   return (
@@ -30,10 +28,8 @@ export const SignUpFormTitle: React.FC<Props> = ({ id, file, initOAuth }) => {
       <Button
         $flexible="Flexible"
         $type="Ghost"
-        disabled={!id}
-        onClick={() => {
-          initOAuth({ action: 'sign-up', id, file });
-        }}
+        disabled={!canSubmit}
+        onClick={onSubmit}
       >
         완료
       </Button>

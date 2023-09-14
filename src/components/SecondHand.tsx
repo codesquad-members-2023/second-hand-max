@@ -20,11 +20,13 @@ const SecondHand: React.FC = () => {
 };
 
 const ViewBox = styled.div`
-  ${({ theme: { colors } }) => css`
+  ${({ theme: { colors, radius } }) => css`
     width: 393px;
     height: 852px;
     background-color: ${colors.neutral.background};
     box-shadow: 0 5px 20px rgba(0, 0, 0, 0.8);
+    border-radius: ${radius.large};
+    overflow: hidden;
     position: relative;
   `};
 `;

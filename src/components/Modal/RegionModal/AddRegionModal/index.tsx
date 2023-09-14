@@ -2,20 +2,22 @@ import { Modal } from '@components/Modal/ModalSheet';
 import { AddRegionModalHeader } from './AddRegionModalHeader';
 import { SearchBar } from './SearchBar';
 import { RegionList } from './RegionList';
-import { useModalStore } from 'stores/useModalStore';
+import { Address } from 'types/region';
 
-export const AddRegionModal: React.FC = () => {
-  const setIsAddRegionModalOpen = useModalStore(
-    ({ setIsAddRegionModalOpen }) => setIsAddRegionModalOpen,
-  );
+type Props = {
+  onModalClose: () => void;
+  addRegion: (address: Address) => void;
+};
 
-  const onModalClose = () => setIsAddRegionModalOpen(false);
-
+export const AddRegionModal: React.FC<Props> = ({
+  onModalClose,
+  addRegion,
+}) => {
   return (
     <Modal onModalClose={onModalClose}>
       <AddRegionModalHeader onModalClose={onModalClose} />
       <SearchBar />
-      <RegionList />
+      <RegionList onClick={addRegion} />
     </Modal>
   );
 };

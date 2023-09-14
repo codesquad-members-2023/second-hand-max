@@ -1,19 +1,14 @@
 import Button from '@components/Button';
 import Icons from '@design/Icons';
-import { useModalStore } from 'stores/useModalStore';
 import { css, styled } from 'styled-components';
 
-export const AddRegionButton: React.FC = () => {
-  const setIsAddRegionModalOpen = useModalStore(
-    ({ setIsAddRegionModalOpen }) => setIsAddRegionModalOpen,
-  );
+type Props = {
+  onClick: () => void;
+};
 
+export const AddRegionButton: React.FC<Props> = ({ onClick }) => {
   return (
-    <StyledButton
-      $flexible="Fixed"
-      $type="Outline"
-      onClick={() => setIsAddRegionModalOpen(true)}
-    >
+    <StyledButton $flexible="Fixed" $type="Outline" onClick={onClick}>
       <Icons.Plus />
       <span>위치 추가</span>
     </StyledButton>

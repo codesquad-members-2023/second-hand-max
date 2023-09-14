@@ -1,14 +1,9 @@
 import Button from '@components/Button';
 import Icons from '@design/Icons';
 import { css, styled } from 'styled-components';
+import { AddedRegionItem } from '../AddedRegionBox';
 
-type Props = {
-  onAddRegionModalOpen: () => void;
-};
-
-export const RegionModalContent: React.FC<Props> = ({
-  onAddRegionModalOpen,
-}) => {
+export const RegionModalContent: React.FC = () => {
   return (
     <Content>
       <Notice>
@@ -16,18 +11,13 @@ export const RegionModalContent: React.FC<Props> = ({
         <br />
         최대 2개까지 설정 가능해요.
       </Notice>
-      <Regions>
-        <Region>
-          <span>역삼 1동</span>
-          <DeleteButton>
-            <Icons.CircleXFilled />
-          </DeleteButton>
-        </Region>
-        <AddRegion onClick={onAddRegionModalOpen}>
+      <AddedRegions>
+        <AddedRegionItem />
+        <AddRegion onClick={() => {}}>
           <Icons.Plus />
           <span>추가</span>
         </AddRegion>
-      </Regions>
+      </AddedRegions>
     </Content>
   );
 };
@@ -47,34 +37,10 @@ const Notice = styled.div`
   `}
 `;
 
-const Regions = styled.ul`
+const AddedRegions = styled.ul`
   display: flex;
   flex-direction: column;
   gap: 8px;
-`;
-
-const Region = styled.li`
-  ${({ theme: { fonts, colors, radius } }) => css`
-    padding: 16px;
-    border-radius: ${radius.medium};
-    background-color: ${colors.accent.primary};
-    box-sizing: border-box;
-    color: ${colors.accent.text};
-    ${fonts.available.strong16};
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-
-    svg {
-      fill: ${colors.accent.text};
-      stroke: ${colors.accent.text};
-      cursor: pointer;
-    }
-  `}
-`;
-
-const DeleteButton = styled(Button)`
-  padding: 0;
 `;
 
 const AddRegion = styled(Button)`

@@ -7,17 +7,13 @@ export const RegionModal: React.FC = () => {
   const setIsRegionModalOpen = useModalStore(
     ({ setIsRegionModalOpen }) => setIsRegionModalOpen,
   );
-  const setIsAddRegionModalOpen = useModalStore(
-    ({ setIsAddRegionModalOpen }) => setIsAddRegionModalOpen,
-  );
 
   const onModalClose = () => setIsRegionModalOpen(false);
-  const onAddRegionModalOpen = () => setIsAddRegionModalOpen(true);
 
   return (
     <Modal onModalClose={onModalClose}>
       <RegionModalHeader onModalClose={onModalClose} />
-      <RegionModalContent onAddRegionModalOpen={onAddRegionModalOpen} />
+      <RegionModalContent />
     </Modal>
   );
 };
