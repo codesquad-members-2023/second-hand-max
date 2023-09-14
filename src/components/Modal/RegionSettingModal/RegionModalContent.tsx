@@ -12,7 +12,12 @@ export const RegionModalContent: React.FC = () => {
         최대 2개까지 설정 가능해요.
       </Notice>
       <AddedRegions>
-        <AddedRegionItem />
+        <AddedRegionItem
+          {...{
+            addressName: '',
+            onDeleteButtonClick: () => {},
+          }}
+        />
         <AddRegion onClick={() => {}}>
           <Icons.Plus />
           <span>추가</span>

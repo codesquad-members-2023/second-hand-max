@@ -1,15 +1,20 @@
 import { useModalStore } from 'stores/useModalStore';
-import { RegionModal } from './RegionModal';
+import { RegionSettingModal } from './RegionSettingModal';
 import { createPortal } from 'react-dom';
 
 export const ModalOutlet: React.FC<{
   parentElement: HTMLDivElement | null;
 }> = ({ parentElement }) => {
-  const isRegionModalOpen = useModalStore(
-    ({ isRegionModalOpen }) => isRegionModalOpen,
+  const isRegionSettingModalOpen = useModalStore(
+    ({ isRegionSettingModalOpen }) => isRegionSettingModalOpen,
   );
 
   const portalRoot = parentElement ?? document.body;
 
-  return <>{isRegionModalOpen && createPortal(<RegionModal />, portalRoot)}</>;
+  return (
+    <>
+      {isRegionSettingModalOpen &&
+        createPortal(<RegionSettingModal />, portalRoot)}
+    </>
+  );
 };

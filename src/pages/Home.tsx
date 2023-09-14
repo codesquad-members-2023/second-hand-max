@@ -7,25 +7,24 @@ import {
 } from '@components/Dropdown/DropdownMenuItem';
 import { DropdownMenus } from '@components/Dropdown/DropdownMenus';
 import Fab from '@components/Fab';
-import { AddRegionModal } from '@components/Modal/RegionModal/AddRegionModal';
 import ProductList from '@components/ProductList';
 import TopBar from '@components/TopBar';
 import Icons from '@design/Icons';
 import { useState } from 'react';
+import { useModalStore } from 'stores/useModalStore';
 import { useUserStore } from 'stores/useUserStore';
 import { css, styled } from 'styled-components';
 
 const Home: React.FC = () => {
   const currentRegion = useUserStore(({ currentRegion }) => currentRegion);
+  const setIsRegionSettingModalOpen = useModalStore(
+    ({ setIsRegionSettingModalOpen }) => setIsRegionSettingModalOpen,
+  );
   const [isRegionMenuOpen, setIsRegionMenuOpen] = useState(false);
-  const [isAddRegionOpen, setIsAddRegionOpen] = useState(false);
 
   const regionMenuOpen = () => setIsRegionMenuOpen(true);
   const regionMenuClose = () => setIsRegionMenuOpen(false);
-  const addRegionMenuOpen = () => setIsAddRegionOpen(true);
-  const addRegionMenuClose = () => setIsAddRegionOpen(false);
-
-  // addRegion gogo
+  const regionSettingModalOpen = () => setIsRegionSettingModalOpen(true);
 
   return (
     <>
@@ -39,15 +38,10 @@ const Home: React.FC = () => {
             <DropdownMenus onClose={regionMenuClose}>
               <DropdownMenuItem onClick={() => {}}>역삼 1동</DropdownMenuItem>
               <DropdownMenuItem onClick={() => {}}>공릉 2동</DropdownMenuItem>
-              <SetRegionButton onClick={addRegionMenuOpen}>
+              <SetRegionButton onClick={regionSettingModalOpen}>
                 내 동네 설정하기
               </SetRegionButton>
             </DropdownMenus>
-          )}
-          {isAddRegionOpen && (
-            <AddRegionModal
-              {...{ onModalClose: addRegionMenuClose, addRegion: () => {} }}
-            />
           )}
         </DropdownContainer>
 

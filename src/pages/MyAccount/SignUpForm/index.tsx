@@ -6,7 +6,7 @@ import { useImageFileHandler } from '@hooks/useImageFileHandler';
 import { SignUpFormTitle } from './SignUpFormTitle';
 import { SignUpField } from './SignUpField';
 import { AddRegionButton } from './AddRegionButton';
-import { AddRegionModal } from '@components/Modal/RegionModal/AddRegionModal';
+import { AddRegionModal } from '@components/Modal/RegionSettingModal/AddRegionModal';
 import { Address } from 'types/region';
 import { AddedRegionItem } from '@components/Modal/AddedRegionBox';
 

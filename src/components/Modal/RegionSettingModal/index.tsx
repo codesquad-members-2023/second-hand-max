@@ -3,12 +3,12 @@ import { Modal } from '../ModalSheet';
 import { RegionModalHeader } from './RegionModalHeader';
 import { RegionModalContent } from './RegionModalContent';
 
-export const RegionModal: React.FC = () => {
-  const setIsRegionModalOpen = useModalStore(
-    ({ setIsRegionModalOpen }) => setIsRegionModalOpen,
+export const RegionSettingModal: React.FC = () => {
+  const setIsRegionSettingModalOpen = useModalStore(
+    ({ setIsRegionSettingModalOpen }) => setIsRegionSettingModalOpen,
   );
 
-  const onModalClose = () => setIsRegionModalOpen(false);
+  const onModalClose = () => setIsRegionSettingModalOpen(false);
 
   return (
     <Modal onModalClose={onModalClose}>
