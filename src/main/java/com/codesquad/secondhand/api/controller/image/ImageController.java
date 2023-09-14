@@ -1,12 +1,17 @@
 package com.codesquad.secondhand.api.controller.image;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestPart;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.codesquad.secondhand.api.ApiResponse;
+import com.codesquad.secondhand.api.ResponseMessage;
 import com.codesquad.secondhand.api.controller.image.request.ImageRequest;
+import com.codesquad.secondhand.api.controller.image.response.ImageResponse;
 import com.codesquad.secondhand.api.service.image.ImageService;
 
 import lombok.RequiredArgsConstructor;
@@ -18,8 +23,11 @@ public class ImageController {
 
 	private final ImageService imageService;
 
+	@ResponseStatus(HttpStatus.CREATED)
 	@PostMapping
-	public void saveImage(@RequestPart MultipartFile image, @RequestPart ImageRequest request) {
-		imageService.createImage(image, request.getType());
+	public ApiResponse<ImageResponse> saveImage(@RequestPart MultipartFile image, @RequestPart ImageRequest request) {
+		return ApiResponse.of(HttpStatus.CREATED, ResponseMessage.IMAGE_CREATE_SUCCESS.getMessage(),
+			ImageResponse.of(imageService.createImage(image, request.getType())));
 	}
+
 }
