@@ -1,9 +1,16 @@
 import { css, styled } from 'styled-components';
 
-export const SearchBar: React.FC = () => {
+type Props = {
+  onChange: (value: string) => void;
+};
+
+export const SearchBar: React.FC<Props> = ({ onChange }) => {
   return (
     <SearchBarWrapper>
-      <SearchBarInput placeholder="동명(읍, 면)으로 검색(ex. 서초동)" />
+      <SearchBarInput
+        placeholder="동명(읍, 면)으로 검색(ex. 서초동)"
+        onChange={({ target }) => onChange(target.value)}
+      />
     </SearchBarWrapper>
   );
 };

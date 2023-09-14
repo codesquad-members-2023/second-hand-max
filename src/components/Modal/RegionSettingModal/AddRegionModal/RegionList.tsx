@@ -3,31 +3,14 @@ import { css, styled } from 'styled-components';
 import { Address } from 'types/region';
 
 type Props = {
+  regions?: Address[];
   onClick: (address: Address) => void;
 };
 
-export const RegionList: React.FC<Props> = ({ onClick }) => {
-  const dummys: Address[] = [
-    {
-      addressId: 1,
-      fullAddressName: '부천시 소사구 괴안동',
-      addressName: '괴안동',
-    },
-    {
-      addressId: 2,
-      fullAddressName: '부천시 소사구 범박동',
-      addressName: '범박동',
-    },
-    {
-      addressId: 3,
-      fullAddressName: '부천시 소사구 옥길동',
-      addressName: '옥길동',
-    },
-  ];
-
+export const RegionList: React.FC<Props> = ({ regions, onClick }) => {
   return (
     <Regions>
-      {dummys.map((region) => (
+      {regions?.map((region) => (
         <Region key={region.addressId}>
           <RegionButton onClick={() => onClick(region)}>
             {region.fullAddressName}
