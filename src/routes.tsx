@@ -1,13 +1,12 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-
 import SecondHand from '@components/SecondHand';
-import Home from '@pages/Home';
 import PATH from '@constants/PATH';
 import SalesHistory from '@pages/SalesHistory';
 import Wishlist from '@pages/Wishlist';
 import Chatting from '@pages/Chatting';
 import MyAccount from '@pages/MyAccount';
 import OAuthLoadingPage from '@pages/MyAccount/OAuthLoadingPage';
+import { Home } from '@pages/Home/index';
 
 const AppRoutes: React.FC = () => {
   return (
