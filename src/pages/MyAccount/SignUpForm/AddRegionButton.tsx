@@ -4,11 +4,17 @@ import { css, styled } from 'styled-components';
 
 type Props = {
   onClick: () => void;
+  disabled: boolean;
 };
 
-export const AddRegionButton: React.FC<Props> = ({ onClick }) => {
+export const AddRegionButton: React.FC<Props> = ({ onClick, disabled }) => {
   return (
-    <StyledButton $flexible="Fixed" $type="Outline" onClick={onClick}>
+    <StyledButton
+      $flexible="Fixed"
+      $type="Outline"
+      onClick={onClick}
+      disabled={disabled}
+    >
       <Icons.Plus />
       <span>위치 추가</span>
     </StyledButton>

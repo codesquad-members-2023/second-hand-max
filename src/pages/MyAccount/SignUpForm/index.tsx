@@ -41,6 +41,7 @@ const SignUpForm: React.FC<{ initOAuth: InitOAuthType }> = ({ initOAuth }) => {
   };
 
   const canSubmit = !!id && addresses.length > 0;
+  const canAddRegion = addresses.length < 2;
 
   return (
     <StyledSignUpPage>
@@ -58,7 +59,10 @@ const SignUpForm: React.FC<{ initOAuth: InitOAuthType }> = ({ initOAuth }) => {
           />
         ))}
       </AddedAddresses>
-      <AddRegionButton onClick={onAddRegionModalOpen} />
+      <AddRegionButton
+        onClick={onAddRegionModalOpen}
+        disabled={!canAddRegion}
+      />
       {isAddRegionModalOpen && (
         <AddRegionModal
           {...{
