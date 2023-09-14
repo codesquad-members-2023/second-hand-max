@@ -38,9 +38,13 @@ export const SignUpFormTitle: React.FC<Props> = ({ canSubmit, onSubmit }) => {
 };
 
 const Title = styled(TopBar)`
-  justify-content: space-between;
-  ${({ theme: { fonts } }) => css`
+  ${({ theme: { fonts, colors } }) => css`
     ${fonts.display.strong16};
+    justify-content: space-between;
+    background-color: ${colors.neutral.background};
+    position: absolute;
+    top: 0;
+    overflow: hidden;
 
     button {
       ${fonts.available.strong16};
