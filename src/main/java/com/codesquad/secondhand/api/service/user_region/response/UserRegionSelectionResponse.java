@@ -12,6 +12,6 @@ import lombok.NoArgsConstructor;
 public class UserRegionSelectionResponse {
 
 	Long selectedId;
-	List<UserRegionResponse> userRegions;
+	List<UserRegionResponse> regions;
 
 }
