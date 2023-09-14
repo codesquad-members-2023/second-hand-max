@@ -1,5 +1,7 @@
 package com.codesquad.secondhand.api.controller.item;
 
+import javax.validation.Valid;
+
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -48,7 +50,7 @@ public class ItemController {
 
 	@ResponseStatus(HttpStatus.CREATED)
 	@PostMapping
-	public ApiResponse<Void> postItem(@RequestBody ItemPostRequest request, @SignIn SignInUser signInUser) {
+	public ApiResponse<Void> postItem(@RequestBody @Valid ItemPostRequest request, @SignIn SignInUser signInUser) {
 		itemService.postItem(request.toService(imageService.findImagesByIds(request.getImageIds())),
 			signInUser.getId());
 		return ApiResponse.noData(HttpStatus.CREATED, ResponseMessage.ITEM_POST_SUCCESS.getMessage());
