@@ -2,7 +2,7 @@ package com.codesquad.secondhand.api.controller.item.request;
 
 import java.util.List;
 
-import com.codesquad.secondhand.api.service.item.request.ItemPostingServiceRequest;
+import com.codesquad.secondhand.api.service.item.request.ItemPostServiceRequest;
 import com.codesquad.secondhand.domain.image.Image;
 
 import lombok.AllArgsConstructor;
@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
-public class ItemPostingRequest {
+public class ItemPostRequest {
 
 	private String title;
 	private Integer price;
@@ -21,8 +21,8 @@ public class ItemPostingRequest {
 	private Long categoryId;
 	private Long regionId;
 
-	public ItemPostingServiceRequest toService(List<Image> images) {
-		return new ItemPostingServiceRequest(title, price, content, images, categoryId, regionId);
+	public ItemPostServiceRequest toService(List<Image> images) {
+		return new ItemPostServiceRequest(title, price, content, images, categoryId, regionId);
 	}
 
 }
