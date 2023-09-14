@@ -44,7 +44,7 @@ public class ImageService {
 
 	@Transactional(readOnly = true)
 	public List<Image> findImagesByIds(List<Long> imageIds) {
-		if(imageIds == null || imageIds.isEmpty()) {
+		if (imageIds == null || imageIds.isEmpty()) {
 			return Collections.emptyList();
 		}
 		return Collections.unmodifiableList(imageRepository.findAllById(imageIds));

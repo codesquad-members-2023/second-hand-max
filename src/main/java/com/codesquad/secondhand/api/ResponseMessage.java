@@ -33,6 +33,7 @@ public enum ResponseMessage {
 
 	// Image
 	MAXIMUM_UPLOAD_SIZE_EXCEEDED("업로드 가능한 파일의 최대 크기를 초과했습니다"),
+	IMAGE_CREATE_SUCCESS("이미지 등록을 성공하였습니다"),
 
 	// Wishlist
 	WISHLIST_FETCH_SUCCESS("관심목록 조회를 성공하였습니다"),
