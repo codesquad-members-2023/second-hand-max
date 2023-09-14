@@ -63,7 +63,10 @@ const SignUpForm: React.FC<{ initOAuth: InitOAuthType }> = ({ initOAuth }) => {
         <AddRegionModal
           {...{
             onModalClose: onAddRegionModalClose,
-            addRegion: addAddress,
+            addRegion: (address) => {
+              addAddress(address);
+              onAddRegionModalClose();
+            },
           }}
         />
       )}
