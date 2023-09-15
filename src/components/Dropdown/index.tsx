@@ -1,13 +1,10 @@
-import { styled } from 'styled-components';
+import { DropdownIndicator } from './DropdownIndicator';
+import { DropdownMenus } from './DropdownMenus';
+import { DropdownMenuItem } from './DropdownMenuItem';
+import { DropdownContainer } from './DropdownContainer';
 
-type Props = {
-  children: React.ReactNode;
-};
-
-export const DropdownContainer: React.FC<Props> = ({ children }) => {
-  return <StyledDropdownContainer>{children}</StyledDropdownContainer>;
-};
-
-const StyledDropdownContainer = styled.div`
-  position: relative;
-`;
+export const Dropdown = Object.assign(DropdownContainer, {
+  Indicator: DropdownIndicator,
+  Menus: DropdownMenus,
+  MenuItem: DropdownMenuItem,
+});
