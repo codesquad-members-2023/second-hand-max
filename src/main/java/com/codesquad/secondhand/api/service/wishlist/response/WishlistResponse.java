@@ -17,24 +17,25 @@ public class WishlistResponse {
 	private String title;
 	private String region;
 	private String status;
+	private Long sellerId;
 	private String thumbnailUrl;
 	private LocalDateTime updatedAt;
-	private int price;
+	private Integer price;
 	private int numChat;
 	private int numLikes;
 
 	public static WishlistResponse from(Wishlist wishlist) {
 		return new WishlistResponse(
-			wishlist.getItem().getId(),
-			wishlist.getItem().getTitle(),
-			wishlist.getItem().getRegion().getTitle(),
-			wishlist.getItem().getStatus().getType(),
-			!wishlist.getItem().getDetailShot().listAllImages().isEmpty() ?
-				wishlist.getItem().getDetailShot().listAllImages().get(0).getImageUrl() : null,
-			wishlist.getItem().getUpdatedAt(),
-			wishlist.getItem().getPrice(),
-			wishlist.getItem().getNumChat(),
-			wishlist.getItem().getPrice());
+			wishlist.getItemId(),
+			wishlist.getItemTitle(),
+			wishlist.getItemRegionTitle(),
+			wishlist.getItemStatusType(),
+			wishlist.getItemSellerId(),
+			wishlist.getItemThumbnailUrl(),
+			wishlist.getItemUpdatedAt(),
+			wishlist.getItemPrice(),
+			wishlist.getItemNumChat(),
+			wishlist.getItemNumLikes());
 	}
 
 }
