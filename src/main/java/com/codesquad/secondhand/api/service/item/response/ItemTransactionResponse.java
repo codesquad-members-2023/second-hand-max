@@ -16,7 +16,7 @@ public class ItemTransactionResponse {
 	private Long id;
 	private String title;
 	private String region;
-	private String thumbnail;
+	private String thumbnailUrl;
 	private LocalDateTime updatedAt;
 	private Integer price;
 
