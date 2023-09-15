@@ -18,7 +18,6 @@ public class ItemResponse {
 	private String status;
 	private Long sellerId;
 	private String thumbnail;
-	private LocalDateTime createdAt;
 	private LocalDateTime updatedAt;
 	private Integer price;
 	private int numChat;
@@ -33,7 +32,6 @@ public class ItemResponse {
 			item.getUser().getId(),
 			item.getThumbnailUrl(),
 			item.getCreatedAt(),
-			item.getUpdatedAt(),
 			item.getPrice(),
 			item.getNumChat(),
 			item.getNumLikes()
