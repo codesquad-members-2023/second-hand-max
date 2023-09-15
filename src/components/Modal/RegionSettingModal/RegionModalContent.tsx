@@ -1,7 +1,7 @@
 import Button from '@components/Button';
 import Icons from '@design/Icons';
 import { css, styled } from 'styled-components';
-import { AddedRegionItem } from '../AddedRegionBox';
+import { AddedRegionItem } from '../AddedRegionItem';
 
 export const RegionModalContent: React.FC = () => {
   return (

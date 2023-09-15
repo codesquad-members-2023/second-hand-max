@@ -8,7 +8,7 @@ import { SignUpField } from './SignUpField';
 import { AddRegionButton } from './AddRegionButton';
 import { AddRegionModal } from '@components/Modal/RegionSettingModal/AddRegionModal';
 import { Address } from 'types/region';
-import { AddedRegionItem } from '@components/Modal/AddedRegionBox';
+import { AddedRegionItem } from '@components/Modal/AddedRegionItem';
 
 const SignUpForm: React.FC<{ initOAuth: InitOAuthType }> = ({ initOAuth }) => {
   const { imageSrc, file, onImageChange } = useImageFileHandler();
