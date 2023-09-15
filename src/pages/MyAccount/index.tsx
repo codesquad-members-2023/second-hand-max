@@ -3,10 +3,10 @@ import { Routes, Route } from 'react-router-dom';
 import PATH from '@constants/PATH';
 import TopBar from '@components/TopBar';
 import SignInForm from './SignInForm';
-import SignUpForm from './SignUpForm';
 import useOAuth from '@hooks/useOAuth';
 import Profile from './Profile';
 import { useUserStore } from 'stores/useUserStore';
+import SignUpForm from './SignUpForm';
 
 const MyAccount: React.FC = () => {
   const { initOAuth } = useOAuth();

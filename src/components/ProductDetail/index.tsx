@@ -4,7 +4,7 @@ import Visual from './Visual';
 import Content from './Content';
 import sample from '../../assets/sample.jpg';
 
-const Detail: React.FC = () => {
+const ProductDetail: React.FC = () => {
   return (
     <Container>
       <Title />
@@ -44,4 +44,4 @@ const Container = styled.article`
   }
 `;
 
-export default Detail;
+export default ProductDetail;
