@@ -21,14 +21,8 @@ public class MemberAddressService {
 
     @Transactional
     public List<MemberAddressResponse> deleteAndUpdateMemberAddresses(Member member, List<Address> addresses) {
-        deleteMemberAddressIfExists(member.getId());
+        memberAddressRepository.deleteByMemberId(member.getId());
         return updateMemberAddresses(MemberAddress.of(member, addresses));
-    }
-
-    private void deleteMemberAddressIfExists(Long memberId) {
-        if (memberAddressRepository.existsByMemberId(memberId)) {
-            memberAddressRepository.deleteByMemberId(memberId);
-        }
     }
 
     private List<MemberAddressResponse> updateMemberAddresses(List<MemberAddress> memberAddresses) {
@@ -37,32 +31,14 @@ public class MemberAddressService {
     }
 
     @Transactional
-    public void updateLastVisitedAddress(Long memberId, Long lastVisitedAddressId) {
-        resetLastVisitedAddress(memberId);
-        setLastVisitedAddress(lastVisitedAddressId);
-    }
-
-    private void resetLastVisitedAddress(Long memberId) {
-        MemberAddress memberAddress = memberAddressRepository.findByMemberIdAndIsLastVisited(memberId, true)
-                .orElseThrow(); // TODO: 무슨 예외를 날려야할지 고민중
-        memberAddress.updateLastVisited(false);
-    }
-
-    private void setLastVisitedAddress(Long lastVisitedAddressId) {
-        MemberAddress lastVisitedAddress = memberAddressRepository.findByAddressId(lastVisitedAddressId)
-                .orElseThrow(InvalidMemberAddressIdException::new);
-        lastVisitedAddress.updateLastVisited(true);
-    }
-
-    @Transactional
-    public List<MemberAddressResponse> readMemberAddresses(Long memberId){
+    public List<MemberAddressResponse> readMemberAddresses(Long memberId) {
         List<MemberAddress> memberAddresses = findByMemberId(memberId);
         return MemberAddressResponse.from(memberAddresses);
     }
 
-    private List<MemberAddress> findByMemberId(Long memberId){
+    private List<MemberAddress> findByMemberId(Long memberId) {
         Optional<List<MemberAddress>> memberAddresses = memberAddressRepository.findAllByMemberId(memberId);
-        if(memberAddresses.isPresent()){
+        if (memberAddresses.isPresent()) {
             return memberAddresses.orElseThrow(InvalidMemberAddressIdException::new);
         }
         return new ArrayList<>();

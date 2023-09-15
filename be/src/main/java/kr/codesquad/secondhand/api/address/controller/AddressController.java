@@ -1,7 +1,7 @@
 package kr.codesquad.secondhand.api.address.controller;
 
+import kr.codesquad.secondhand.api.address.dto.AddressSliceResponse;
 import kr.codesquad.secondhand.api.address.service.AddressService;
-import kr.codesquad.secondhand.api.member.dto.response.AddressSliceResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,7 +15,7 @@ public class AddressController {
     private final AddressService addressService;
 
     @GetMapping("/api/addresses")
-    public ResponseEntity<AddressSliceResponse> readAddresses(@RequestParam int page, @RequestParam int size) {
+    public ResponseEntity<AddressSliceResponse> readAddresses(@RequestParam Integer page, @RequestParam Integer size) {
         AddressSliceResponse addressSliceResponse = addressService.findAddresses(page, size);
         return ResponseEntity.ok()
                 .body(addressSliceResponse);
