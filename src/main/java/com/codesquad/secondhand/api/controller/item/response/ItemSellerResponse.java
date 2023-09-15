@@ -10,7 +10,7 @@ import lombok.Getter;
 public class ItemSellerResponse {
 
 	private Long id;
-	private String nickName;
+	private String nickname;
 
 	public static ItemSellerResponse from(User user) {
 		return new ItemSellerResponse(user.getId(), user.getNickname());
