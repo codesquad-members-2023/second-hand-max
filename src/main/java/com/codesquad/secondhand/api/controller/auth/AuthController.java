@@ -44,7 +44,7 @@ public class AuthController {
 
 	@PostMapping("/refresh")
 	public ApiResponse<ReissueResponse> refreshAccessToken(@RequestHeader(AUTHORIZATION_HEADER) String refreshToken) {
-		return ApiResponse.of(HttpStatus.OK, ResponseMessage.USER_SIGN_OUT_SUCCESS.getMessage(),
+		return ApiResponse.of(HttpStatus.OK, ResponseMessage.REISSUE_ACCESS_TOKEN_SUCCESS.getMessage(),
 			authService.reissue(refreshToken));
 	}
 

@@ -62,7 +62,7 @@ public class Item extends BaseTimeEntity {
 	private DetailShot detailShot;
 
 	@OneToMany(mappedBy = "item", cascade = CascadeType.ALL)
-	private List<Wishlist> wishLists = new ArrayList<>();
+	private List<Wishlist> wishlists = new ArrayList<>();
 
 	@OneToMany(mappedBy = "item")
 	private List<Chat> chats = new ArrayList<>();
@@ -100,11 +100,11 @@ public class Item extends BaseTimeEntity {
 	}
 
 	public int getNumLikes() {
-		return this.getWishLists().size();
+		return this.getWishlists().size();
 	}
 
 	public boolean isInWishlist(Long userId) {
-		return wishLists.stream()
+		return wishlists.stream()
 			.anyMatch(w -> w.getUser().isSameUserAs(userId));
 	}
 

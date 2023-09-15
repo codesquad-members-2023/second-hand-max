@@ -17,8 +17,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.codesquad.secondhand.FixtureFactory;
 import com.codesquad.secondhand.IntegrationTestSupport;
 import com.codesquad.secondhand.api.service.auth.response.SignInResponse;
+import com.codesquad.secondhand.domain.auth.RedisAuthRepository;
 import com.codesquad.secondhand.domain.auth.RefreshToken;
-import com.codesquad.secondhand.domain.auth.RefreshTokenRepository;
 import com.codesquad.secondhand.domain.region.Region;
 import com.codesquad.secondhand.domain.region.RegionRepository;
 import com.codesquad.secondhand.domain.user.User;
@@ -45,7 +45,7 @@ class JwtServiceTest extends IntegrationTestSupport {
 	private RegionRepository regionRepository;
 
 	@Autowired
-	private RefreshTokenRepository refreshTokenRepository;
+	private RedisAuthRepository redisAuthRepository;
 
 	@DisplayName("사용자의 access token과 refresh token을 발급하고 refresh token은 DB에 저장한다.")
 	@Test
@@ -57,12 +57,12 @@ class JwtServiceTest extends IntegrationTestSupport {
 		SignInResponse tokens = jwtService.issueTokens(user);
 
 		// when
-		RefreshToken refreshToken = refreshTokenRepository.findByUserId(savedUser.getId()).orElseThrow();
+		RefreshToken refreshToken = redisAuthRepository.findByUserId(savedUser.getId()).orElseThrow();
 
 		// then
 		assertAll(
-			() -> assertThat(refreshToken.getUser().getId()).isEqualTo(savedUser.getId()),
-			() -> assertThat(refreshToken.getToken()).isEqualTo(tokens.getRefreshToken())
+			() -> assertThat(refreshToken.getUserId()).isEqualTo(savedUser.getId()),
+			() -> assertThat(refreshToken.getRefreshToken()).isEqualTo(tokens.getRefreshToken())
 		);
 	}
 
