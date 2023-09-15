@@ -2,9 +2,9 @@ import { css, styled } from 'styled-components';
 import { getFormattedTimeDifference } from '@utils/time';
 import Icons from '@design/Icons';
 import noThumbnailImage from '../../assets/no-thumbnail-image.png';
-import { ProductListItem } from 'apis/types';
 import PATH from '@constants/PATH';
 import { Link } from 'react-router-dom';
+import { ProductListItem } from 'types';
 
 const ListItem: React.FC<ProductListItem> = ({
   itemId,

@@ -1,27 +1,25 @@
 import { css, styled } from 'styled-components';
 import Button from '@components/Button';
-import ProfileImageButton from '@components/ProfileImageButton';
-import { signOutUser } from 'apis/api';
+import ProfileImageUploader from '@components/ProfileImageUploader';
+import { signOutUser } from 'apis/auth';
+import { useImageFileHandler } from '@hooks/useImageFileHandler';
+import { useEffect } from 'react';
 import { useUserStore } from 'stores/useUserStore';
-import { useTokenStore } from 'stores/useTokenStore';
 
 const Profile: React.FC = () => {
-  const tokenStore = useTokenStore();
-  const userStore = useUserStore();
+  const userReset = useUserStore(({ reset }) => reset);
+  const user = useUserStore(({ user }) => user);
+  const initialImageSrc = user?.profileUrl;
+  const { imageSrc, file, onImageChange } =
+    useImageFileHandler(initialImageSrc);
 
-  const onFileChange = () => {
-    // TODO: 프로필 사진 변경 핸들러 구현하기
-  };
+  useEffect(() => {
+    // TODO: 프로필 이미지 변경 요청
+  }, [file]);
 
   const onLogout = () => {
-    try {
-      signOutUser();
-    } catch (error) {
-      console.error(error);
-    }
-
-    tokenStore.reset();
-    userStore.reset();
+    signOutUser();
+    userReset();
     alert('로그아웃 되었습니다.');
   };
 
@@ -30,10 +28,8 @@ const Profile: React.FC = () => {
       <h2 className="blind">프로필</h2>
 
       <UserProfile>
-        <ProfileImageButton
-          {...{ onFileChange, initialImageSrc: userStore.user?.profileUrl }}
-        />
-        <UserName>{userStore.user?.loginId}</UserName>
+        <ProfileImageUploader {...{ imageSrc, onImageChange }} />
+        <UserName>{user?.loginId || '사용자 이름'}</UserName>
       </UserProfile>
 
       <Button

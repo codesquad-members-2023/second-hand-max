@@ -2,7 +2,6 @@ import BackButton from '@components/BackButton';
 import { css, styled } from 'styled-components';
 
 const Header: React.FC = () => {
-
   return (
     <Container>
       <BackButton />
@@ -23,8 +22,6 @@ const Container = styled.h2`
   `}
 `;
 
-const Title = styled.span`
-
-`
+const Title = styled.span``;
 
 export default Header;

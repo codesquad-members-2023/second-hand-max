@@ -1,26 +1,19 @@
 import Fab from '@components/Fab';
 import ProductList from '@components/ProductList';
-import TopBar from '@components/TopBar';
-import { Outlet } from 'react-router-dom';
 import { styled } from 'styled-components';
+import { Title } from './Title';
 
-const Home: React.FC = () => {
+export const Home: React.FC = () => {
   return (
     <>
-      <Title aria-label="홈">홈</Title>
+      <Title />
       <Content>
         <ProductList />
         <Fab />
-        <Outlet />
       </Content>
     </>
   );
 };
-
-const Title = styled(TopBar)`
-  justify-content: center;
-  ${({ theme: { fonts } }) => fonts.display.strong16};
-`;
 
 const Content = styled.div`
   box-sizing: border-box;
@@ -30,10 +23,8 @@ const Content = styled.div`
   overflow: scroll;
 
   &::-webkit-scrollbar {
-    width: 0px; /* 스크롤바의 너비 */
+    width: 0px;
     padding: 0;
     height: 0;
   }
 `;
-
-export default Home;

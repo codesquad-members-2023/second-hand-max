@@ -1,3 +1,5 @@
+import { Address } from './region';
+
 export type ProductListItem = {
   itemId: number;
   thumbnailUrl: string;
@@ -13,6 +15,7 @@ export type ProductListItem = {
 export type User = {
   loginId: string;
   profileUrl: string;
+  addresses: Address[];
 };
 
 export type AccessToken = { accessToken: string };

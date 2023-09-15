@@ -1,6 +1,7 @@
 import GlobalStyle from '@design/GlobalStyle';
 import { theme } from '@design/designSystem';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import AppRoutes from 'routes';
 import { ThemeProvider } from 'styled-components';
 
@@ -13,6 +14,7 @@ const App: React.FC = () => {
         <GlobalStyle />
         <AppRoutes />
       </ThemeProvider>
+      <ReactQueryDevtools initialIsOpen={true} />
     </QueryClientProvider>
   );
 };
