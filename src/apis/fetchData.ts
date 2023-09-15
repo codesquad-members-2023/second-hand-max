@@ -1,6 +1,6 @@
 import { BASE_URL } from '@constants/BASE_URL';
 import { updateAccessToken } from './auth';
-import { useUserAuthStore } from 'stores/useUserAuthStore';
+import { useUserStore } from 'stores/useUserStore';
 
 export const fetchData = async (path: string, options?: RequestInit) => {
   const response = await fetch(BASE_URL + path, options);
@@ -14,7 +14,7 @@ export const fetchData = async (path: string, options?: RequestInit) => {
 
 const handleAccessTokenUpdate = async () => {
   try {
-    const { tokens, setTokens } = useUserAuthStore.getState();
+    const { tokens, setTokens } = useUserStore.getState();
 
     if (!tokens) {
       throw new Error('로컬스토리지에 토큰이 없습니다.');

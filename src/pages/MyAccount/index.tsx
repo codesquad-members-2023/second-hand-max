@@ -6,11 +6,11 @@ import SignInForm from './SignInForm';
 import SignUpForm from './SignUpForm';
 import useOAuth from '@hooks/useOAuth';
 import Profile from './Profile';
-import { useUserAuthStore } from 'stores/useUserAuthStore';
+import { useUserStore } from 'stores/useUserStore';
 
 const MyAccount: React.FC = () => {
   const { initOAuth } = useOAuth();
-  const tokens = useUserAuthStore(({ tokens }) => tokens);
+  const tokens = useUserStore(({ tokens }) => tokens);
   const isLogin = !!tokens;
 
   return (
@@ -42,7 +42,8 @@ const Title = styled(TopBar)`
 const Contents = styled.div`
   width: 100%;
   height: 100%;
-  padding: ${({ theme: { dimensions } }) => dimensions.topBarHeight} 32px 0;
+  padding: 0 32px ${({ theme: { dimensions } }) => dimensions.bottomBarHeight}
+    32px;
   box-sizing: border-box;
 
   display: flex;

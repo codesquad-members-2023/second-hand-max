@@ -4,11 +4,11 @@ import ProfileImageUploader from '@components/ProfileImageUploader';
 import { signOutUser } from 'apis/auth';
 import { useImageFileHandler } from '@hooks/useImageFileHandler';
 import { useEffect } from 'react';
-import { useUserAuthStore } from 'stores/useUserAuthStore';
+import { useUserStore } from 'stores/useUserStore';
 
 const Profile: React.FC = () => {
-  const userAuthReset = useUserAuthStore(({ reset }) => reset);
-  const user = useUserAuthStore(({ user }) => user);
+  const userReset = useUserStore(({ reset }) => reset);
+  const user = useUserStore(({ user }) => user);
   const initialImageSrc = user?.profileUrl;
   const { imageSrc, file, onImageChange } =
     useImageFileHandler(initialImageSrc);
@@ -19,7 +19,7 @@ const Profile: React.FC = () => {
 
   const onLogout = () => {
     signOutUser();
-    userAuthReset();
+    userReset();
     alert('로그아웃 되었습니다.');
   };
 

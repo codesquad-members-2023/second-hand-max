@@ -5,16 +5,18 @@ import {
   UpdateAccessTokenResponse,
 } from './types';
 import { BASE_URL } from '@constants/BASE_URL';
-import { useUserAuthStore } from 'stores/useUserAuthStore';
+import { useUserStore } from 'stores/useUserStore';
 
 export const signUpUser = async ({
   code,
   id,
   file,
+  addressIds,
 }: {
   code: string;
   id: string;
   file?: File;
+  addressIds: number[];
 }): Promise<SignUpUserResponse> => {
   const formData = new FormData();
 
@@ -22,7 +24,7 @@ export const signUpUser = async ({
     formData.append('profile', file);
   }
 
-  const data = JSON.stringify({ loginId: id, addressNames: ['가락 1동'] });
+  const data = JSON.stringify({ loginId: id, addressIds });
   formData.append('signupData', new Blob([data], { type: 'application/json' }));
 
   const response = await fetchData(`/auth/naver/signup?code=${code}`, {
@@ -54,7 +56,7 @@ export const signInUser = async ({
 };
 
 export const signOutUser = () => {
-  const { tokens } = useUserAuthStore.getState();
+  const { tokens } = useUserStore.getState();
 
   if (!tokens) {
     throw new Error('로컬스토리지에 token이 없습니다.');
