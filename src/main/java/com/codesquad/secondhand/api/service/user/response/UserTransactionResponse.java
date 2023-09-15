@@ -18,7 +18,7 @@ public class UserTransactionResponse {
 	private String region;
 	private String status;
 	private Long sellerId;
-	private String thumbnail;
+	private String thumbnailUrl;
 	private LocalDateTime updatedAt;
 	private Integer price;
 	private int numChat;
