@@ -18,7 +18,6 @@ const Container = styled.figure`
   img {
     width: 100%;
   }
-  
 `;
 
 export default Visual;
