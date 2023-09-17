@@ -1,12 +1,16 @@
 package com.codesquad.secondhand.api.controller.user;
 
+import java.util.List;
+
 import javax.validation.Valid;
 
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
@@ -20,7 +24,10 @@ import com.codesquad.secondhand.api.controller.user.request.UserCreateRequest;
 import com.codesquad.secondhand.api.controller.user.request.UserUpdateRequest;
 import com.codesquad.secondhand.api.controller.user.response.UserInformationResponse;
 import com.codesquad.secondhand.api.service.image.ImageService;
+import com.codesquad.secondhand.api.service.item.response.ItemTransactionSliceResponse;
 import com.codesquad.secondhand.api.service.user.UserService;
+import com.codesquad.secondhand.domain.provider.Provider;
+import com.codesquad.secondhand.domain.region.Region;
 
 import lombok.RequiredArgsConstructor;
 
@@ -38,23 +45,34 @@ public class UserController {
 	@PostMapping()
 	public ApiResponse<Void> createLocalUser(@RequestPart(required = false) MultipartFile image,
 		@Valid @RequestPart UserCreateRequest request) {
-		userService.createLocalUser(
-			request.toService(image == null ? null : imageService.createImage(image, USER_IMAGE_DIRECTORY)));
+		userService.createUser(
+			request.toService(image == null ? null : imageService.createImage(image, USER_IMAGE_DIRECTORY),
+				Provider.ofLocal(), Region.ofDefault()));
 		return ApiResponse.noData(HttpStatus.CREATED, ResponseMessage.USER_CREATE_SUCCESS.getMessage());
 	}
 
+	@ResponseStatus(HttpStatus.OK)
 	@GetMapping("/info")
 	public ApiResponse<UserInformationResponse> showUserInformation(@SignIn SignInUser signInUser) {
 		return ApiResponse.of(HttpStatus.OK, ResponseMessage.USER_INFORMATION_FETCH_SUCCESS.getMessage(),
 			userService.showUserInformation(signInUser.getId()));
 	}
 
+	@ResponseStatus(HttpStatus.OK)
 	@PatchMapping("/info")
 	public ApiResponse<Void> updateUserInformation(@RequestPart(required = false) MultipartFile image,
 		@Valid @RequestPart UserUpdateRequest request, @SignIn SignInUser signInUser) {
 		userService.updateUserInformation(signInUser.getId(),
 			request.toService(image == null ? null : imageService.createImage(image, USER_IMAGE_DIRECTORY)));
 		return ApiResponse.noData(HttpStatus.OK, ResponseMessage.USER_INFORMATION_UPDATE_SUCCESS.getMessage());
+	}
+
+	@ResponseStatus(HttpStatus.OK)
+	@GetMapping("/transactions")
+	public ApiResponse<ItemTransactionSliceResponse> showUserTransactionList(@SignIn SignInUser signInUser,
+		@RequestParam(name = "status", required = false) List<Long> statusIds, Pageable pageable) {
+		return ApiResponse.of(HttpStatus.OK, ResponseMessage.USER_TRANSACTION_FETCH_SUCCESS.getMessage(),
+			userService.findUserTransactionList(signInUser.getId(), statusIds, pageable));
 	}
 
 }

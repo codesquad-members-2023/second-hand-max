@@ -1,26 +1,37 @@
 package com.codesquad.secondhand.domain.user;
 
 import static org.assertj.core.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.Collection;
 import java.util.List;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DynamicTest;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
 import com.codesquad.secondhand.FixtureFactory;
 import com.codesquad.secondhand.IntegrationTestSupport;
+import com.codesquad.secondhand.domain.category.Category;
+import com.codesquad.secondhand.domain.category.CategoryRepository;
+import com.codesquad.secondhand.domain.image.Image;
+import com.codesquad.secondhand.domain.image.ImageRepository;
+import com.codesquad.secondhand.domain.item.Item;
+import com.codesquad.secondhand.domain.item.ItemRepository;
 import com.codesquad.secondhand.domain.region.Region;
 import com.codesquad.secondhand.domain.region.RegionRepository;
-import com.codesquad.secondhand.domain.user_region.UserRegionRepository;
-import com.codesquad.secondhand.exception.user_region.DuplicatedUserRegionException;
-import com.codesquad.secondhand.exception.user_region.ExceedUserRegionLimitException;
-import com.codesquad.secondhand.exception.user_region.MinimumUserRegionViolationException;
+import com.codesquad.secondhand.domain.status.Status;
+import com.codesquad.secondhand.domain.status.StatusRepository;
+import com.codesquad.secondhand.domain.wishlist.WishlistRepository;
 import com.codesquad.secondhand.exception.user_region.NoSuchUserRegionException;
+import com.codesquad.secondhand.exception.wishlist.DuplicatedWishlistException;
+import com.codesquad.secondhand.exception.wishlist.NoSuchWishlistException;
 
-class UserTest extends IntegrationTestSupport {
+public class UserTest extends IntegrationTestSupport {
 
 	@Autowired
 	private UserRepository userRepository;
@@ -29,88 +40,142 @@ class UserTest extends IntegrationTestSupport {
 	private RegionRepository regionRepository;
 
 	@Autowired
-	private UserRegionRepository userRegionRepository;
+	private ImageRepository imageRepository;
 
-	@DisplayName("사용자 동네 등록 시나리오")
-	@TestFactory
-	Collection<DynamicTest> addUserRegion() {
+	@Autowired
+	private CategoryRepository categoryRepository;
+
+	@Autowired
+	private StatusRepository statusRepository;
+
+	@Autowired
+	private ItemRepository itemRepository;
+
+	@Autowired
+	private WishlistRepository wishlistRepository;
+
+	@DisplayName("사용자를 등록한다.")
+	@Test
+	void addUser() {
 		// given
-		List<Region> regions = FixtureFactory.createRegionFixtures(3);
+		List<Region> regions = FixtureFactory.createRegionFixtures(1);
 		regionRepository.saveAll(regions);
 
-		User user = FixtureFactory.createUserFixtureWithRegions(List.of(regions.get(0)));
-		userRepository.save(user);
+		User user = FixtureFactory.createUserFixture(List.of(regions.get(0)));
 
-		return List.of(
-			DynamicTest.dynamicTest("중복된 동네를 저장하려고 시도하는 경우 예외가 발생한다.", () -> {
-				// given
-				Region region = regions.get(0);
+		// when
+		User savedUser = userRepository.save(user);
 
-				// when // then
-				assertThatThrownBy(() -> user.addUserRegion(region))
-					.isInstanceOf(DuplicatedUserRegionException.class)
-					.hasMessage("이미 등록된 동네입니다");
-			}),
-			DynamicTest.dynamicTest("사용자 동네를 추가할 수 있다.", () -> {
-				// given
-				Region region = regions.get(1);
-
-				// when
-				user.addUserRegion(region);
-
-				// then
-				assertThat(user.listUserRegion()).hasSize(2);
-			}),
-			DynamicTest.dynamicTest("최대 등록 수를 초과하여 등록하려고 시도하는 경우 예외가 발생한다.", () -> {
-				// given
-				Region region = regions.get(2);
-
-				// when // then
-				assertThatThrownBy(() -> user.addUserRegion(region))
-					.isInstanceOf(ExceedUserRegionLimitException.class)
-					.hasMessage("동네 등록 수가 최대 제한을 초과했습니다");
-			})
+		// then
+		assertAll(
+			() -> assertThat(savedUser.getNickname()).isEqualTo(user.getNickname()),
+			() -> assertThat(savedUser.getEmail()).isEqualTo(user.getEmail()),
+			() -> assertThat(savedUser.getProvider()).isEqualTo(user.getProvider())
 		);
 	}
 
-	@DisplayName("사용자 동네 삭제 시나리오")
+	@DisplayName("사용자의 닉네임과 프로필을 수정한다.")
+	@Test
+	void updateInformation() {
+		// given
+		List<Region> regions = FixtureFactory.createRegionFixtures(1);
+		regionRepository.saveAll(regions);
+
+		User user = FixtureFactory.createUserFixture(List.of(regions.get(0)));
+		User savedUser = userRepository.save(user);
+
+		Image image = new Image(null, "https://carrot.jpeg");
+		Image savedImage = imageRepository.save(image);
+
+		// when
+		savedUser.updateInformation("newNickname", savedImage);
+
+		// then
+		assertAll(
+			() -> assertThat(user.getNickname()).isEqualTo("newNickname"),
+			() -> assertThat(user.getProfile()).isEqualTo(savedImage)
+		);
+	}
+
+	@DisplayName("사용자의 동네가 아닌 다른 동네에 새로운 상품을 등록하는 경우 예외가 발생한다.")
+	@Test
+	void postItem() {
+		//given
+		List<Region> regions = FixtureFactory.createRegionFixtures(3);
+		regionRepository.saveAll(regions);
+		User seller = FixtureFactory.createUserFixture(List.of(regions.get(0), regions.get(1)));
+		userRepository.save(seller);
+		Region region = regions.get(2);
+
+		assertThatThrownBy(() -> seller.validateHasRegion(region))
+			.isInstanceOf(NoSuchUserRegionException.class)
+			.hasMessage("사용자 동네 목록에 없는 동네입니다");
+	}
+
+	@DisplayName("사용자 관심 목록 시나리오")
 	@TestFactory
-	Collection<DynamicTest> removeUserRegion() {
+	Collection<DynamicTest> wishlist() {
 		// given
 		List<Region> regions = FixtureFactory.createRegionFixtures(3);
 		regionRepository.saveAll(regions);
 
-		User user = FixtureFactory.createUserFixtureWithRegions(List.of(regions.get(0), regions.get(1)));
-		userRepository.save(user);
+		User user = FixtureFactory.createUserFixture(List.of(regions.get(0)));
+		User savedUser = userRepository.save(user);
+
+		List<Category> categories = FixtureFactory.createCategoryFixtures(3);
+		categoryRepository.saveAll(categories);
+
+		List<Status> statuses = FixtureFactory.createStatusFixtures();
+		statusRepository.saveAll(statuses);
+
+		Item item1 = FixtureFactory.createItemFixture(user, categories.get(0), regions.get(0), statuses.get(0));
+		Item item2 = FixtureFactory.createItemFixture(user, categories.get(1), regions.get(1), statuses.get(1));
+		Item item3 = FixtureFactory.createItemFixture(user, categories.get(2), regions.get(2), statuses.get(2));
+		List<Item> items = itemRepository.saveAll(List.of(item1, item2, item3));
 
 		return List.of(
-			DynamicTest.dynamicTest("등록하지 않은 사용자 동네를 삭제하려고 시도하는 경우 예외가 발생한다.", () -> {
-				// given
-				Region region = regions.get(2);
-
-				// when // then
-				assertThatThrownBy(() -> user.removeUserRegion(region))
-					.isInstanceOf(NoSuchUserRegionException.class)
-					.hasMessage("사용자 동네 목록에 없는 동네입니다");
-			}),
-			DynamicTest.dynamicTest("사용자 동네를 삭제할 수 있다.", () -> {
-				// given
-				Region region = regions.get(1);
-
+			DynamicTest.dynamicTest("관심 목록에 상품을 등록한다.", () -> {
 				// when
-				user.removeUserRegion(region);
+				user.addWishlist(items.get(0));
 
 				// then
-				assertThat(user.listUserRegion()).hasSize(1);
+				assertThat(user.getMyWishlist().listAll()).hasSize(1);
 			}),
-			DynamicTest.dynamicTest("사용자 동네 수가 1개일 때 삭제하려고 시도하는 경우 예외가 발생한다.", () -> {
-				// given
-				Region region = regions.get(0);
+			DynamicTest.dynamicTest("중복된 상품을 관심 목록에 등록하려고 시도하는 경우 예외가 발생한다.", () -> {
+				// when & then
+				assertThatThrownBy(() -> user.addWishlist(items.get(0)))
+					.isInstanceOf(DuplicatedWishlistException.class)
+					.hasMessage("이미 관심 목록에 담은 상품입니다");
+			}),
+			DynamicTest.dynamicTest("중복되지 않은 상품을 관심 목록에 등록하는데 성공한다.", () -> {
+				// when
+				user.addWishlist(items.get(1));
 
-				// when // then
-				assertThatThrownBy(() -> user.removeUserRegion(region))
-					.isInstanceOf(MinimumUserRegionViolationException.class)
-					.hasMessage("최소 1개의 동네는 필수입니다");
+				//then
+				assertThat(user.getMyWishlist().listAll()).hasSize(2);
+			}),
+			DynamicTest.dynamicTest("상품을 관심 목록에서 삭제한다.", () -> {
+				// when
+				user.removeWishlist(items.get(1));
+
+				//then
+				assertThat(user.getMyWishlist().listAll()).hasSize(1);
+			}),
+			DynamicTest.dynamicTest("관심 목록에 없는 상품을 삭제하려고 시도하는 경우 예외가 발생한다.", () -> {
+				// when & then
+				assertThatThrownBy(() -> user.removeWishlist(items.get(1)))
+					.isInstanceOf(NoSuchWishlistException.class)
+					.hasMessage("관심 목록에 없는 상품입니다");
+			}),
+			DynamicTest.dynamicTest("아이템을 삭제하면 관심 목록에서도 삭제된다.", () -> {
+				// given
+				Pageable pageable = PageRequest.of(0, 20);
+
+				// when
+				items.get(0).delete(user.getId());
+
+				//then
+				assertThat(wishlistRepository.findSliceByUserId(pageable, user.getId())).isEmpty();
 			})
 		);
 	}

@@ -1,5 +1,7 @@
 package com.codesquad.secondhand.domain.wishlist;
 
+import java.time.LocalDateTime;
+
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -22,7 +24,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @Entity
 @Table(name = "wishlist")
-public class WishList {
+public class Wishlist {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -35,5 +37,45 @@ public class WishList {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "item_id")
 	private Item item;
+
+	public Long getItemId() {
+		return this.item.getId();
+	}
+
+	public String getItemTitle() {
+		return this.item.getTitle();
+	}
+
+	public Long getItemSellerId() {
+		return this.item.getUser().getId();
+	}
+
+	public String getItemRegionTitle() {
+		return this.item.getRegion().getTitle();
+	}
+
+	public String getItemStatusType() {
+		return this.item.getStatus().getType();
+	}
+
+	public String getItemThumbnailUrl() {
+		return this.item.getThumbnailUrl();
+	}
+
+	public LocalDateTime getItemUpdatedAt() {
+		return this.item.getUpdatedAt();
+	}
+
+	public Integer getItemPrice() {
+		return this.item.getPrice();
+	}
+
+	public int getItemNumChat() {
+		return this.item.getNumChat();
+	}
+
+	public int getItemNumLikes() {
+		return this.item.getNumLikes();
+	}
 
 }

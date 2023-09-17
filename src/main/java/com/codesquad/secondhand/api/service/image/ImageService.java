@@ -3,6 +3,8 @@ package com.codesquad.secondhand.api.service.image;
 import static com.codesquad.secondhand.domain.image.ImageExtension.*;
 
 import java.io.IOException;
+import java.util.Collections;
+import java.util.List;
 import java.util.Objects;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -32,13 +34,20 @@ public class ImageService {
 	@Value("${cloud.aws.s3.bucket}")
 	private String bucket;
 
-	private final AmazonS3Client amazonS3Client;
-
 	private final ImageRepository imageRepository;
+	private final AmazonS3Client amazonS3Client;
 
 	@Transactional
 	public Image createImage(MultipartFile file, String directory) {
 		return imageRepository.save(new Image(null, upload(file, directory)));
+	}
+
+	@Transactional(readOnly = true)
+	public List<Image> findImagesByIds(List<Long> imageIds) {
+		if (imageIds == null || imageIds.isEmpty()) {
+			return Collections.emptyList();
+		}
+		return Collections.unmodifiableList(imageRepository.findAllById(imageIds));
 	}
 
 	private String upload(MultipartFile multipartFile, String directory) {
@@ -75,7 +84,7 @@ public class ImageService {
 		}
 	}
 
-	private static ObjectMetadata generateObjectMetadata(MultipartFile multipartFile) throws IOException {
+	private ObjectMetadata generateObjectMetadata(MultipartFile multipartFile) throws IOException {
 		ObjectMetadata objectMetadata = new ObjectMetadata();
 		objectMetadata.setContentType(multipartFile.getContentType());
 		objectMetadata.setContentLength(multipartFile.getInputStream().available());

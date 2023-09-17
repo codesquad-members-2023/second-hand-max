@@ -11,7 +11,6 @@ import com.codesquad.secondhand.api.ApiResponse;
 import com.codesquad.secondhand.api.ResponseMessage;
 import com.codesquad.secondhand.api.service.region.RegionService;
 import com.codesquad.secondhand.api.service.region.response.RegionSliceResponse;
-import com.codesquad.secondhand.domain.common.Cursor;
 
 import lombok.RequiredArgsConstructor;
 

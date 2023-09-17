@@ -1,6 +1,5 @@
 package com.codesquad.secondhand.api.service.user_region;
 
-import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
@@ -8,6 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.codesquad.secondhand.api.service.user_region.request.UserRegionCreateServiceRequest;
 import com.codesquad.secondhand.api.service.user_region.response.UserRegionResponse;
+import com.codesquad.secondhand.api.service.user_region.response.UserRegionSelectionResponse;
 import com.codesquad.secondhand.domain.region.Region;
 import com.codesquad.secondhand.domain.region.RegionRepository;
 import com.codesquad.secondhand.domain.user.User;
@@ -25,12 +25,13 @@ public class UserRegionService {
 	private final RegionRepository regionRepository;
 
 	@Transactional(readOnly = true)
-	public List<UserRegionResponse> listUserRegions(Long userId) {
+	public UserRegionSelectionResponse listUserRegions(Long userId) {
 		User user = userRepository.findCompleteUserById(userId).orElseThrow(NoSuchUserException::new);
-		return user.listUserRegion()
-			.stream()
-			.map(UserRegionResponse::from)
-			.collect(Collectors.toUnmodifiableList());
+		return new UserRegionSelectionResponse(user.getSelectedRegion().getId(),
+			user.listUserRegion()
+				.stream()
+				.map(UserRegionResponse::from)
+				.collect(Collectors.toUnmodifiableList()));
 	}
 
 	@Transactional
@@ -40,6 +41,13 @@ public class UserRegionService {
 		Region region = regionRepository.findById(serviceRequest.getRegionId())
 			.orElseThrow(NoSuchRegionException::new);
 		user.addUserRegion(region);
+	}
+
+	@Transactional
+	public void selectUserRegion(Long userId, Long regionId) {
+		User user = userRepository.findCompleteUserById(userId).orElseThrow(NoSuchUserException::new);
+		Region region = regionRepository.findById(regionId).orElseThrow(NoSuchRegionException::new);
+		user.updateSelectedRegion(region);
 	}
 
 	@Transactional

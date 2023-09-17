@@ -26,7 +26,6 @@ public class MyRegion {
 	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
 	private final List<UserRegion> userRegions = new ArrayList<>();
 
-	// --- Validation ---
 	public List<UserRegion> listAll() {
 		return List.copyOf(userRegions);
 	}
@@ -40,6 +39,13 @@ public class MyRegion {
 	public void removeRegion(Region region) {
 		validateMinimumUserRegion();
 		userRegions.remove(validateUserRegion(region));
+	}
+
+	public UserRegion validateUserRegion(Region region) {
+		return userRegions.stream()
+			.filter(r -> r.findRegionId().equals(region.getId()))
+			.findFirst()
+			.orElseThrow(NoSuchUserRegionException::new);
 	}
 
 	private void validateUserRegionLimit() {
@@ -58,13 +64,6 @@ public class MyRegion {
 		if (this.userRegions.size() <= MINIMUM_USER_REGION_COUNT) {
 			throw new MinimumUserRegionViolationException();
 		}
-	}
-
-	private UserRegion validateUserRegion(Region region) {
-		return userRegions.stream()
-			.filter(r -> r.findRegionId().equals(region.getId()))
-			.findFirst()
-			.orElseThrow(NoSuchUserRegionException::new);
 	}
 
 }

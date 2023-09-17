@@ -22,4 +22,10 @@ public class AuthExceptionHandler {
 		return ApiResponse.noData(HttpStatus.FORBIDDEN, exception.getMessage());
 	}
 
+	@ResponseStatus(HttpStatus.UNAUTHORIZED)
+	@ExceptionHandler(PermissionDeniedException.class)
+	public ApiResponse<Void> handlePermissionDeniedException(PermissionDeniedException exception) {
+		return ApiResponse.noData(HttpStatus.UNAUTHORIZED, exception.getMessage());
+	}
+
 }

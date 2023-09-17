@@ -1,11 +1,6 @@
 package com.codesquad.secondhand.domain.item;
 
-import static com.codesquad.secondhand.domain.chat.QChat.*;
-import static com.codesquad.secondhand.domain.image.QImage.*;
 import static com.codesquad.secondhand.domain.item.QItem.*;
-import static com.codesquad.secondhand.domain.item.QItemImage.*;
-import static com.codesquad.secondhand.domain.region.QRegion.*;
-import static com.codesquad.secondhand.domain.wishlist.QWishList.*;
 
 import java.util.List;
 
@@ -15,8 +10,6 @@ import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.SliceImpl;
 import org.springframework.stereotype.Repository;
 
-import com.codesquad.secondhand.api.service.item.response.ItemResponse;
-import com.codesquad.secondhand.api.service.item.response.QItemResponse;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
@@ -28,46 +21,34 @@ public class QueryItemRepository {
 
 	private final JPAQueryFactory queryFactory;
 
-	public Slice<ItemResponse> filteredListByCategoryAndRegion(Long categoryId, Long regionId, Pageable pageable) {
-		List<ItemResponse> itemResponseList = queryFactory
-			.selectDistinct(new QItemResponse(
-				item.id,
-				item.title,
-				item.region.title,
-				item.status.type,
-				itemImage.image.imageUrl,
-				item.createdAt,
-				item.updatedAt,
-				item.price,
-				chat.countDistinct(),
-				wishList.countDistinct()
-
-			))
-			.from(item)
+	public Slice<Item> filteredByCategoryIdAndRegionId(Long categoryId, Long regionId, Pageable pageable) {
+		List<Item> itemList = queryFactory
+			.selectFrom(item)
 			.where(
 				item.region.id.eq(regionId),
+				item.isDeleted.isFalse(),
 				categoryIdEq(categoryId)
-			)
-			.leftJoin(item.region, region)
-			.leftJoin(item.itemImages, itemImage)
-			.leftJoin(itemImage.image, image)
-			.leftJoin(item.chats, chat)
-			.leftJoin(item.wishLists, wishList)
-			.groupBy(
-				item.id,
-				item.title,
-				item.region.title,
-				item.status.type,
-				itemImage.image,
-				item.createdAt,
-				item.updatedAt,
-				item.price
 			)
 			.orderBy(item.updatedAt.desc())
 			.limit(pageable.getPageSize() + 1) // 다음 항목 있는지 확인
 			.offset(pageable.getOffset())
 			.fetch();
-		return checkLastPage(pageable.getPageSize(), itemResponseList);
+		return checkLastPage(pageable.getPageSize(), itemList);
+	}
+
+	public Slice<Item> filteredByUserIdAndStatusIds(Long userId, List<Long> statusIds, Pageable pageable) {
+		List<Item> itemList = queryFactory
+			.selectFrom(item)
+			.where(
+				item.user.id.eq(userId),
+				item.isDeleted.isFalse(),
+				statusIdEq(statusIds)
+			)
+			.orderBy(item.updatedAt.desc())
+			.limit(pageable.getPageSize() + 1) // 다음 항목 있는지 확인
+			.offset(pageable.getOffset())
+			.fetch();
+		return checkLastPage(pageable.getPageSize(), itemList);
 	}
 
 	private BooleanExpression categoryIdEq(Long categoryId) {
@@ -77,9 +58,17 @@ public class QueryItemRepository {
 		return item.category.id.eq(categoryId);
 	}
 
-	private Slice<ItemResponse> checkLastPage(int pageSize, List<ItemResponse> itemList) {
+	private BooleanExpression statusIdEq(List<Long> statusIds) {
+		if (statusIds == null || statusIds.isEmpty()) {
+			return null;
+		} else {
+			return item.status.id.in(statusIds);
+		}
+	}
+
+	private Slice<Item> checkLastPage(int pageSize, List<Item> itemList) {
 		boolean hasNext = false;
-		if(itemList.size() > pageSize) {
+		if (itemList.size() > pageSize) {
 			hasNext = true;
 			itemList.remove(pageSize);
 		}

@@ -14,15 +14,15 @@ import com.codesquad.secondhand.api.service.category.response.CategoryResponse;
 
 import lombok.RequiredArgsConstructor;
 
+@RequestMapping("/api/categories")
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/api/categories")
 public class CategoryController {
 
 	private final CategoryService categoryService;
 
 	@GetMapping
-	public ApiResponse<List<CategoryResponse>> show() {
+	public ApiResponse<List<CategoryResponse>> listCategories() {
 		return ApiResponse.of(HttpStatus.OK, ResponseMessage.CATEGORY_FETCH_SUCCESS.getMessage(),
 			categoryService.getCategories());
 	}

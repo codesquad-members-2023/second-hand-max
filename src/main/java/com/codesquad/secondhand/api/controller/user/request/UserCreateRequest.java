@@ -4,11 +4,15 @@ import javax.validation.constraints.Pattern;
 
 import com.codesquad.secondhand.api.service.user.request.UserCreateServiceRequest;
 import com.codesquad.secondhand.domain.image.Image;
+import com.codesquad.secondhand.domain.provider.Provider;
+import com.codesquad.secondhand.domain.region.Region;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @NoArgsConstructor
+@AllArgsConstructor
 @Getter
 public class UserCreateRequest {
 
@@ -21,8 +25,8 @@ public class UserCreateRequest {
 	@Pattern(regexp = "^(?=.*[a-zA-Z])(?=.*\\d)(?=.*[!@#$%^&*()_+\\-=\\[\\]{};':\"\\\\|,.<>\\/?]).{8,16}$", message = "비밀번호는 8자 이상 16자 이하로, 영문, 숫자, 특수문자를 최소 1개씩 포함해야 합니다")
 	private String password;
 
-	public UserCreateServiceRequest toService(Image image) {
-		return new UserCreateServiceRequest(this.nickname, this.email, this.password, image);
+	public UserCreateServiceRequest toService(Image image, Provider provider, Region region) {
+		return new UserCreateServiceRequest(this.nickname, this.email, this.password, image, provider, region);
 	}
 
 }

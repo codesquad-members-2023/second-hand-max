@@ -18,12 +18,15 @@ class UserRegionControllerTest extends ControllerTestSupport {
 	@DisplayName("사용자 동네 목록 조회에 성공하면 200을 응답한다.")
 	@Test
 	void listUserRegions() throws Exception {
+		// given
+		mockingJwtService();
+
 		// when // then
 		mockMvc.perform(get("/api/users/regions"))
 			.andDo(print())
 			.andExpect(status().isOk())
 			.andExpect(jsonPath("$.code").value(HttpStatus.OK.value()))
-			.andExpect(jsonPath("$.status").value(HttpStatus.OK.name()))
+			.andExpect(jsonPath("$.status").value(HttpStatus.OK.getReasonPhrase()))
 			.andExpect(jsonPath("$.message").value(ResponseMessage.USER_REGION_FETCH_SUCCESS.getMessage()));
 	}
 
@@ -31,6 +34,8 @@ class UserRegionControllerTest extends ControllerTestSupport {
 	@Test
 	void createUserRegion() throws Exception {
 		// given
+		mockingJwtService();
+
 		UserRegionCreateRequest request = new UserRegionCreateRequest(1L);
 
 		// when // then
@@ -40,17 +45,20 @@ class UserRegionControllerTest extends ControllerTestSupport {
 			.andDo(print())
 			.andExpect(status().isCreated())
 			.andExpect(jsonPath("$.code").value(HttpStatus.CREATED.value()))
-			.andExpect(jsonPath("$.status").value(HttpStatus.CREATED.name()))
+			.andExpect(jsonPath("$.status").value(HttpStatus.CREATED.getReasonPhrase()))
 			.andExpect(jsonPath("$.message").value(ResponseMessage.USER_REGION_CREATE_SUCCESS.getMessage()));
 	}
 
-	@DisplayName("사용자 동네 삭제에 성공하면 204를 응답한다.")
+	@DisplayName("사용자 동네 삭제에 성공하면 200을 응답한다.")
 	@Test
 	void deleteUserRegion() throws Exception {
+		// // given
+		mockingJwtService();
+
 		// when // then
 		mockMvc.perform(delete("/api/users/regions/1"))
 			.andDo(print())
-			.andExpect(status().isNoContent());
+			.andExpect(status().isOk());
 	}
 
 }
