@@ -1,28 +1,54 @@
 import Button from '@components/Button';
+import { InfiniteScrollTrigger } from '@components/InfiniteScrollTrigger';
+import {
+  FetchNextPageOptions,
+  InfiniteData,
+  InfiniteQueryObserverResult,
+} from '@tanstack/react-query';
+import { GetRegionsResponse } from 'apis/region/types';
 import { css, styled } from 'styled-components';
 import { Address } from 'types/region';
 
 type Props = {
-  regions?: Address[];
+  regions?: InfiniteData<GetRegionsResponse>;
+  hasNextPage?: boolean;
+  isFetchingNextPage: boolean;
+  fetchNextPage: (
+    options?: FetchNextPageOptions,
+  ) => Promise<InfiniteQueryObserverResult<GetRegionsResponse, unknown>>;
   onClick: (address: Address) => void;
 };
 
-export const RegionList: React.FC<Props> = ({ regions, onClick }) => {
+export const RegionList: React.FC<Props> = ({
+  regions,
+  hasNextPage,
+  isFetchingNextPage,
+  fetchNextPage,
+  onClick,
+}) => {
   return (
     <Regions>
-      {regions?.map((region) => (
-        <Region key={region.addressId}>
-          <RegionButton onClick={() => onClick(region)}>
-            {region.fullAddressName}
-          </RegionButton>
-        </Region>
-      ))}
+      {regions &&
+        regions.pages.map((page) =>
+          page.data.contents.map((region) => (
+            <Region key={region.addressId}>
+              <RegionButton onClick={() => onClick(region)}>
+                {region.fullAddressName}
+              </RegionButton>
+            </Region>
+          )),
+        )}
+      <InfiniteScrollTrigger
+        {...{ hasNextPage, isFetchingNextPage, fetchNextPage }}
+      />
     </Regions>
   );
 };
 
 const Regions = styled.ul`
   padding: 0 24px;
+  flex-grow: 1;
+  overflow: scroll;
 `;
 
 const Region = styled.li`
