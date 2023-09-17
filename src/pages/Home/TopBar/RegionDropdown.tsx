@@ -9,13 +9,12 @@ import styled from 'styled-components';
 export const RegionDropdown: React.FC = () => {
   const [isRegionMenuOpen, setIsRegionMenuOpen] = useState(false);
   const currentRegion = useUserStore(({ currentRegion }) => currentRegion);
-  const setIsRegionSettingModalOpen = useModalStore(
-    ({ setIsRegionSettingModalOpen }) => setIsRegionSettingModalOpen,
+  const openRegionSettingModal = useModalStore(
+    ({ openRegionSettingModal }) => openRegionSettingModal,
   );
 
   const regionMenuOpen = () => setIsRegionMenuOpen(true);
   const regionMenuClose = () => setIsRegionMenuOpen(false);
-  const regionSettingModalOpen = () => setIsRegionSettingModalOpen(true);
 
   return (
     <Dropdown>
@@ -27,7 +26,7 @@ export const RegionDropdown: React.FC = () => {
         <Dropdown.Menus onClose={regionMenuClose}>
           <Dropdown.MenuItem onClick={() => {}}>역삼 1동</Dropdown.MenuItem>
           <Dropdown.MenuItem onClick={() => {}}>공릉 2동</Dropdown.MenuItem>
-          <SetRegionButton onClick={regionSettingModalOpen}>
+          <SetRegionButton onClick={openRegionSettingModal}>
             내 동네 설정하기
           </SetRegionButton>
         </Dropdown.Menus>

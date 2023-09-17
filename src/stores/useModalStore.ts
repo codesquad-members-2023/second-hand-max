@@ -3,7 +3,8 @@ import { create } from 'zustand';
 type ModalStore = {
   isRegionSettingModalOpen: boolean;
   isCategoryModalOpen: boolean;
-  setIsRegionSettingModalOpen: (isOpen: boolean) => void;
+  openRegionSettingModal: () => void;
+  closeRegionSettingModal: () => void;
   openCategoryModal: () => void;
   closeCategoryModal: () => void;
 };
@@ -15,8 +16,9 @@ const initialState = {
 
 export const useModalStore = create<ModalStore>()((set) => ({
   ...initialState,
-  setIsRegionSettingModalOpen: (isOpen) =>
-    set(() => ({ isRegionSettingModalOpen: isOpen })),
+  openRegionSettingModal: () => set(() => ({ isRegionSettingModalOpen: true })),
+  closeRegionSettingModal: () =>
+    set(() => ({ isRegionSettingModalOpen: false })),
   openCategoryModal: () => set(() => ({ isCategoryModalOpen: true })),
   closeCategoryModal: () => set(() => ({ isCategoryModalOpen: false })),
 }));

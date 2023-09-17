@@ -4,15 +4,13 @@ import { RegionModalHeader } from './RegionModalHeader';
 import { RegionModalContent } from './RegionModalContent';
 
 export const RegionSettingModal: React.FC = () => {
-  const setIsRegionSettingModalOpen = useModalStore(
-    ({ setIsRegionSettingModalOpen }) => setIsRegionSettingModalOpen,
+  const closeRegionSettingModal = useModalStore(
+    ({ closeRegionSettingModal }) => closeRegionSettingModal,
   );
 
-  const onModalClose = () => setIsRegionSettingModalOpen(false);
-
   return (
-    <Modal onModalClose={onModalClose}>
-      <RegionModalHeader onModalClose={onModalClose} />
+    <Modal onModalClose={closeRegionSettingModal}>
+      <RegionModalHeader onModalClose={closeRegionSettingModal} />
       <RegionModalContent />
     </Modal>
   );
