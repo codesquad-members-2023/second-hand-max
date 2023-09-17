@@ -21,8 +21,8 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import com.codesquad.secondhand.Image.domain.Image;
 import com.codesquad.secondhand.category.domain.Category;
+import com.codesquad.secondhand.image.domain.Image;
 import com.codesquad.secondhand.region.domain.Region;
 import com.codesquad.secondhand.user.domain.User;
 import com.codesquad.secondhand.user.domain.Wishlist;
@@ -32,9 +32,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
+@EntityListeners(AuditingEntityListener.class)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
-@EntityListeners(AuditingEntityListener.class)
 public class Item {
 
 	@Id
@@ -81,6 +81,7 @@ public class Item {
 
 	public Item(String title, Integer price, String content, List<Image> images, Category category, Region region,
 		Status status, User user) {
+		user.validateNotIncludeMyRegion(region);
 		this.title = title;
 		this.price = price;
 		this.content = content;
@@ -100,23 +101,64 @@ public class Item {
 		}
 	}
 
-	public void addImage(Image image) {
-		if (Objects.nonNull(image)) {
-			this.images.addImage(ItemImage.of(this, image));
-		}
-	}
-
 	public void increaseViewCount() {
 		views++;
+	}
+
+	public void updateStatus(User accountUser, Status status) {
+		this.user.validatePermission(accountUser);
+		this.status = status;
+	}
+
+	public void update(String title, Integer price, String content, User accountUser, List<Image> images,
+		Category category, Region region) {
+		this.user.validatePermission(accountUser);
+		this.user.validateNotIncludeMyRegion(region);
+		this.title = title;
+		this.price = price;
+		this.content = content;
+		this.category = category;
+		this.region = region;
+		updateImage(images);
+	}
+
+	private void updateImage(List<Image> images) {
+		if (Objects.isNull(images) || images.isEmpty()) {
+			this.images.clear();
+			return;
+		}
+
+		List<Image> originalImages = this.images.getImages();
+		removeImagesForUpdate(images, originalImages);
+		addImagesForUpdate(images, originalImages);
+	}
+
+	private void addImagesForUpdate(List<Image> images, List<Image> originalImages) {
+		List<Image> addImages = images.stream()
+			.filter(i -> !originalImages.contains(i))
+			.collect(Collectors.toUnmodifiableList());
+		addImage(addImages);
+	}
+
+	private void removeImagesForUpdate(List<Image> images, List<Image> originalImages) {
+		List<Image> removeImages = originalImages.stream()
+			.filter(i -> !images.contains(i))
+			.collect(Collectors.toUnmodifiableList());
+		this.images.removeAll(removeImages);
+	}
+
+	public void delete(User accountUser) {
+		this.user.validatePermission(accountUser);
+		this.isDeleted = true;
 	}
 
 	public int getWishlistCount() {
 		return wishlists.size();
 	}
 
-	public boolean isMyWishlisted(Long accountUserId) {
+	public boolean isMyWishlisted(User user) {
 		return wishlists.stream()
-			.anyMatch(w -> w.getUser().equalsId(accountUserId));
+			.anyMatch(w -> w.equalsUser(user));
 	}
 
 	public int getChatCount() {
@@ -129,5 +171,13 @@ public class Item {
 
 	public List<Image> getImages() {
 		return images.getImages();
+	}
+
+	public boolean equalsId(Long id) {
+		return Objects.equals(this.id, id);
+	}
+
+	public Long getSellerId() {
+		return user.getId();
 	}
 }

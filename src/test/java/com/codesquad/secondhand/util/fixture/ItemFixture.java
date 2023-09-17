@@ -1,20 +1,17 @@
 package com.codesquad.secondhand.util.fixture;
 
-import static com.codesquad.secondhand.util.fixture.CategoryFixture.카테고리_가구_인테리어;
-import static com.codesquad.secondhand.util.fixture.CategoryFixture.카테고리_게임_취미;
-import static com.codesquad.secondhand.util.fixture.CategoryFixture.카테고리_생활;
-import static com.codesquad.secondhand.util.fixture.CategoryFixture.카테고리_스포츠_레저;
-import static com.codesquad.secondhand.util.fixture.RegionFixture.동네_서울_종로구_궁정동;
-import static com.codesquad.secondhand.util.fixture.RegionFixture.동네_서울_종로구_청운동;
-import static com.codesquad.secondhand.util.fixture.StatusFixture.판매중;
-import static com.codesquad.secondhand.util.fixture.UserFixture.유저_만두;
+import static com.codesquad.secondhand.util.fixture.CategoryFixture.*;
+import static com.codesquad.secondhand.util.fixture.RegionFixture.*;
+import static com.codesquad.secondhand.util.fixture.StatusFixture.*;
+import static com.codesquad.secondhand.util.fixture.UserFixture.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
-import com.codesquad.secondhand.Image.application.dto.ImageResponse;
+import com.codesquad.secondhand.image.application.dto.ImageResponse;
 import com.codesquad.secondhand.item.application.dto.ItemDetailResponse;
 import com.codesquad.secondhand.item.application.dto.ItemResponse;
+import com.codesquad.secondhand.item.application.dto.MyTransactionResponse;
 
 public enum ItemFixture {
 
@@ -55,17 +52,24 @@ public enum ItemFixture {
 	public ItemResponse toItemResponse(String thumbnail, int numChat, int numLikes) {
 		return new ItemResponse(
 			id, title, RegionFixture.findById(regionId).getTitle(), StatusFixture.findById(statusId).getType(),
-			thumbnail, null, null, price, numChat, numLikes
+			thumbnail, null, null, price, numChat, numLikes, userId
 		);
 	}
 
-	public ItemDetailResponse toItemDetailResponse(int views, int numChat, int numLikes, List<ImageResponse> imageResponses) {
+	public ItemDetailResponse toItemDetailResponse(int views, int numChat, int numLikes,
+		List<ImageResponse> imageResponses) {
 		return new ItemDetailResponse(
 			id, title, content, price, numChat,
 			numLikes, views, false, LocalDateTime.now(),
 			StatusFixture.findById(statusId).toStatusItemDetailResponse(),
 			CategoryFixture.findById(categoryId).toCategoryItemDetailResponse(),
 			UserFixture.findById(userId).toUserItemDetailResponse(), imageResponses);
+	}
+
+	public MyTransactionResponse toMyTransactionResponse(String thumbnailUrl) {
+		return new MyTransactionResponse(
+			id, title, RegionFixture.findById(regionId).getTitle(), null, price, thumbnailUrl, userId
+		);
 	}
 
 	public Long getId() {

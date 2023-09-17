@@ -10,13 +10,12 @@ import javax.validation.constraints.Size;
 
 import org.hibernate.validator.constraints.Length;
 
-import com.codesquad.secondhand.Image.domain.Image;
+import com.codesquad.secondhand.image.domain.Image;
 import com.codesquad.secondhand.category.domain.Category;
 import com.codesquad.secondhand.item.domain.Item;
 import com.codesquad.secondhand.item.domain.Status;
 import com.codesquad.secondhand.region.domain.Region;
 import com.codesquad.secondhand.user.domain.User;
-
 
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -45,6 +44,8 @@ public class ItemCreateRequest {
 	@NotNull(message = "지역이 선택되지 않았습니다")
 	private Long regionId;
 
+	private Long userId;
+
 	public ItemCreateRequest(String title, Integer price, String content, List<Long> imageIds, Long categoryId,
 		Long regionId) {
 		this.title = title;
@@ -61,5 +62,9 @@ public class ItemCreateRequest {
 
 	public List<Long> getImageIds() {
 		return Objects.isNull(imageIds) ? Collections.emptyList() : imageIds;
+	}
+
+	public void injectUserId(Long userId) {
+		this.userId = userId;
 	}
 }

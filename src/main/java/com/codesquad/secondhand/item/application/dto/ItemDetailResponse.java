@@ -3,7 +3,7 @@ package com.codesquad.secondhand.item.application.dto;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import com.codesquad.secondhand.Image.application.dto.ImageResponse;
+import com.codesquad.secondhand.image.application.dto.ImageResponse;
 import com.codesquad.secondhand.auth.domain.Account;
 import com.codesquad.secondhand.category.application.dto.CategoryItemDetailResponse;
 import com.codesquad.secondhand.category.domain.Category;
@@ -24,19 +24,19 @@ public class ItemDetailResponse {
 	private int numChat;
 	private int numLikes;
 	private int numViews;
-	private boolean isWishlisted;
+	private boolean isLiked;
 	private LocalDateTime updatedAt;
 	private StatusItemDetailResponse status;
 	private CategoryItemDetailResponse category;
 	private UserItemDetailResponse seller;
-	private List<ImageResponse> imageResponse;
+	private List<ImageResponse> images;
 
-	public static ItemDetailResponse from(Item item, Account account) {
+	public static ItemDetailResponse from(Item item, User accountUser) {
 		Status status = item.getStatus();
 		Category category = item.getCategory();
 		User user = item.getUser();
 		return new ItemDetailResponse(item.getId(), item.getTitle(), item.getContent(), item.getPrice(),
-			item.getChatCount(), item.getWishlistCount(), item.getViews(), item.isMyWishlisted(account.getId()), item.getUpdatedAt(),
+			item.getChatCount(), item.getWishlistCount(), item.getViews(), item.isMyWishlisted(accountUser), item.getUpdatedAt(),
 			StatusItemDetailResponse.from(status), CategoryItemDetailResponse.from(category),
 			UserItemDetailResponse.from(user), ImageResponse.from(item.getImages()));
 	}
@@ -69,8 +69,8 @@ public class ItemDetailResponse {
 		return numViews;
 	}
 
-	public boolean getIsWishlisted() {
-		return isWishlisted;
+	public boolean getIsLiked() {
+		return isLiked;
 	}
 
 	public LocalDateTime getUpdatedAt() {
@@ -89,7 +89,7 @@ public class ItemDetailResponse {
 		return seller;
 	}
 
-	public List<ImageResponse> getImageResponse() {
-		return imageResponse;
+	public List<ImageResponse> getImages() {
+		return images.isEmpty() ? null : images;
 	}
 }

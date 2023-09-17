@@ -10,7 +10,7 @@ import org.springframework.data.jpa.repository.Query;
 
 import com.codesquad.secondhand.item.domain.Item;
 
-public interface ItemRepository extends JpaRepository<Item, Long>, ItemDao {
+public interface ItemRepository extends JpaRepository<Item, Long>, ItemCustomRepository {
 
 	@Lock(LockModeType.PESSIMISTIC_WRITE)
 	@Query("select i from Item i inner join fetch i.region r "
@@ -19,6 +19,7 @@ public interface ItemRepository extends JpaRepository<Item, Long>, ItemDao {
 		+ "inner join fetch i.user u "
 		+ "left join fetch i.images.itemImages ii "
 		+ "left join fetch ii.image image "
-		+ "where i.id = :id")
+		+ "where i.id = :id and i.isDeleted = false")
 	Optional<Item> findDetailById(Long id);
+
 }
