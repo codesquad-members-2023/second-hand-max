@@ -1,10 +1,9 @@
-import Button from '@components/Button';
 import TopBarStyle from '@components/TopBar';
-import Icons from '@design/Icons';
 import { useEffect } from 'react';
 import { useUserStore } from 'stores/useUserStore';
 import { css, styled } from 'styled-components';
 import { RegionDropdown } from './RegionDropdown';
+import { CategoryButton } from './CategoryButton';
 
 export const TopBar: React.FC = () => {
   const user = useUserStore(({ user }) => user);
@@ -21,10 +20,7 @@ export const TopBar: React.FC = () => {
   return (
     <StyledTopBar>
       <RegionDropdown />
-
-      <IconWrapper>
-        <Icons.LayoutGrid />
-      </IconWrapper>
+      <CategoryButton />
     </StyledTopBar>
   );
 };
@@ -42,11 +38,4 @@ const StyledTopBar = styled(TopBarStyle)`
 
     stroke: ${colors.neutral.text};
   `};
-`;
-
-const IconWrapper = styled(Button)`
-  width: 40px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
 `;
