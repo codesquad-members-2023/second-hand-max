@@ -1,11 +1,11 @@
 import { Modal } from '@components/Modal/ModalSheet';
 import { AddRegionModalHeader } from './AddRegionModalHeader';
 import { SearchBar } from './SearchBar';
-import { RegionList } from './RegionList';
 import { Address } from 'types/region';
 import { useState } from 'react';
-import { Loader } from '@components/Loader';
 import { useRegionQuery } from '@hooks/queries/useRegionQuery';
+import { Loader } from '@components/Loader';
+import { RegionList } from './RegionList';
 
 type Props = {
   onModalClose: () => void;
@@ -19,19 +19,31 @@ export const AddRegionModal: React.FC<Props> = ({
   const [searchWord, setSearchWord] = useState('');
   const regionQuery = useRegionQuery(searchWord);
 
-  const regions = regionQuery.data?.data.contents;
-
   const onSearchWordChange = (word: string) => setSearchWord(word);
 
   return (
-    <Modal onModalClose={onModalClose}>
+    <Modal
+      onModalClose={onModalClose}
+      modalSheetStyle={{
+        display: 'flex',
+        flexDirection: 'column',
+      }}
+    >
       <AddRegionModalHeader onModalClose={onModalClose} />
       <SearchBar onChange={onSearchWordChange} />
 
       {regionQuery.isLoading ? (
         <Loader />
       ) : (
-        <RegionList {...{ regions, onClick: addRegion }} />
+        <RegionList
+          {...{
+            regions: regionQuery.data,
+            hasNextPage: regionQuery.hasNextPage,
+            isFetchingNextPage: regionQuery.isFetchingNextPage,
+            fetchNextPage: regionQuery.fetchNextPage,
+            onClick: addRegion,
+          }}
+        />
       )}
     </Modal>
   );
