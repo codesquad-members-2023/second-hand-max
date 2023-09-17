@@ -1,11 +1,8 @@
 package codesquard.app.domain.item;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Objects;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -15,13 +12,15 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 
+import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.DynamicInsert;
+
+import codesquard.app.api.errors.errorcode.ItemErrorCode;
+import codesquard.app.api.errors.exception.RestApiException;
 import codesquard.app.domain.category.Category;
-import codesquard.app.domain.chat.ChatRoom;
-import codesquard.app.domain.image.Image;
 import codesquard.app.domain.member.Member;
-import codesquard.app.domain.wish.Wish;
+import codesquard.app.domain.oauth.support.Principal;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
@@ -33,6 +32,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
+@DynamicInsert
 public class Item {
 
 	@Id
@@ -47,9 +47,12 @@ public class Item {
 	private LocalDateTime createdAt;
 	private String thumbnailUrl;
 	private LocalDateTime modifiedAt;
-	private Long wishCount = 0L;
-	private Long chatCount = 0L;
-	private Long viewCount = 0L;
+	@ColumnDefault("0")
+	private Long wishCount;
+	@ColumnDefault("0")
+	private Long chatCount;
+	@ColumnDefault("0")
+	private Long viewCount;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "member_id")
@@ -59,22 +62,14 @@ public class Item {
 	@JoinColumn(name = "category_id")
 	private Category category;
 
-	@OneToMany(mappedBy = "item", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
-	private List<Wish> wishes = new ArrayList<>();
-
-	@OneToMany(mappedBy = "item", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
-	private List<ChatRoom> chatRooms = new ArrayList<>();
-
-	@OneToMany(mappedBy = "item", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
-	private List<Image> images = new ArrayList<>();
-
 	public Item(Long id) {
 		this.id = id;
 	}
 
 	@Builder
 	public Item(String title, String content, Long price, ItemStatus status, String region, LocalDateTime createdAt,
-		String thumbnailUrl, LocalDateTime modifiedAt, Long wishCount, Long chatCount, Long viewCount) {
+		String thumbnailUrl, LocalDateTime modifiedAt, Long wishCount, Long chatCount, Long viewCount, Member member,
+		Category category) {
 		this.title = title;
 		this.content = content;
 		this.price = price;
@@ -86,10 +81,12 @@ public class Item {
 		this.wishCount = wishCount;
 		this.chatCount = chatCount;
 		this.viewCount = viewCount;
+		this.member = member;
+		this.category = category;
 	}
 
 	public static Item create(String title, String content, Long price, ItemStatus status, String region,
-		LocalDateTime createdAt, Long viewCount) {
+		LocalDateTime createdAt, Long viewCount, Member member) {
 		return Item.builder()
 			.title(title)
 			.content(content)
@@ -98,51 +95,24 @@ public class Item {
 			.region(region)
 			.createdAt(createdAt)
 			.viewCount(viewCount)
+			.member(member)
 			.build();
 	}
 
-	public void setMember(Member member) {
-		this.member = member;
-		if (this.member != null && !this.member.getItems().contains(this)) {
-			this.member.addItem(this);
-		}
-	}
-
-	public void setCategory(Category category) {
+	public void changeCategory(Category category) {
 		this.category = category;
 	}
 
-	public void addImage(Image image) {
-		if (image != null && !this.images.contains(image)) {
-			this.images.add(image);
-		}
-		if (image != null) {
-			image.setItem(this);
-		}
+	public void changeBy(Item changeItem) {
+		this.title = changeItem.title;
+		this.price = changeItem.price;
+		this.content = changeItem.content;
+		this.region = changeItem.region;
+		this.status = changeItem.status;
 	}
 
-	public void addWish(Wish wish) {
-		if (wish != null && !this.wishes.contains(wish)) {
-			this.wishes.add(wish);
-		}
-		if (wish != null) {
-			wish.setItem(this);
-		}
-	}
-
-	public void addChatRoom(ChatRoom chatRoom) {
-		if (chatRoom != null && !chatRooms.contains(chatRoom)) {
-			chatRooms.add(chatRoom);
-		}
-		if (chatRoom != null) {
-			chatRoom.setItem(this);
-		}
-	}
-
-	public int getTotalChatLogCount() {
-		return chatRooms.stream()
-			.mapToInt(ChatRoom::getChatLogsSize)
-			.sum();
+	public void changeStatus(ItemStatus status) {
+		this.status = status;
 	}
 
 	public void wishRegister() {
@@ -153,16 +123,15 @@ public class Item {
 		this.wishCount--;
 	}
 
-	public List<String> getImageUrls() {
-		return images.stream()
-			.map(Image::getImageUrl)
-			.collect(Collectors.toUnmodifiableList());
-	}
-
 	@Override
 	public String toString() {
 		return String.format("%s, %s(id=%d, title=%s, price=%d, status=%s, region=%s, viewCount=%d)",
 			"상품", this.getClass().getSimpleName(), id, title, price, status, region, viewCount);
 	}
 
+	public void validateAuthorization(Principal writer) {
+		if (!Objects.equals(member.getId(), writer.getMemberId())) {
+			throw new RestApiException(ItemErrorCode.ITEM_FORBIDDEN);
+		}
+	}
 }

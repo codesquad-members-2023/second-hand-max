@@ -4,10 +4,13 @@ import static org.springframework.http.HttpStatus.*;
 
 import java.time.LocalDateTime;
 
+import javax.validation.Valid;
+
 import org.springframework.http.MediaType;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -25,8 +28,6 @@ import codesquard.app.api.oauth.response.OauthRefreshResponse;
 import codesquard.app.api.oauth.response.OauthSignUpResponse;
 import codesquard.app.api.response.ApiResponse;
 import codesquard.app.config.ValidationSequence;
-import codesquard.app.domain.oauth.support.AuthPrincipal;
-import codesquard.app.domain.oauth.support.Principal;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -45,14 +46,13 @@ public class OauthRestController {
 		@PathVariable String provider,
 		@RequestParam String code,
 		@RequestPart(value = "profile", required = false) MultipartFile profile,
-		@Validated(ValidationSequence.class) @RequestPart(value = "signupData") OauthSignUpRequest request) {
+		@Valid @RequestPart(value = "signupData") OauthSignUpRequest request) {
 		log.info("provider : {}, code : {}, profile : {}, {}", provider, code, profile, request);
 
 		oauthService.signUp(profile, request, provider, code);
 		return ApiResponse.created("회원가입에 성공하였습니다.", null);
 	}
 
-	@ResponseStatus(OK)
 	@PostMapping(value = "/{provider}/login")
 	public ApiResponse<OauthLoginResponse> login(
 		@PathVariable String provider,
@@ -62,23 +62,22 @@ public class OauthRestController {
 		return ApiResponse.of(OK, "로그인에 성공하였습니다.", response);
 	}
 
-	@ResponseStatus(OK)
 	@PostMapping(value = "/logout")
-	public ApiResponse<Void> logout(@AuthPrincipal Principal principal) {
-		log.info("{}", principal);
-		OauthLogoutRequest request = OauthLogoutRequest.create(principal);
+	public ApiResponse<Void> logout(@RequestAttribute String accessToken,
+		@RequestBody OauthLogoutRequest request) {
+		request = OauthLogoutRequest.create(accessToken, request.getRefreshToken());
+		log.info("로그아웃 요청 입력 : request={}", request);
 		oauthService.logout(request);
 		return ApiResponse.ok("로그아웃에 성공하였습니다.", null);
 	}
 
 	@ResponseStatus(OK)
 	@PostMapping("/token")
-	public ApiResponse<OauthRefreshResponse> refreshAccessToken(@AuthPrincipal Principal principal,
-		@RequestBody OauthRefreshRequest request) {
-		log.info("{}, {}", principal, request);
+	public ApiResponse<OauthRefreshResponse> refreshAccessToken(@RequestBody OauthRefreshRequest request) {
+		log.info("리프레시 토큰 API 요청 : {}", request);
 
 		OauthRefreshResponse response = oauthService.refreshAccessToken(request, LocalDateTime.now());
-		log.debug("{}", response);
+		log.debug("리프레시 토큰 API 응답 : {}", response);
 		return ApiResponse.ok("액세스 토큰 갱신에 성공하였습니다.", response);
 	}
 

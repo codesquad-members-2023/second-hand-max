@@ -1,4 +1,4 @@
-package codesquard.app.api.item;
+package codesquard.app.api.item.request;
 
 import java.time.LocalDateTime;
 
@@ -22,7 +22,7 @@ public class ItemRegisterRequest {
 	private Long price;
 	private String content;
 	private String region;
-	private String status;
+	private ItemStatus status;
 	private Long categoryId;
 	private String categoryName;
 
@@ -31,17 +31,16 @@ public class ItemRegisterRequest {
 			.title(title)
 			.content(content)
 			.price(price)
-			.status(ItemStatus.of(status))
+			.status(status)
 			.region(region)
 			.createdAt(LocalDateTime.now())
 			.thumbnailUrl(thumbnailUrl)
 			.wishCount(0L)
 			.chatCount(0L)
 			.viewCount(0L)
+			.member(member)
 			.build();
-		item.setMember(member);
-		item.setCategory(new Category(categoryId));
+		item.changeCategory(new Category(categoryId));
 		return item;
 	}
-
 }

@@ -12,6 +12,7 @@ import javax.persistence.ManyToOne;
 
 import codesquard.app.domain.item.Item;
 import codesquard.app.domain.member.Member;
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -19,8 +20,8 @@ import lombok.NoArgsConstructor;
 
 @Entity
 @EqualsAndHashCode(of = "id")
-@NoArgsConstructor
-@AllArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Getter
 public class Wish {
 
@@ -35,24 +36,13 @@ public class Wish {
 	private Item item;
 	private LocalDateTime createdAt;
 
-	public Wish(Long memberId, Long itemId) {
-		this.member = new Member(memberId);
-		this.item = new Item(itemId);
-		this.createdAt = LocalDateTime.now();
-	}
-
-	public static Wish create(LocalDateTime createdAt) {
-		return new Wish(null, null, null, createdAt);
-	}
-
-	public void setMember(Member member) {
+	private Wish(Member member, Item item, LocalDateTime createdAt) {
 		this.member = member;
+		this.item = item;
+		this.createdAt = createdAt;
 	}
 
-	public void setItem(Item item) {
-		this.item = item;
-		if (!item.getWishes().contains(this)) {
-			this.item.addWish(this);
-		}
+	public static Wish create(Member member, Item item, LocalDateTime createdAt) {
+		return new Wish(member, item, createdAt);
 	}
 }

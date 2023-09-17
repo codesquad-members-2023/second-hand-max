@@ -1,5 +1,8 @@
 package codesquard.app.domain.image;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -9,12 +12,13 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
 import codesquard.app.domain.item.Item;
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Getter
 public class Image {
@@ -22,28 +26,31 @@ public class Image {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
+	private String imageUrl;
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "item_id")
 	private Item item;
-	private String imageUrl;
 
-	public Image(String imageUrl) {
+	private Image(String imageUrl, Item item) {
 		this.imageUrl = imageUrl;
+		this.item = item;
 	}
 
-	public Image(Item item, String imageUrl) {
-		this.item = item;
-		this.imageUrl = imageUrl;
+	public static Image create(String imageUrl, Item item) {
+		return new Image(imageUrl, item);
 	}
 
-	public void setItem(Item item) {
-		this.item = item;
-		if (!item.getImages().contains(this)) {
-			item.addImage(this);
+	public static List<Image> create(List<String> imageUrls, Item item) {
+		List<Image> images = new ArrayList<>();
+		for (String imageUrl : imageUrls) {
+			images.add(create(imageUrl, item));
 		}
+		return images;
 	}
 
-	public static Image create(String imageUrl) {
-		return new Image(imageUrl);
+	@Override
+	public String toString() {
+		return String.format("%s, %s(id=%d, imageUrl=%s, item_id=%d)",
+			"상품의 이미지", this.getClass().getSimpleName(), id, imageUrl, item.getId());
 	}
 }
