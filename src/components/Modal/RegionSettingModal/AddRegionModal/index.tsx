@@ -3,11 +3,9 @@ import { AddRegionModalHeader } from './AddRegionModalHeader';
 import { SearchBar } from './SearchBar';
 import { RegionList } from './RegionList';
 import { Address } from 'types/region';
-import { useQuery } from '@tanstack/react-query';
-import { QUERY_KEY } from '@constants/QUERY_KEY';
-import { getRegions } from 'apis/region';
 import { useState } from 'react';
 import { Loader } from '@components/Loader';
+import { useRegionQuery } from '@hooks/queries/useRegionQuery';
 
 type Props = {
   onModalClose: () => void;
@@ -19,7 +17,7 @@ export const AddRegionModal: React.FC<Props> = ({
   addRegion,
 }) => {
   const [searchWord, setSearchWord] = useState('');
-  const regionQuery = useQuery(QUERY_KEY.REGION, () => getRegions(searchWord));
+  const regionQuery = useRegionQuery(searchWord);
 
   const regions = regionQuery.data?.data.contents;
 
