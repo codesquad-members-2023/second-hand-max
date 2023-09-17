@@ -6,6 +6,7 @@ import { useState } from 'react';
 import { useRegionQuery } from '@hooks/queries/useRegionQuery';
 import { Loader } from '@components/Loader';
 import { RegionList } from './RegionList';
+import { useDebounce } from '@hooks/useDebounce';
 
 type Props = {
   onModalClose: () => void;
@@ -17,7 +18,8 @@ export const AddRegionModal: React.FC<Props> = ({
   addRegion,
 }) => {
   const [searchWord, setSearchWord] = useState('');
-  const regionQuery = useRegionQuery(searchWord);
+  const debouncedSearchWord = useDebounce(searchWord, 300);
+  const regionQuery = useRegionQuery(debouncedSearchWord);
 
   const onSearchWordChange = (word: string) => setSearchWord(word);
 
