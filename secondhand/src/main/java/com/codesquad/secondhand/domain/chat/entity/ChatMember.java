@@ -1,36 +1,35 @@
-package com.codesquad.secondhand.domain.token.entity;
+package com.codesquad.secondhand.domain.chat.entity;
 
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 
 import com.codesquad.secondhand.domain.member.entity.Member;
 
 import lombok.AccessLevel;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 @Getter
-public class Token {
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+public class ChatMember {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
-	@OneToOne
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "chat_id")
+	private ChatRoom chatRoom;
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "member_id")
 	private Member member;
-	private String refreshToken;
+	@OneToOne(fetch = FetchType.LAZY)
+	private ChatMessage isReadMessage;
 
-	@Builder
-	public Token(Member member, String refreshToken) {
-		this.id = id;
-		this.member = member;
-		this.refreshToken = refreshToken;
-	}
 }

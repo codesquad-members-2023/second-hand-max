@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,13 +29,13 @@ public class RegionQueryService {
 			RegionException.REGION_NOT_FOUND));
 	}
 
-	public List<Region> findAll(Pageable pageable, String word) {
+	public Slice<Region> findAll(Pageable pageable, String word) {
 		return regionQueryRepository.findAll(pageable, word);
 	}
 
 	public List<Region> findByIds(List<Long> regionIds) {
 		return regionIds.stream()
-			.map(regionId -> findById(regionId))
+			.map(this::findById)
 			.collect(Collectors.toUnmodifiableList());
 	}
 }

@@ -1,4 +1,4 @@
-package com.codesquad.secondhand.domain.jwt;
+package com.codesquad.secondhand.domain.jwt.domain;
 
 import java.security.Key;
 import java.util.Collections;
@@ -86,9 +86,8 @@ public class JwtProvider {
 		return new Jwt(signUpToken);
 	}
 
-	public Jwt reissueAccessToken(Map<String, Object> claims, String refreshToken) {
-		String accessToken = createToken(claims, getExpireDateAccessToken());
-		return new Jwt(accessToken, refreshToken);
+	public String reissueAccessToken(Map<String, Object> claims) {
+		return createToken(claims, getExpireDateAccessToken());
 	}
 
 	private Date getExpireDateAccessToken() {

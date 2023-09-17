@@ -1,6 +1,7 @@
 package com.codesquad.secondhand.domain.reaction.entity;
 
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -24,11 +25,11 @@ public class Reaction {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "product_id")
 	private Product product;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "member_id")
 	private Member member;
 
@@ -41,6 +42,13 @@ public class Reaction {
 
 	public boolean isProductInCategory(Long categoryId) {
 		return product.getCategory().getId().equals(categoryId);
+	}
+
+	public static Reaction of(Product product, Member member) {
+		return Reaction.builder()
+			.product(product)
+			.member(member)
+			.build();
 	}
 
 }

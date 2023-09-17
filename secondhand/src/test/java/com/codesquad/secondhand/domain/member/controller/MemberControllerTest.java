@@ -13,8 +13,11 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import com.codesquad.secondhand.BaseControllerTest;
 import com.codesquad.secondhand.annotation.ControllerIntegrationTest;
+import com.codesquad.secondhand.domain.jwt.dto.request.ReissueTokenRequest;
+import com.codesquad.secondhand.domain.jwt.entity.Token;
 import com.codesquad.secondhand.domain.member.dto.request.RegionRequest;
 import com.codesquad.secondhand.domain.member.dto.request.SignupRequest;
+import com.codesquad.secondhand.domain.member.entity.Member;
 
 @ControllerIntegrationTest
 class MemberControllerTest extends BaseControllerTest {
@@ -32,6 +35,9 @@ class MemberControllerTest extends BaseControllerTest {
 				.header(AUTHORIZATION, JWT_TOKEN_PREFIX + jwt.getSignUpToken())
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(request))
+			.andExpect(jsonPath("$.memberId").exists())
+			.andExpect(jsonPath("$.accessToken").exists())
+			.andExpect(jsonPath("$.refreshToken").exists())
 			.andExpect(status().isCreated());
 	}
 
@@ -123,4 +129,35 @@ class MemberControllerTest extends BaseControllerTest {
 			.build();
 	}
 
+	@Test
+	@DisplayName("사용자 정보 api 를 통해 특정 사용자의 정보를 응답으로 전송한다.")
+	void getUserInfo() throws Exception {
+		mockMvc.perform(MockMvcRequestBuilders.get("/api/members/{memberId}", MEMBER_ID)
+				.header(AUTHORIZATION, JWT_TOKEN_PREFIX + jwt.getAccessToken())
+				.contentType(MediaType.APPLICATION_JSON))
+			.andExpect(jsonPath("$.id").exists())
+			.andExpect(jsonPath("$.nickname").exists())
+			.andExpect(jsonPath("$.profileImg").exists())
+			.andExpect(status().isOk());
+	}
+
+	@Test
+	@DisplayName("토큰을 재 요청 한다.")
+	void reissueToken() throws Exception {
+		// given
+		Token token = Token.builder()
+			.member(Member.builder().id(1L).build())
+			.refreshToken("123")
+			.build();
+		jwtQueryService.save(token);
+		ReissueTokenRequest requestDto = new ReissueTokenRequest("123");
+		String request = objectMapper.writeValueAsString(requestDto);
+		// when & then
+		mockMvc.perform(MockMvcRequestBuilders.post("/api/oauth2/token")
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(request))
+			.andExpect(jsonPath("$.accessToken").exists())
+			.andExpect(status().isOk());
+
+	}
 }

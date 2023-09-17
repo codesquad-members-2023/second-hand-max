@@ -19,9 +19,14 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.codesquad.secondhand.domain.jwt.dto.request.ReissueTokenRequest;
+import com.codesquad.secondhand.domain.jwt.dto.response.ReissueTokenResponse;
+import com.codesquad.secondhand.domain.jwt.service.JwtService;
 import com.codesquad.secondhand.domain.member.dto.request.RegionRequest;
 import com.codesquad.secondhand.domain.member.dto.request.SignupRequest;
+import com.codesquad.secondhand.domain.member.dto.response.MemberInfoResponse;
 import com.codesquad.secondhand.domain.member.dto.response.MemberRegionResponse;
+import com.codesquad.secondhand.domain.member.dto.response.SignUpResponse;
 import com.codesquad.secondhand.domain.member.service.MemberService;
 
 import lombok.RequiredArgsConstructor;
@@ -32,12 +37,14 @@ import lombok.RequiredArgsConstructor;
 public class MemberController {
 
 	private final MemberService memberService;
+	private final JwtService jwtService;
 
 	@PostMapping("/members/signup")
-	public ResponseEntity signUp(@RequestBody @Valid SignupRequest signupRequest, HttpServletRequest request) {
+	public ResponseEntity<SignUpResponse> signUp(@RequestBody @Valid SignupRequest signupRequest,
+		HttpServletRequest request) {
 		String email = extractEmail(request);
-		memberService.signUp(signupRequest, email);
-		return ResponseEntity.status(HttpStatus.CREATED).build();
+		SignUpResponse signUpResponse = memberService.signUp(signupRequest, email);
+		return ResponseEntity.status(HttpStatus.CREATED).body(signUpResponse);
 	}
 
 	@PostMapping("/members/signout")
@@ -70,6 +77,17 @@ public class MemberController {
 	public ResponseEntity<MemberRegionResponse> getRegions(@PathVariable Long memberId) {
 		MemberRegionResponse memberRegionResponse = memberService.getRegion(memberId);
 		return ResponseEntity.ok(memberRegionResponse);
+	}
+
+	//todo 이럴때 토큰에 있는 memberId랑 해당 memberId랑 같은지 수정해야함
+	@GetMapping("/members/{memberId}")
+	public ResponseEntity<MemberInfoResponse> getMemberInfo(@PathVariable Long memberId) {
+		return ResponseEntity.ok().body(memberService.getMemberInfo(memberId));
+	}
+
+	@PostMapping("/oauth2/token")
+	public ResponseEntity<ReissueTokenResponse> reissueToken(@RequestBody ReissueTokenRequest reissueTokenRequest) {
+		return ResponseEntity.ok().body(jwtService.ReissueToken(reissueTokenRequest));
 	}
 
 }
