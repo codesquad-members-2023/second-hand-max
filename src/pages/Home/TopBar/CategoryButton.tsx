@@ -1,10 +1,16 @@
 import Button from '@components/Button';
 import Icons from '@design/Icons';
+import { useModalStore } from 'stores/useModalStore';
+
 import styled from 'styled-components';
 
 export const CategoryButton: React.FC = () => {
+  const openCategoryModal = useModalStore(
+    ({ openCategoryModal }) => openCategoryModal,
+  );
+
   return (
-    <IconWrapper>
+    <IconWrapper onClick={openCategoryModal}>
       <Icons.LayoutGrid />
     </IconWrapper>
   );
