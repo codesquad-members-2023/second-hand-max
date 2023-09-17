@@ -1,20 +1,22 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-
 import SecondHand from '@components/SecondHand';
-import Home from '@pages/Home';
 import PATH from '@constants/PATH';
 import SalesHistory from '@pages/SalesHistory';
 import Wishlist from '@pages/Wishlist';
 import Chatting from '@pages/Chatting';
 import MyAccount from '@pages/MyAccount';
 import OAuthLoadingPage from '@pages/MyAccount/OAuthLoadingPage';
+import { Home } from '@pages/Home/index';
+import ProductDetail from '@components/ProductDetail';
 
 const AppRoutes: React.FC = () => {
   return (
     <Router>
       <Routes>
         <Route path={PATH.BASE} element={<SecondHand />}>
-          <Route index element={<Home />} />
+          <Route path={''} element={<Home />}>
+            <Route path={`${PATH.ITEM_DETAIL}/*`} element={<ProductDetail />} />
+          </Route>
           <Route path={PATH.SALES_HISTORY} element={<SalesHistory />} />
           <Route path={PATH.WISHLIST} element={<Wishlist />} />
           <Route path={PATH.CHATTING} element={<Chatting />} />

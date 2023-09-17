@@ -2,15 +2,15 @@ import { styled } from 'styled-components';
 import { Routes, Route } from 'react-router-dom';
 import PATH from '@constants/PATH';
 import TopBar from '@components/TopBar';
-import Profile from './Profile';
 import SignInForm from './SignInForm';
-import SignUpForm from './SignUpForm';
 import useOAuth from '@hooks/useOAuth';
-import { useTokenStore } from 'stores/useTokenStore';
+import Profile from './Profile';
+import { useUserStore } from 'stores/useUserStore';
+import SignUpForm from './SignUpForm';
 
 const MyAccount: React.FC = () => {
   const { initOAuth } = useOAuth();
-  const { tokens } = useTokenStore();
+  const tokens = useUserStore(({ tokens }) => tokens);
   const isLogin = !!tokens;
 
   return (
@@ -42,7 +42,8 @@ const Title = styled(TopBar)`
 const Contents = styled.div`
   width: 100%;
   height: 100%;
-  padding: ${({ theme: { dimensions } }) => dimensions.topBarHeight} 32px 0;
+  padding: 0 32px ${({ theme: { dimensions } }) => dimensions.bottomBarHeight}
+    32px;
   box-sizing: border-box;
 
   display: flex;
