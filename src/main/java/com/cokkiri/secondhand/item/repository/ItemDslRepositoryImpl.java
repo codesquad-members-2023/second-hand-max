@@ -1,8 +1,6 @@
 package com.cokkiri.secondhand.item.repository;
 
-import static com.cokkiri.secondhand.item.entity.QCategory.*;
 import static com.cokkiri.secondhand.item.entity.QItem.*;
-import static com.cokkiri.secondhand.item.entity.QLocation.*;
 
 import java.util.List;
 
@@ -26,37 +24,53 @@ public class ItemDslRepositoryImpl implements ItemDslRepository {
 
 	public List<Item> findAllByLocationId(Pageable pageable, Long locationId, Long cursorId) {
 
-		BooleanBuilder dynamicLtId = new BooleanBuilder();
+		BooleanBuilder builder = generateBooleanBuilderWithCursorCondition(cursorId)
+			.and(item.location.id.eq(locationId));
 
-		if (cursorId != null) {
-			dynamicLtId.and(item.id.lt(cursorId));
-		}
-
-		return queryFactory
-			.selectFrom(item)
-			.leftJoin(location).on(location.id.eq(item.location.id))
-			.where(dynamicLtId.and(location.id.eq(locationId)))
-			.orderBy(item.id.desc())
-			.limit(pageable.getPageSize())
-			.fetch();
+		return findAllBy(pageable, builder);
 	}
 
 	public List<Item> findAllByCategoryIdAndLocationId(Pageable pageable, Long categoryId, Long locationId, Long cursorId) {
 
-		BooleanBuilder dynamicLtId = new BooleanBuilder();
+		BooleanBuilder builder = generateBooleanBuilderWithCursorCondition(cursorId)
+			.and(item.category.id.eq(categoryId))
+			.and(item.location.id.eq(locationId));
 
+		return findAllBy(pageable, builder);
+	}
+
+	public List<Item> findAllBySellerId(Pageable pageable, Long sellerId, Long cursorId) {
+
+		BooleanBuilder builder = generateBooleanBuilderWithCursorCondition(cursorId)
+			.and(item.seller.id.eq(sellerId));
+
+		return findAllBy(pageable, builder);
+	}
+
+	public List<Item> findAllBySellerIdAndStatusId(Pageable pageable, Long sellerId, Long statusId, Long cursorId) {
+
+		BooleanBuilder builder = generateBooleanBuilderWithCursorCondition(cursorId)
+			.and(item.seller.id.eq(sellerId))
+			.and(item.status.id.eq(statusId));
+
+		return findAllBy(pageable, builder);
+	}
+
+	private BooleanBuilder generateBooleanBuilderWithCursorCondition(Long cursorId) {
+
+		BooleanBuilder builder = new BooleanBuilder();
 		if (cursorId != null) {
-			dynamicLtId.and(item.id.lt(cursorId));
+			builder.and(item.id.lt(cursorId));
 		}
+
+		return builder;
+	}
+
+	private List<Item> findAllBy(Pageable pageable, BooleanBuilder builder) {
 
 		return queryFactory
 			.selectFrom(item)
-			.leftJoin(category).on(category.id.eq(item.category.id))
-			.leftJoin(location).on(location.id.eq(item.location.id))
-			.where(
-				dynamicLtId
-					.and(category.id.eq(categoryId))
-					.and(location.id.eq(locationId)))
+			.where(builder)
 			.orderBy(item.id.desc())
 			.limit(pageable.getPageSize())
 			.fetch();

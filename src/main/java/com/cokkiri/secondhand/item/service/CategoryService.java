@@ -1,12 +1,13 @@
 package com.cokkiri.secondhand.item.service;
 
-import java.util.stream.Collectors;
+import java.util.Collections;
+import java.util.List;
 
 import org.springframework.stereotype.Service;
 
 import com.cokkiri.secondhand.item.dto.response.CategoryListResponse;
 import com.cokkiri.secondhand.item.dto.response.CategoryResponse;
-import com.cokkiri.secondhand.item.repository.CategoryJpaRepository;
+import com.cokkiri.secondhand.item.repository.CategoryDslRepository;
 
 import lombok.RequiredArgsConstructor;
 
@@ -14,15 +15,24 @@ import lombok.RequiredArgsConstructor;
 @Service
 public class CategoryService {
 
-	private final CategoryJpaRepository categoryJpaRepository;
+	private final CategoryDslRepository categoryDslRepository;
 
 	public CategoryListResponse getAllCategories() {
 		return
 			new CategoryListResponse(
-				categoryJpaRepository.findAll()
-					.stream()
-					.map(CategoryResponse::from)
-					.collect(Collectors.toList())
+				categoryDslRepository.findAll()
+			);
+	}
+
+	public CategoryListResponse getRecommendedCategories() {
+		List<CategoryResponse> categories = categoryDslRepository.findAll();
+
+		Collections.shuffle(categories);
+		List<CategoryResponse> recommendedCategories = categories.subList(0, 3);
+
+		return
+			new CategoryListResponse(
+				recommendedCategories
 			);
 	}
 }

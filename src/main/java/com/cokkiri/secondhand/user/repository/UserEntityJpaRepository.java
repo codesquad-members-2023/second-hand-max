@@ -8,5 +8,5 @@ import com.cokkiri.secondhand.user.entity.UserEntity;
 
 public interface UserEntityJpaRepository extends JpaRepository<UserEntity, Long> {
 
-	Optional<UserEntity> findById(Long id);
+	Optional<UserEntity> findByNickname(String nickname);
 }
