@@ -1,12 +1,12 @@
 import Fab from '@components/Fab';
 import ProductList from '@components/ProductList';
 import { styled } from 'styled-components';
-import { Title } from './Title';
+import { TopBar } from './TopBar';
 
 export const Home: React.FC = () => {
   return (
     <>
-      <Title />
+      <TopBar />
       <Content>
         <ProductList />
         <Fab />
