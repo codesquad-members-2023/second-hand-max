@@ -14,7 +14,7 @@ const App: React.FC = () => {
         <GlobalStyle />
         <AppRoutes />
       </ThemeProvider>
-      <ReactQueryDevtools initialIsOpen={true} />
+      <ReactQueryDevtools />
     </QueryClientProvider>
   );
 };
