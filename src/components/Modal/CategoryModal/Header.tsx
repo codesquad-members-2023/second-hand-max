@@ -1,27 +1,29 @@
-import BackButton from '@components/BackButton';
+import { BackButton } from '@components/BackButton';
+import TopBar from '@components/TopBar';
+import { useModalStore } from 'stores/useModalStore';
 import { css, styled } from 'styled-components';
 
-const Header: React.FC = () => {
+export const Header: React.FC = () => {
+  const closeCategoryModal = useModalStore(
+    ({ closeCategoryModal }) => closeCategoryModal,
+  );
+
   return (
     <Container>
-      <BackButton />
-      <Title>카테고리</Title>
+      <BackButton onClick={closeCategoryModal} />
+      <span>카테고리</span>
     </Container>
   );
 };
 
-const Container = styled.h2`
+const Container = styled(TopBar)`
   ${({ theme: { fonts, colors } }) => css`
     display: flex;
     justify-content: center;
     align-items: center;
     box-sizing: border-box;
     height: 56px;
-    ${fonts.display.strong20}
+    ${fonts.display.strong16}
     stroke: ${colors.neutral.text};
   `}
 `;
-
-const Title = styled.span``;
-
-export default Header;
