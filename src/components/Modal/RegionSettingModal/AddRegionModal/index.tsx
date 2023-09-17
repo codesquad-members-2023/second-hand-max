@@ -19,10 +19,9 @@ export const AddRegionModal: React.FC<Props> = ({
   addRegion,
 }) => {
   const [searchWord, setSearchWord] = useState('');
-  const { isLoading, data } = useQuery(QUERY_KEY.REGION, () =>
-    getRegions(searchWord),
-  );
-  const regions = data?.data.contents;
+  const regionQuery = useQuery(QUERY_KEY.REGION, () => getRegions(searchWord));
+
+  const regions = regionQuery.data?.data.contents;
 
   const onSearchWordChange = (word: string) => setSearchWord(word);
 
@@ -30,8 +29,12 @@ export const AddRegionModal: React.FC<Props> = ({
     <Modal onModalClose={onModalClose}>
       <AddRegionModalHeader onModalClose={onModalClose} />
       <SearchBar onChange={onSearchWordChange} />
-      <RegionList regions={regions} onClick={addRegion} />
-      {isLoading && <Loader />}
+
+      {regionQuery.isLoading ? (
+        <Loader />
+      ) : (
+        <RegionList {...{ regions, onClick: addRegion }} />
+      )}
     </Modal>
   );
 };
