@@ -1,7 +1,7 @@
 import { styled } from 'styled-components';
 import Header from './Header';
 
-const CategoryForm: React.FC = () => {
+export const CategoryModal: React.FC = () => {
   return (
     <Container>
       <Header />
@@ -10,5 +10,3 @@ const CategoryForm: React.FC = () => {
 };
 
 const Container = styled.form``;
-
-export default CategoryForm;
