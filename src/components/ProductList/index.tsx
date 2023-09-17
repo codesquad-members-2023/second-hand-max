@@ -1,6 +1,6 @@
 import { styled } from 'styled-components';
 import ListItem from './ListItem';
-import { ProductListItem } from 'apis/types';
+import { ProductListItem } from 'types';
 
 const ProductList: React.FC = () => {
   return (
