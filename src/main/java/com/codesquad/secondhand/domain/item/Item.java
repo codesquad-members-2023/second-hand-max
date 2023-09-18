@@ -92,7 +92,7 @@ public class Item extends BaseTimeEntity {
 	}
 
 	public List<Image> listImage() {
-		return detailShot.listAllImages();
+		return detailShot.listAllImages().isEmpty() ? null : detailShot.listAllImages();
 	}
 
 	public int getNumChat() {
