@@ -30,7 +30,7 @@ public class ItemPostRequest {
 	@Length(max = 3000, message = "내용은 최대 3000자 입니다")
 	private String content;
 
-	@Size(max = 10, message = "상품 이미지는 최대 10개까지 등록할 수 있습니다")
+	@Size(max = 10, message = "상품 이미지 등록 수가 최대 제한을 초과했습니다. 상품 등록 요청이 거부되었습니다")
 	private List<Long> imageIds;
 
 	@NotNull(message = "상품 카테고리가 선택되지 않았습니다")

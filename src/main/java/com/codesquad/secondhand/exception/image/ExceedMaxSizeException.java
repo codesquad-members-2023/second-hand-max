@@ -3,10 +3,10 @@ package com.codesquad.secondhand.exception.image;
 import com.codesquad.secondhand.exception.CustomException;
 import com.codesquad.secondhand.exception.ErrorResponse;
 
-public class InvalidExtensionException extends CustomException {
+public class ExceedMaxSizeException extends CustomException {
 
-	public InvalidExtensionException() {
-		super(ErrorResponse.INVALID_EXTENSION_EXCEPTION);
+	public ExceedMaxSizeException() {
+		super(ErrorResponse.EXCEED_MAX_SIZE_EXCEPTION);
 	}
 
 }

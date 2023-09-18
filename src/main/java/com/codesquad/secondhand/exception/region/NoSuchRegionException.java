@@ -1,11 +1,12 @@
 package com.codesquad.secondhand.exception.region;
 
-public class NoSuchRegionException extends RuntimeException {
+import com.codesquad.secondhand.exception.CustomException;
+import com.codesquad.secondhand.exception.ErrorResponse;
 
-	private static final String MESSAGE = "존재하지 않는 동네입니다";
+public class NoSuchRegionException extends CustomException {
 
 	public NoSuchRegionException() {
-		super(MESSAGE);
+		super(ErrorResponse.NO_SUCH_REGION_EXCEPTION);
 	}
 
 }

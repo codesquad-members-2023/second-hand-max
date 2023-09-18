@@ -1,11 +1,12 @@
 package com.codesquad.secondhand.exception.user;
 
-public class NoSuchUserException extends RuntimeException {
+import com.codesquad.secondhand.exception.CustomException;
+import com.codesquad.secondhand.exception.ErrorResponse;
 
-	private static final String MESSAGE = "존재하지 않는 사용자입니다";
+public class NoSuchUserException extends CustomException {
 
 	public NoSuchUserException() {
-		super(MESSAGE);
+		super(ErrorResponse.NO_SUCH_USER_EXCEPTION);
 	}
 
 }

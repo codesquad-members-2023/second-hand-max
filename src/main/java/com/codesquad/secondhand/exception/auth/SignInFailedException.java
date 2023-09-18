@@ -1,11 +1,12 @@
 package com.codesquad.secondhand.exception.auth;
 
-public class SignInFailedException extends RuntimeException {
+import com.codesquad.secondhand.exception.CustomException;
+import com.codesquad.secondhand.exception.ErrorResponse;
 
-	private static final String MESSAGE = "이메일 또는 비밀번호가 일치하지 않습니다";
+public class SignInFailedException extends CustomException {
 
 	public SignInFailedException() {
-		super(MESSAGE);
+		super(ErrorResponse.SIGN_IN_FAILED_EXCEPTION);
 	}
 
 }

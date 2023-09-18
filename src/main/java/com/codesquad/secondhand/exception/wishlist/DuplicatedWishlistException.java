@@ -1,11 +1,12 @@
 package com.codesquad.secondhand.exception.wishlist;
 
-public class DuplicatedWishlistException extends RuntimeException {
+import com.codesquad.secondhand.exception.CustomException;
+import com.codesquad.secondhand.exception.ErrorResponse;
 
-	private static final String MESSAGE = "이미 관심 목록에 담은 상품입니다";
+public class DuplicatedWishlistException extends CustomException {
 
 	public DuplicatedWishlistException() {
-		super(MESSAGE);
+		super(ErrorResponse.DUPLICATED_WISHLIST_EXCEPTION);
 	}
 
 }

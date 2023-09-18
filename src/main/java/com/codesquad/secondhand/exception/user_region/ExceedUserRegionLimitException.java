@@ -1,11 +1,12 @@
 package com.codesquad.secondhand.exception.user_region;
 
-public class ExceedUserRegionLimitException extends RuntimeException {
+import com.codesquad.secondhand.exception.CustomException;
+import com.codesquad.secondhand.exception.ErrorResponse;
 
-	private static final String MESSAGE = "동네 등록 수가 최대 제한을 초과했습니다";
+public class ExceedUserRegionLimitException extends CustomException {
 
 	public ExceedUserRegionLimitException() {
-		super(MESSAGE);
+		super(ErrorResponse.EXCEED_USER_REGION_LIMIT_EXCEPTION);
 	}
 
 }
