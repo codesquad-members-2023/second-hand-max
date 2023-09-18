@@ -74,14 +74,22 @@ const useOAuth = () => {
 
   const initOAuth = ({ action, id, file, addressIds }: InitOAuthParams) => {
     const onMessageReceive = ({ origin, data }: MessageEvent) => {
-      const isSameOrigin = origin === window.location.origin;
-      const { status, code } = data;
+      try {
+        const isSameOrigin = origin === window.location.origin;
+        const { status, code } = data;
 
-      if (!isSameOrigin || status === 'error' || !id) {
+        if (!isSameOrigin || status === 'error' || !id) {
           throw new Error(ERROR_MESSAGE.INVALID_ACCESS);
-      }
+        }
 
-      actionHandlerMap[action]({ code, id, file, addressIds });
+        actionHandlerMap[action]({ code, id, file, addressIds });
+      } catch (error) {
+        console.error(error);
+
+        if (error instanceof Error) {
+          alert(error.message);
+        }
+      }
     };
 
     const oauthUrl = `${import.meta.env.VITE_APP_OAUTH_URL}&state=${action}`;
