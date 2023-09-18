@@ -7,6 +7,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.Collection;
 import java.util.List;
 
+import com.codesquad.secondhand.exception.ErrorResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DynamicTest;
@@ -181,7 +182,7 @@ public class ItemServiceTest extends IntegrationTestSupport {
 		// when & then
 		assertThatThrownBy(() -> itemService.postItem(request, wrongUserId))
 			.isInstanceOf(NoSuchUserException.class)
-			.hasMessage("존재하지 않는 사용자입니다");
+			.hasMessage(ErrorResponse.NO_SUCH_USER_EXCEPTION.getMessage());
 
 	}
 
@@ -196,7 +197,7 @@ public class ItemServiceTest extends IntegrationTestSupport {
 		// when & then
 		assertThatThrownBy(() -> itemService.postItem(request, loginUser.getId()))
 			.isInstanceOf(NoSuchCategoryException.class)
-			.hasMessage("존재하지 않는 카테고리입니다");
+			.hasMessage(ErrorResponse.NO_SUCH_CATEGORY_EXCEPTION.getMessage());
 	}
 
 	@DisplayName("상품 등록 시 존재하지 않는 지역을 설정하면 예외가 발생한다.")
@@ -210,7 +211,7 @@ public class ItemServiceTest extends IntegrationTestSupport {
 		// when & then
 		assertThatThrownBy(() -> itemService.postItem(request, loginUser.getId()))
 			.isInstanceOf(NoSuchRegionException.class)
-			.hasMessage("존재하지 않는 동네입니다");
+			.hasMessage(ErrorResponse.NO_SUCH_REGION_EXCEPTION.getMessage());
 	}
 
 	@DisplayName("상품 등록 시 나의 동네가 아닌 지역을 설정하면 예외가 발생한다.")
@@ -224,7 +225,7 @@ public class ItemServiceTest extends IntegrationTestSupport {
 		// when & then
 		assertThatThrownBy(() -> itemService.postItem(request, loginUser.getId()))
 			.isInstanceOf(NoSuchUserRegionException.class)
-			.hasMessage("사용자 동네 목록에 없는 동네입니다");
+			.hasMessage(ErrorResponse.NO_SUCH_USER_REGION_EXCEPTION.getMessage());
 	}
 
 	@DisplayName("상품 상세 조회를 성공한다.")
@@ -266,7 +267,7 @@ public class ItemServiceTest extends IntegrationTestSupport {
 		// when & then
 		assertThatThrownBy(() -> itemService.getItemDetail(wrongItemId, loginUser.getId()))
 			.isInstanceOf(NoSuchItemException.class)
-			.hasMessage("존재하지 않는 상품입니다");
+			.hasMessage(ErrorResponse.NO_SUCH_ITEM_EXCEPTION.getMessage());
 	}
 
 	@DisplayName("상품 삭제를 성공한다.")
@@ -382,7 +383,7 @@ public class ItemServiceTest extends IntegrationTestSupport {
 		// when & then
 		assertThatThrownBy(() -> itemService.updateItemStatus(request, loginUser.getId()))
 			.isInstanceOf(PermissionDeniedException.class)
-			.hasMessage("허가되지 않은 접근입니다");
+			.hasMessage(ErrorResponse.PERMISSION_DENIED_EXCEPTION.getMessage());
 	}
 
 }

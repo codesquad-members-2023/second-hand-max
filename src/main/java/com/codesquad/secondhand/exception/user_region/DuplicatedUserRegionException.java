@@ -1,11 +1,12 @@
 package com.codesquad.secondhand.exception.user_region;
 
-public class DuplicatedUserRegionException extends RuntimeException {
+import com.codesquad.secondhand.exception.CustomException;
+import com.codesquad.secondhand.exception.ErrorResponse;
 
-	private static final String MESSAGE = "이미 등록된 동네입니다";
+public class DuplicatedUserRegionException extends CustomException {
 
 	public DuplicatedUserRegionException() {
-		super(MESSAGE);
+		super(ErrorResponse.DUPLICATED_USER_REGION_EXCEPTION);
 	}
 
 }

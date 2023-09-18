@@ -1,10 +1,11 @@
 package com.codesquad.secondhand.exception.auth;
 
-public class PermissionDeniedException extends RuntimeException {
+import com.codesquad.secondhand.exception.CustomException;
+import com.codesquad.secondhand.exception.ErrorResponse;
 
-	private static final String MESSAGE = "허가되지 않은 접근입니다";
+public class PermissionDeniedException extends CustomException {
 
 	public PermissionDeniedException() {
-		super(MESSAGE);
+		super(ErrorResponse.PERMISSION_DENIED_EXCEPTION);
 	}
 }

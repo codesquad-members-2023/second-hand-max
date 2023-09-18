@@ -1,9 +1,11 @@
 package com.codesquad.secondhand.exception.item_image;
 
-public class NoSuchItemImageException extends RuntimeException {
-	private final static String MESSAGE = "존재하지 않는 상품 이미지입니다";
+import com.codesquad.secondhand.exception.CustomException;
+import com.codesquad.secondhand.exception.ErrorResponse;
+
+public class NoSuchItemImageException extends CustomException {
 
 	public NoSuchItemImageException() {
-		super(MESSAGE);
+		super(ErrorResponse.NO_SUCH_ITEM_IMAGE_EXCEPTION);
 	}
 }

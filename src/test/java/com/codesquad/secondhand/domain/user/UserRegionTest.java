@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.*;
 import java.util.Collection;
 import java.util.List;
 
+import com.codesquad.secondhand.exception.ErrorResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.TestFactory;
@@ -45,7 +46,7 @@ class UserRegionTest extends IntegrationTestSupport {
 				// when // then
 				assertThatThrownBy(() -> user.addUserRegion(region))
 					.isInstanceOf(DuplicatedUserRegionException.class)
-					.hasMessage("이미 등록된 동네입니다");
+					.hasMessage(ErrorResponse.DUPLICATED_USER_REGION_EXCEPTION.getMessage());
 			}),
 			DynamicTest.dynamicTest("사용자 동네를 추가할 수 있다.", () -> {
 				// given
@@ -64,7 +65,7 @@ class UserRegionTest extends IntegrationTestSupport {
 				// when // then
 				assertThatThrownBy(() -> user.addUserRegion(region))
 					.isInstanceOf(ExceedUserRegionLimitException.class)
-					.hasMessage("동네 등록 수가 최대 제한을 초과했습니다");
+					.hasMessage(ErrorResponse.EXCEED_USER_REGION_LIMIT_EXCEPTION.getMessage());
 			})
 		);
 	}
@@ -87,7 +88,7 @@ class UserRegionTest extends IntegrationTestSupport {
 				// when // then
 				assertThatThrownBy(() -> user.removeUserRegion(region))
 					.isInstanceOf(NoSuchUserRegionException.class)
-					.hasMessage("사용자 동네 목록에 없는 동네입니다");
+					.hasMessage(ErrorResponse.NO_SUCH_USER_REGION_EXCEPTION.getMessage());
 			}),
 			DynamicTest.dynamicTest("사용자 동네를 삭제할 수 있다.", () -> {
 				// given
@@ -106,7 +107,7 @@ class UserRegionTest extends IntegrationTestSupport {
 				// when // then
 				assertThatThrownBy(() -> user.removeUserRegion(region))
 					.isInstanceOf(MinimumUserRegionViolationException.class)
-					.hasMessage("최소 1개의 동네는 필수입니다");
+					.hasMessage(ErrorResponse.MINIMUM_USER_REGION_VIOLATION_EXCEPTION.getMessage());
 			})
 		);
 	}
@@ -130,7 +131,7 @@ class UserRegionTest extends IntegrationTestSupport {
 				// when & then
 				assertThatThrownBy(() -> savedUser.updateSelectedRegion(regions.get(1)))
 					.isInstanceOf(NoSuchUserRegionException.class)
-					.hasMessage("사용자 동네 목록에 없는 동네입니다");
+					.hasMessage(ErrorResponse.NO_SUCH_USER_REGION_EXCEPTION.getMessage());
 			}),
 			DynamicTest.dynamicTest("사용자 목록에 있는 동네를 선택할 수 있다.", () -> {
 				// given

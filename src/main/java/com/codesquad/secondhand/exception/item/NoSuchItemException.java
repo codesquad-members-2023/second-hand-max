@@ -1,10 +1,11 @@
 package com.codesquad.secondhand.exception.item;
 
-public class NoSuchItemException extends RuntimeException {
+import com.codesquad.secondhand.exception.CustomException;
+import com.codesquad.secondhand.exception.ErrorResponse;
 
-	private static final String MESSAGE = "존재하지 않는 상품입니다";
+public class NoSuchItemException extends CustomException {
 
 	public NoSuchItemException() {
-		super(MESSAGE);
+		super(ErrorResponse.NO_SUCH_ITEM_EXCEPTION);
 	}
 }

@@ -1,11 +1,12 @@
 package com.codesquad.secondhand.exception.category;
 
-public class NoSuchCategoryException extends RuntimeException {
+import com.codesquad.secondhand.exception.CustomException;
+import com.codesquad.secondhand.exception.ErrorResponse;
 
-	private static final String MESSAGE = "존재하지 않는 카테고리입니다";
+public class NoSuchCategoryException extends CustomException {
 
 	public NoSuchCategoryException() {
-		super(MESSAGE);
+		super(ErrorResponse.NO_SUCH_CATEGORY_EXCEPTION);
 	}
 
 }

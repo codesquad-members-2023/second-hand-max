@@ -70,7 +70,7 @@ public class ItemControllerTest extends ControllerTestSupport {
 			.andExpect(jsonPath("$.data.price").doesNotExist())
 			.andExpect(jsonPath("$.data.category").value("가전"))
 			.andExpect(jsonPath("$.data.seller.id").value(1L))
-			.andExpect(jsonPath("$.data.seller.nickName").value("nickname"))
+			.andExpect(jsonPath("$.data.seller.nickname").value("nickname"))
 			.andExpect(jsonPath("$.data.numChat").value(0))
 			.andExpect(jsonPath("$.data.numLikes").value(0))
 			.andExpect(jsonPath("$.data.numViews").value(0L))

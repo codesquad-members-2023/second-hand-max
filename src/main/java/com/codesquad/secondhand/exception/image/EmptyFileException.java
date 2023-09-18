@@ -1,11 +1,12 @@
 package com.codesquad.secondhand.exception.image;
 
-public class EmptyFileException extends RuntimeException {
+import com.codesquad.secondhand.exception.CustomException;
+import com.codesquad.secondhand.exception.ErrorResponse;
 
-	private static final String MESSAGE = "파일이 비어있습니다";
+public class EmptyFileException extends CustomException {
 
 	public EmptyFileException() {
-		super(MESSAGE);
+		super(ErrorResponse.EMPTY_FILE_EXCEPTION);
 	}
 
 }

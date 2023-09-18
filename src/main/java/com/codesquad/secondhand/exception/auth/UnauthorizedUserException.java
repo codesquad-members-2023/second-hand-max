@@ -1,11 +1,12 @@
 package com.codesquad.secondhand.exception.auth;
 
-public class UnauthorizedUserException extends RuntimeException {
+import com.codesquad.secondhand.exception.CustomException;
+import com.codesquad.secondhand.exception.ErrorResponse;
 
-	private static final String MESSAGE = "인증되지 않은 사용자입니다";
+public class UnauthorizedUserException extends CustomException {
 
 	public UnauthorizedUserException() {
-		super(MESSAGE);
+		super(ErrorResponse.UNAUTHORIZED_USER_EXCEPTION);
 	}
 
 }

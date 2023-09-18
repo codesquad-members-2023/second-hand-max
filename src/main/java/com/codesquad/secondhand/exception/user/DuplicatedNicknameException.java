@@ -1,11 +1,12 @@
 package com.codesquad.secondhand.exception.user;
 
-public class DuplicatedNicknameException extends RuntimeException {
+import com.codesquad.secondhand.exception.CustomException;
+import com.codesquad.secondhand.exception.ErrorResponse;
 
-	private static final String MESSAGE = "이미 존재하는 닉네임입니다";
+public class DuplicatedNicknameException extends CustomException {
 
 	public DuplicatedNicknameException() {
-		super(MESSAGE);
+		super(ErrorResponse.DUPLICATED_NICKNAME_EXCEPTION);
 	}
 
 }
