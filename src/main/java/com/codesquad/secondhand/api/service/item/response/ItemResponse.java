@@ -31,7 +31,7 @@ public class ItemResponse {
 			item.getStatus().getType(),
 			item.getUser().getId(),
 			item.getThumbnailUrl(),
-			item.getCreatedAt(),
+			item.getUpdatedAt(),
 			item.getPrice(),
 			item.getNumChat(),
 			item.getNumLikes()
