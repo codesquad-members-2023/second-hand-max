@@ -8,6 +8,7 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
+import com.codesquad.secondhand.exception.ErrorResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.Test;
@@ -84,8 +85,7 @@ class JwtServiceTest extends IntegrationTestSupport {
 				// when // then
 				assertThatThrownBy(() -> jwtService.parse("Bearer " + expiredToken))
 					.isInstanceOf(ExpiredTokenException.class)
-					.hasMessage("Access Token이 만료되었습니다");
-
+					.hasMessage(ErrorResponse.EXPIRED_TOKEN_EXCEPTION.getMessage());
 			}),
 			DynamicTest.dynamicTest("변조된 Access Token을 받았을 때 예외가 발생한다.", () -> {
 				// given
@@ -104,7 +104,7 @@ class JwtServiceTest extends IntegrationTestSupport {
 				// when // then
 				assertThatThrownBy(() -> jwtService.parse("Bearer " + invalidToken))
 					.isInstanceOf(InvalidTokenException.class)
-					.hasMessage("유효하지 않은 토큰입니다");
+					.hasMessage(ErrorResponse.INVALID_TOKEN_EXCEPTION.getMessage());
 			})
 		);
 	}

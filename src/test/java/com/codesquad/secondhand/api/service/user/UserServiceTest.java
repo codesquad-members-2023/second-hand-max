@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import java.util.Collection;
 import java.util.List;
 
+import com.codesquad.secondhand.exception.ErrorResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.TestFactory;
@@ -79,7 +80,7 @@ class UserServiceTest extends IntegrationTestSupport {
 				// when // then
 				assertThatThrownBy(() -> userService.createUser(request))
 					.isInstanceOf(DuplicatedEmailException.class)
-					.hasMessage("이미 존재하는 이메일입니다");
+					.hasMessage(ErrorResponse.DUPLICATED_EMAIL_EXCEPTION.getMessage());
 			}),
 			DynamicTest.dynamicTest("이미 사용 중인 닉네임으로 등록을 시도하는 경우 예외가 발생한다.", () -> {
 				// given
@@ -90,7 +91,7 @@ class UserServiceTest extends IntegrationTestSupport {
 				// when // then
 				assertThatThrownBy(() -> userService.createUser(request))
 					.isInstanceOf(DuplicatedNicknameException.class)
-					.hasMessage("이미 존재하는 닉네임입니다");
+					.hasMessage(ErrorResponse.DUPLICATED_NICKNAME_EXCEPTION.getMessage());
 			}),
 			DynamicTest.dynamicTest("닉네임과 이메일이 중복되지 않는 새로운 사용자 등록에 성공한다.", () -> {
 				// given
