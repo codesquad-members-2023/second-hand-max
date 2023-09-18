@@ -2,6 +2,7 @@ import { useNavigate } from 'react-router-dom';
 import PATH from '@constants/PATH';
 import { signInUser, signUpUser } from 'apis/auth';
 import { useUserStore } from 'stores/useUserStore';
+import { ERROR_MESSAGE } from '@constants/ERROR_MESSAGE';
 
 type Action = 'sign-up' | 'sign-in';
 
@@ -77,7 +78,7 @@ const useOAuth = () => {
       const { status, code } = data;
 
       if (!isSameOrigin || status === 'error' || !id) {
-        throw new Error('비정상적인 접근입니다.');
+          throw new Error(ERROR_MESSAGE.INVALID_ACCESS);
       }
 
       actionHandlerMap[action]({ code, id, file, addressIds });

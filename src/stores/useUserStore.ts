@@ -1,3 +1,4 @@
+import { ERROR_MESSAGE } from '@constants/ERROR_MESSAGE';
 import { LOCAL_STORAGE_KEY } from '@constants/LOCAL_STORAGE_KEY';
 import { updateAccessToken } from 'apis/auth';
 import { Tokens, User } from 'types';
@@ -36,7 +37,7 @@ export const useUserStore = create<UserStore>()(
         const tokens = get().tokens;
 
         if (!tokens) {
-          throw new Error('스토어에 token이 없습니다.');
+          throw new Error(ERROR_MESSAGE.TOKEN_NOT_FOUND);
         }
 
         return tokens;
@@ -55,7 +56,7 @@ export const useUserStore = create<UserStore>()(
 
             state.setTokens({ ...tokens, accessToken });
           } else {
-            throw new Error('토큰 재발급에 실패했습니다.');
+            throw new Error(ERROR_MESSAGE.TOKEN_REFRESH_FAILED);
           }
         } catch (error) {
           console.error(error);
