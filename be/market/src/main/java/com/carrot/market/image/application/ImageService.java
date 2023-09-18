@@ -41,6 +41,10 @@ public class ImageService {
 
 	private final ImageS3Uploader imageS3Uploader;
 
+	public List<Image> findImagesById(List<Long> imageIds) {
+		return imageRepository.findAllById(imageIds);
+	}
+
 	@Transactional
 	public List<ImageResponse> uploadImages(List<MultipartFile> multipartFiles) {
 		final List<String> imageUrls = new ArrayList<>();
@@ -58,6 +62,10 @@ public class ImageService {
 	}
 
 	private String uploadImage(MultipartFile file) {
+		if (file == null || file.isEmpty()) {
+			throw new ApiException(ImageException.NOT_EXIST_IMAGE);
+		}
+
 		try (var imageInputStream = file.getInputStream()) {
 			BufferedImage image = ImageIO.read(imageInputStream);
 			return imageS3Uploader.upload(image, generateKey(file.getOriginalFilename()), imageHeight, imageWidth);

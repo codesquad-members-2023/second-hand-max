@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.util.PatternMatchUtils;
+import org.springframework.util.StringUtils;
 import org.springframework.web.cors.CorsUtils;
 
 import com.carrot.market.global.exception.domain.JwtException;
@@ -29,7 +30,7 @@ import jakarta.servlet.http.HttpServletResponse;
 public class JwtAuthorizationFilter implements Filter {
 	private static final String TOKEN_PREFIX = "Bearer ";
 	private static final String HEADER_AUTHORIZATION = "Authorization";
-	private static final String MEMBER_ID = "memberId";
+	public static final String MEMBER_ID = "memberId";
 	private static final String SOCIAL_ID = "socialId";
 	private static final String PROFILE_IMAGE_URL = "imageUrl";
 	private static final int BEARER_PREFIX_LENGTH = 7;
@@ -78,7 +79,7 @@ public class JwtAuthorizationFilter implements Filter {
 			}
 			chain.doFilter(request, response);
 		} catch (ExpiredJwtException | UnsupportedJwtException | MalformedJwtException | SignatureException |
-				 IllegalArgumentException ex) {
+			IllegalArgumentException ex) {
 			sendErrorApiResponse(response, ex);
 		}
 	}
@@ -103,7 +104,11 @@ public class JwtAuthorizationFilter implements Filter {
 	}
 
 	private String extractToken(String authorization) {
-		return authorization.substring(BEARER_PREFIX_LENGTH).replace("\"", "");
+		if (StringUtils.hasText(authorization) && authorization.startsWith(TOKEN_PREFIX)) {
+			return authorization.substring(BEARER_PREFIX_LENGTH).replace("\"", "");
+		}
+
+		throw new IllegalArgumentException();
 	}
 
 	private void sendErrorApiResponse(ServletResponse response, RuntimeException ex) throws IOException {
