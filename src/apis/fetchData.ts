@@ -14,11 +14,9 @@ export const fetchData = async (path: string, options?: RequestInit) => {
 
 const handleAccessTokenUpdate = async () => {
   try {
-    const { tokens, setTokens } = useUserStore.getState();
-
-    if (!tokens) {
-      throw new Error('로컬스토리지에 토큰이 없습니다.');
-    }
+    const userState = useUserStore.getState();
+    const { setTokens } = userState;
+    const tokens = userState.getTokens();
 
     const tokenResponse = await updateAccessToken(tokens.refreshToken);
     const isSuccess = tokenResponse.statusCode === 200;

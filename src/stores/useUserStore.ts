@@ -8,6 +8,7 @@ type UserStore = {
   user: User | null;
   tokens: Tokens | null;
   currentRegion: Address;
+  getTokens: () => Tokens;
   setTokens: (tokens: Tokens) => void;
   setUserAuth: ({ user, tokens }: { user: User; tokens: Tokens }) => void;
   setAddAddress: (address: Address) => void;
@@ -27,8 +28,17 @@ const initialState = {
 
 export const useUserStore = create<UserStore>()(
   persist(
-    (set) => ({
+    (set, get) => ({
       ...initialState,
+      getTokens: () => {
+        const tokens = get().tokens;
+
+        if (!tokens) {
+          throw new Error('스토어에 token이 없습니다.');
+        }
+
+        return tokens;
+      },
       setTokens: (tokens) => set({ tokens }),
       setUserAuth: ({ user, tokens }) => set({ user, tokens }),
       setAddAddress: (address) =>
