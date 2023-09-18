@@ -7,7 +7,6 @@ import java.time.temporal.ChronoUnit;
 import java.util.Collection;
 import java.util.List;
 
-import com.codesquad.secondhand.exception.ErrorResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DynamicTest;
@@ -36,6 +35,7 @@ import com.codesquad.secondhand.domain.status.Status;
 import com.codesquad.secondhand.domain.status.StatusRepository;
 import com.codesquad.secondhand.domain.user.User;
 import com.codesquad.secondhand.domain.user.UserRepository;
+import com.codesquad.secondhand.exception.ErrorResponse;
 import com.codesquad.secondhand.exception.auth.PermissionDeniedException;
 import com.codesquad.secondhand.exception.category.NoSuchCategoryException;
 import com.codesquad.secondhand.exception.item.NoSuchItemException;
@@ -249,7 +249,8 @@ public class ItemServiceTest extends IntegrationTestSupport {
 			() -> assertThat(postedItem.getUpdatedAt()).isCloseTo(item.getUpdatedAt(),
 				within(1, ChronoUnit.SECONDS)),
 			() -> assertThat(postedItem.getPrice()).isNull(),
-			() -> assertThat(postedItem.getCategory()).isEqualTo(categories.get(0).getTitle()),
+			() -> assertThat(postedItem.getCategory().getId()).isEqualTo(categories.get(0).getId()),
+			() -> assertThat(postedItem.getCategory().getTitle()).isEqualTo(categories.get(0).getTitle()),
 			() -> assertThat(postedItem.getSeller().getId()).isEqualTo(seller.getId()),
 			() -> assertThat(postedItem.getNumChat()).isEqualTo(0),
 			() -> assertThat(postedItem.getNumLikes()).isEqualTo(0),
@@ -302,8 +303,7 @@ public class ItemServiceTest extends IntegrationTestSupport {
 	@TestFactory
 	Collection<DynamicTest> updateItem() {
 		// given
-		Item myItem = FixtureFactory.createItemFixture(loginUser, categories.get(0), regions.get(0),
-			statusList.get(0));
+		Item myItem = FixtureFactory.createItemFixture(loginUser, categories.get(0), regions.get(0), statusList.get(0));
 		itemRepository.save(myItem);
 		myItem.addItemImages(images);
 
@@ -322,7 +322,7 @@ public class ItemServiceTest extends IntegrationTestSupport {
 					() -> assertThat(updatedItem.getTitle()).isEqualTo("new title"),
 					() -> assertThat(updatedItem.getPrice()).isEqualTo(100),
 					() -> assertThat(updatedItem.getContent()).isEqualTo("new content"),
-					() -> assertThat(updatedItem.listImage()).isEmpty(),
+					() -> assertThat(updatedItem.listImage()).isNull(),
 					() -> assertThat(updatedItem.getCategory().getId()).isEqualTo(1L),
 					() -> assertThat(updatedItem.getRegion().getId()).isEqualTo(1L)
 				);
