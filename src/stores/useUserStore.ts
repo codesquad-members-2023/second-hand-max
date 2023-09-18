@@ -45,8 +45,8 @@ export const useUserStore = create<UserStore>()(
       setTokens: (tokens) => set({ tokens }),
       handleTokenExpiry: async () => {
         try {
-          const state = get();
-          const tokens = state.getTokens();
+          const { getTokens, setTokens } = get();
+          const tokens = getTokens();
 
           const tokenResponse = await updateAccessToken(tokens.refreshToken);
           const isSuccess = tokenResponse.statusCode === 200;
@@ -54,7 +54,7 @@ export const useUserStore = create<UserStore>()(
           if (isSuccess) {
             const { accessToken } = tokenResponse.data.jwt;
 
-            state.setTokens({ ...tokens, accessToken });
+            setTokens({ ...tokens, accessToken });
           } else {
             throw new Error(ERROR_MESSAGE.TOKEN_REFRESH_FAILED);
           }
