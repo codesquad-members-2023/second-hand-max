@@ -14,6 +14,7 @@ import org.springframework.http.MediaType;
 
 import com.codesquad.secondhand.ControllerTestSupport;
 import com.codesquad.secondhand.api.controller.item.request.ItemPostRequest;
+import com.codesquad.secondhand.api.controller.item.response.ItemCategoryResponse;
 import com.codesquad.secondhand.api.controller.item.response.ItemDetailResponse;
 import com.codesquad.secondhand.api.controller.item.response.ItemSellerResponse;
 import com.codesquad.secondhand.domain.image.Image;
@@ -53,8 +54,9 @@ public class ItemControllerTest extends ControllerTestSupport {
 		mockingJwtService();
 		Long itemId = 1L;
 		ItemSellerResponse sellerResponse = new ItemSellerResponse(1L, "nickname");
+		ItemCategoryResponse categoryResponse = new ItemCategoryResponse(2L, "가전");
 		ItemDetailResponse itemResponse = new ItemDetailResponse(1L, "title", "판매중", "content", LocalDateTime.now(),
-			null, "가전", sellerResponse, 0, 0, 0L, false, null);
+			null, categoryResponse, sellerResponse, 0, 0, 0L, false, null);
 
 		when(itemService.getItemDetail(anyLong(), anyLong())).thenReturn(itemResponse);
 
@@ -68,7 +70,8 @@ public class ItemControllerTest extends ControllerTestSupport {
 			.andExpect(jsonPath("$.data.title").value("title"))
 			.andExpect(jsonPath("$.data.content").value("content"))
 			.andExpect(jsonPath("$.data.price").doesNotExist())
-			.andExpect(jsonPath("$.data.category").value("가전"))
+			.andExpect(jsonPath("$.data.category.id").value(2L))
+			.andExpect(jsonPath("$.data.category.title").value("가전"))
 			.andExpect(jsonPath("$.data.seller.id").value(1L))
 			.andExpect(jsonPath("$.data.seller.nickname").value("nickname"))
 			.andExpect(jsonPath("$.data.numChat").value(0))
