@@ -15,6 +15,7 @@ import com.codesquad.secondhand.domain.user.UserRepository;
 import com.codesquad.secondhand.exception.ErrorResponse;
 import com.codesquad.secondhand.exception.auth.PermissionDeniedException;
 import com.codesquad.secondhand.exception.item_image.NoSuchItemImageException;
+
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 
