@@ -1,4 +1,5 @@
 import { LOCAL_STORAGE_KEY } from '@constants/LOCAL_STORAGE_KEY';
+import { updateAccessToken } from 'apis/auth';
 import { Tokens, User } from 'types';
 import { Address } from 'types/region';
 import { create } from 'zustand';
@@ -10,6 +11,7 @@ type UserStore = {
   currentRegion: Address;
   getTokens: () => Tokens;
   setTokens: (tokens: Tokens) => void;
+  handleTokenExpiry: () => void;
   setUserAuth: ({ user, tokens }: { user: User; tokens: Tokens }) => void;
   setAddAddress: (address: Address) => void;
   setCurrentRegion: (address: Address) => void;
@@ -40,6 +42,25 @@ export const useUserStore = create<UserStore>()(
         return tokens;
       },
       setTokens: (tokens) => set({ tokens }),
+      handleTokenExpiry: async () => {
+        try {
+          const state = get();
+          const tokens = state.getTokens();
+
+          const tokenResponse = await updateAccessToken(tokens.refreshToken);
+          const isSuccess = tokenResponse.statusCode === 200;
+
+          if (isSuccess) {
+            const { accessToken } = tokenResponse.data.jwt;
+
+            state.setTokens({ ...tokens, accessToken });
+          } else {
+            throw new Error('토큰 재발급에 실패했습니다.');
+          }
+        } catch (error) {
+          console.error(error);
+        }
+      },
       setUserAuth: ({ user, tokens }) => set({ user, tokens }),
       setAddAddress: (address) =>
         set(({ user }) => {
