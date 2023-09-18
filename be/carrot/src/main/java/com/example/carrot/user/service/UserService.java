@@ -52,7 +52,8 @@ public class UserService {
 	@Value("${oauth.kakao.redirect_uri}")
 	private String redirectUri;
 
-	public UserService(LocationService locationService, UserLocationService userLocationService, UserRepository userRepository,
+	public UserService(LocationService locationService, UserLocationService userLocationService,
+		UserRepository userRepository,
 		JwtProvider jwtProvider) {
 		this.locationService = locationService;
 		this.userLocationService = userLocationService;
@@ -110,7 +111,7 @@ public class UserService {
 	private Map<String, Object> findUserInfo(String accessToken) {
 		return WebClient.create()
 			.get()
-			.uri("https://kapi.kakao.com/v2/user/me")
+			.uri(KAKAO_USER_ME_URI)
 			.header("Content-type", "application/x-www-form-urlencoded;charset=utf-8")
 			.header("Authorization", "Bearer " + accessToken)
 			.retrieve()

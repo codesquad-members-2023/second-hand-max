@@ -7,39 +7,37 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
 
 import com.example.carrot.global.common.BaseCreatedTimeEntity;
 import com.example.carrot.product.entity.Product;
 import com.example.carrot.user_location.entity.UserLocation;
 
-import lombok.Builder;
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Location extends BaseCreatedTimeEntity {
+
 	@Id
-	@GeneratedValue
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long locationId;
 
 	@Column(nullable = false)
 	private String name;
 
-	@OneToOne(mappedBy = "location")
-	private Product product;
+	@OneToMany(mappedBy = "location", cascade = CascadeType.PERSIST)
+	private List<Product> products = new ArrayList<>();
 
-	@OneToMany(mappedBy = "location", cascade = CascadeType.ALL)
+	@OneToMany(mappedBy = "location", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<UserLocation> userLocations = new ArrayList<>();
 
-	@Builder
-	public Location(String name, Product product) {
+	public Location(String name) {
 		this.name = name;
-		this.product = product;
 	}
-
 }

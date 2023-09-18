@@ -18,11 +18,14 @@ import org.springframework.web.cors.CorsUtils;
 
 import com.example.carrot.global.common.ApiResponse;
 import com.example.carrot.global.exception.ErrorCode;
+import com.example.carrot.global.exception.ExceptionToStatusCodeMapper;
 import com.example.carrot.global.exception.StatusCode;
 import com.example.carrot.global.jwt.JwtProvider;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.JwtException;
+import io.jsonwebtoken.MalformedJwtException;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -41,11 +44,16 @@ public class AuthFilter implements Filter {
 
 	@Value("${filter.users-signup-uri}")
 	private String signupUri;
+	@Value("${filter.open-uris}")
+	private String[] openUris;
+
+	private final ExceptionToStatusCodeMapper exceptionMapper;
 
 	private final ObjectMapper objectMapper;
 	private final JwtProvider jwtProvider;
 
-	public AuthFilter(ObjectMapper objectMapper, JwtProvider jwtProvider) {
+	public AuthFilter(ExceptionToStatusCodeMapper exceptionMapper, ObjectMapper objectMapper, JwtProvider jwtProvider) {
+		this.exceptionMapper = exceptionMapper;
 		this.objectMapper = objectMapper;
 		this.jwtProvider = jwtProvider;
 	}
@@ -64,44 +72,62 @@ public class AuthFilter implements Filter {
 		}
 
 		if (whiteListCheck(httpServletRequest.getRequestURI())) {
-			log.info("whileListCheck 진입");
-			if (isSignupUri(httpServletRequest.getRequestURI())) {
-				processSignupJwt(httpServletRequest, httpServletResponse);
-			}
+			log.info("whiteListCheck 진입");
 			chain.doFilter(request, response);
 			return;
 		}
 
+		if (isSignupUri(httpServletRequest.getRequestURI())) {
+			log.info(signupUri + " 진입");
+			processSignupJwt(httpServletRequest, httpServletResponse, chain);
+			return;
+		}
+
+		if (!isContainToken(httpServletRequest)) {
+			handleIsOpenUriOrNot(httpServletRequest, httpServletResponse, chain);
+			return;
+		}
+
 		try {
-			if (!isContainToken(httpServletRequest)) {
-				request.setAttribute(USER_ID, null);
-				chain.doFilter(request, response);
-				return;
-			}
-
 			Claims claims = jwtProvider.getClaims(getToken(httpServletRequest));
-
 			request.setAttribute(USER_ID, claims.get(USER_ID));
 			chain.doFilter(request, response);
-		} catch (RuntimeException e) {
-			log.debug(e.getClass().getName());
+		} catch (JwtException e) {
+			log.error(e.getClass().getName());
 			sendErrorApiResponse(httpServletResponse, e);
 		}
+	}
+
+	private void handleIsOpenUriOrNot(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse,
+		FilterChain chain) throws
+		IOException, ServletException {
+		if (!openUrisCheck(httpServletRequest.getRequestURI()) || !httpServletRequest.getMethod().equalsIgnoreCase("get")) {
+			log.info("openUris에 해당하지 않는 uri");
+			sendErrorApiResponse(httpServletResponse, new MalformedJwtException(""));
+			return;
+		}
+		httpServletRequest.setAttribute(USER_ID, null);
+		chain.doFilter(httpServletRequest, httpServletResponse);
+	}
+
+	private boolean openUrisCheck(String uri) {
+		return PatternMatchUtils.simpleMatch(openUris, uri);
 	}
 
 	private boolean isSignupUri(String uri) {
 		return signupUri.equals(uri);
 	}
 
-	private void processSignupJwt(HttpServletRequest request, HttpServletResponse httpServletResponse) throws
-		IOException {
+	private void processSignupJwt(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws
+		IOException, ServletException {
 		try {
 			Claims claims = jwtProvider.getClaims(getToken(request));
 			request.setAttribute(SOCIAL_ID, claims.get(SOCIAL_ID));
 			request.setAttribute(IMAGE_URL, claims.get(IMAGE_URL));
-		} catch (RuntimeException e) {
+			chain.doFilter(request, response);
+		} catch (JwtException e) {
 			log.info(e.getClass().getName());
-			sendErrorApiResponse(httpServletResponse, e);
+			sendErrorApiResponse(response, e);
 		}
 	}
 
@@ -116,7 +142,7 @@ public class AuthFilter implements Filter {
 	}
 
 	private ApiResponse<ErrorCode> generateErrorApiResponse(RuntimeException e) {
-		StatusCode statusCode = StatusCode.from(e);
+		StatusCode statusCode = exceptionMapper.mapException(e);
 
 		return ApiResponse.fail(new ErrorCode(statusCode.getStatus(), statusCode.getMessage()));
 	}

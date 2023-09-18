@@ -1,14 +1,7 @@
 package com.example.carrot.global.exception;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.springframework.http.HttpStatus;
 
-import io.jsonwebtoken.ExpiredJwtException;
-import io.jsonwebtoken.MalformedJwtException;
-import io.jsonwebtoken.UnsupportedJwtException;
-import io.jsonwebtoken.security.SignatureException;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
@@ -23,7 +16,7 @@ public enum StatusCode {
 	SIGNATURE_EXCEPTION(HttpStatus.UNAUTHORIZED, "JWT의 서명이 올바르지 않습니다."),
 	UNSUPPORTED_JWT_EXCEPTION(HttpStatus.UNAUTHORIZED, "지원하지 않는 토큰입니다."),
 	ILLEGAL_ARGUMENT_EXCEPTION(HttpStatus.UNAUTHORIZED, "잘못된 인자입니다."),
-	UNKNOWN_EXCEPTION(HttpStatus.UNAUTHORIZED, "알 수 없는 오류가 발생했습니다." ),
+	UNKNOWN_EXCEPTION(HttpStatus.UNAUTHORIZED, "알 수 없는 오류가 발생했습니다."),
 
 	// -- [USER] -- //
 	ALREADY_EXIST_USER(HttpStatus.CONFLICT, "같은 닉네임이 존재합니다."),
@@ -43,25 +36,14 @@ public enum StatusCode {
 	// -- [PRODUCT] -- //
 	NOT_FOUND_PRODUCT(HttpStatus.NOT_FOUND, "해당하는 상품을 찾을 수 없습니다."),
 	NO_EDIT_PERMISSION(HttpStatus.FORBIDDEN, "수정할 권한이 없습니다."),
+	INVALID_PRODUCT_STATUS(HttpStatus.BAD_REQUEST, "유효하지 않은 상태입니다."),
 
 	// -- [IMAGE] -- //
-	NOT_FOUND_IMAGE(HttpStatus.NOT_FOUND, "해당하는 이미지가 없습니다.");
+	UPLOAD_IMAGE_EXCEPTION(HttpStatus.BAD_REQUEST, "이미지 업로드에 실패했습니다."),
+	NOT_FOUND_IMAGE(HttpStatus.NOT_FOUND, "해당하는 이미지가 없습니다."),
+	NOT_FOUND_MAIN_IMAGE(HttpStatus.NOT_FOUND, "메인 이미지를 찾을 수 없습니다.");
 
 	private final HttpStatus status;
 	private final String message;
 
-	public static final Map<Class<? extends RuntimeException>, StatusCode> exceptionMappings;
-
-	static {
-		exceptionMappings = new HashMap<>();
-		exceptionMappings.put(MalformedJwtException.class, MALFORMED_JWT_EXCEPTION);
-		exceptionMappings.put(ExpiredJwtException.class, EXPIRED_JWT_EXCEPTION);
-		exceptionMappings.put(SignatureException.class, SIGNATURE_EXCEPTION);
-		exceptionMappings.put(UnsupportedJwtException.class, UNSUPPORTED_JWT_EXCEPTION);
-		exceptionMappings.put(IllegalArgumentException.class, ILLEGAL_ARGUMENT_EXCEPTION);
-	}
-
-	public static StatusCode from(RuntimeException e) {
-		return exceptionMappings.getOrDefault(e.getClass(), UNKNOWN_EXCEPTION);
-	}
 }
