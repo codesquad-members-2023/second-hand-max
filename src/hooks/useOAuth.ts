@@ -3,6 +3,7 @@ import PATH from '@constants/PATH';
 import { signInUser, signUpUser } from 'apis/auth';
 import { useUserStore } from 'stores/useUserStore';
 import { ERROR_MESSAGE } from '@constants/ERROR_MESSAGE';
+import { useRef } from 'react';
 
 type Action = 'sign-up' | 'sign-in';
 
@@ -18,6 +19,7 @@ export type InitOAuthType = (params: InitOAuthParams) => void;
 const useOAuth = () => {
   const navigate = useNavigate();
   const setUserAuth = useUserStore(({ setUserAuth }) => setUserAuth);
+  const oauthWindowRef = useRef<Window | null>(null);
 
   const onSignIn = async ({ code, id }: { code: string; id: string }) => {
     const userData = await signInUser({ code, id });
@@ -92,10 +94,17 @@ const useOAuth = () => {
       }
     };
 
-    const oauthUrl = `${import.meta.env.VITE_APP_OAUTH_URL}&state=${action}`;
+    // 이미 oauth 팝업이 떠 있는 경우
+    if (oauthWindowRef.current && !oauthWindowRef.current.closed) {
+      oauthWindowRef.current.focus();
+      return;
+    }
 
+    window.removeEventListener('message', onMessageReceive);
     window.addEventListener('message', onMessageReceive, { once: true });
-    window.open(oauthUrl, '_blank', 'popup');
+
+    const oauthUrl = `${import.meta.env.VITE_APP_OAUTH_URL}&state=${action}`;
+    oauthWindowRef.current = window.open(oauthUrl, '_blank', 'popup');
   };
 
   return { initOAuth };
