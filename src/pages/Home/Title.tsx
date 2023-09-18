@@ -3,7 +3,7 @@ import { Dropdown } from '@components/Dropdown';
 import { StyledDropdownMenuItem } from '@components/Dropdown/DropdownMenuItem';
 import TopBarStyle from '@components/TopBar';
 import Icons from '@design/Icons';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useModalStore } from 'stores/useModalStore';
 import { useUserStore } from 'stores/useUserStore';
 import { css, styled } from 'styled-components';
@@ -18,10 +18,6 @@ export const Title: React.FC = () => {
     ({ setIsRegionSettingModalOpen }) => setIsRegionSettingModalOpen,
   );
 
-  const [isRegionMenuOpen, setIsRegionMenuOpen] = useState(false);
-
-  const regionMenuOpen = () => setIsRegionMenuOpen(true);
-  const regionMenuClose = () => setIsRegionMenuOpen(false);
   const regionSettingModalOpen = () => setIsRegionSettingModalOpen(true);
 
   useEffect(() => {
@@ -33,19 +29,17 @@ export const Title: React.FC = () => {
   return (
     <TopBar>
       <Dropdown>
-        <Dropdown.Indicator onClick={regionMenuOpen}>
+        <Dropdown.Indicator>
           <CurrentRegion>{currentRegion.addressName}</CurrentRegion>
           <Icons.ChevronDown />
         </Dropdown.Indicator>
-        {isRegionMenuOpen && (
-          <Dropdown.Menus onClose={regionMenuClose}>
-            <Dropdown.MenuItem onClick={() => {}}>역삼 1동</Dropdown.MenuItem>
-            <Dropdown.MenuItem onClick={() => {}}>공릉 2동</Dropdown.MenuItem>
-            <SetRegionButton onClick={regionSettingModalOpen}>
-              내 동네 설정하기
-            </SetRegionButton>
-          </Dropdown.Menus>
-        )}
+        <Dropdown.Menus>
+          <Dropdown.MenuItem onClick={() => {}}>역삼 1동</Dropdown.MenuItem>
+          <Dropdown.MenuItem onClick={() => {}}>공릉 2동</Dropdown.MenuItem>
+          <SetRegionButton onClick={regionSettingModalOpen}>
+            내 동네 설정하기
+          </SetRegionButton>
+        </Dropdown.Menus>
       </Dropdown>
 
       <IconWrapper>
