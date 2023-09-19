@@ -4,7 +4,7 @@ import { createPortal } from 'react-dom';
 import { CategoryModal } from './CategoryModal';
 
 export const ModalOutlet: React.FC<{
-  parentElement: HTMLDivElement | null;
+  parentElement: React.MutableRefObject<HTMLDivElement | null>;
 }> = ({ parentElement }) => {
   const isRegionSettingModalOpen = useModalStore(
     ({ isRegionSettingModalOpen }) => isRegionSettingModalOpen,
@@ -13,7 +13,7 @@ export const ModalOutlet: React.FC<{
     ({ isCategoryModalOpen }) => isCategoryModalOpen,
   );
 
-  const portalRoot = parentElement ?? document.body;
+  const portalRoot = parentElement.current ?? document.body;
 
   return (
     <>
