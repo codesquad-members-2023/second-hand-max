@@ -19,6 +19,7 @@ public class WishlistResponse {
 	private String status;
 	private Long sellerId;
 	private String thumbnailUrl;
+	private WishlistCategory category;
 	private LocalDateTime updatedAt;
 	private Integer price;
 	private int numChat;
@@ -32,6 +33,7 @@ public class WishlistResponse {
 			wishlist.getItemStatusType(),
 			wishlist.getItemSellerId(),
 			wishlist.getItemThumbnailUrl(),
+			WishlistCategory.from(wishlist.getItem().getCategory()),
 			wishlist.getItemUpdatedAt(),
 			wishlist.getItemPrice(),
 			wishlist.getItemNumChat(),

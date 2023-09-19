@@ -12,6 +12,7 @@ public interface WishlistRepository extends JpaRepository<Wishlist, Long> {
 		+ "LEFT JOIN fetch w.item AS wi "
 		+ "JOIN fetch wi.region "
 		+ "JOIN fetch wi.status "
+		+ "JOIN fetch wi.category "
 		+ "LEFT JOIN fetch wi.detailShot.itemImages "
 		+ "WHERE w.user.id = :userId "
 		+ "AND wi.isDeleted = false")
