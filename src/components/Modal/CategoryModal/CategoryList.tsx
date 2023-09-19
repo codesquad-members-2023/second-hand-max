@@ -2,11 +2,22 @@ import Button from '@components/Button';
 import { Loader } from '@components/Loader';
 import { useCategoryQuery } from '@hooks/queries/useCategoryQuery';
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useModalStore } from 'stores/useModalStore';
 import styled from 'styled-components';
 import { Category } from 'types/category';
 
 export const CategoryList: React.FC = () => {
   const { isLoading, data: categories } = useCategoryQuery();
+  const closeCategoryModal = useModalStore(
+    ({ closeCategoryModal }) => closeCategoryModal,
+  );
+  const navigate = useNavigate();
+
+  const onCategoryItemClick = (categoryId: number) => {
+    navigate(`/category-id/${categoryId}`);
+    closeCategoryModal();
+  };
 
   return (
     <Categories>
@@ -14,16 +25,26 @@ export const CategoryList: React.FC = () => {
         <Loader />
       ) : (
         categories?.map((category) => {
-          return <CategoryItem key={category.id} {...category} />;
+          return (
+            <CategoryItem
+              key={category.id}
+              {...category}
+              onClick={() => onCategoryItemClick(category.id)}
+            />
+          );
         })
       )}
     </Categories>
   );
 };
 
-const CategoryItem: React.FC<Category> = ({ imageUrl, name }) => {
+const CategoryItem: React.FC<Category & { onClick: () => void }> = ({
+  imageUrl,
+  name,
+  onClick,
+}) => {
   return (
-    <li>
+    <li onClick={onClick}>
       <CategoryItemButton>
         <StyledIcon src={imageUrl}></StyledIcon>
         <span>{name}</span>

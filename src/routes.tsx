@@ -15,6 +15,10 @@ const AppRoutes: React.FC = () => {
       <Routes>
         <Route path={PATH.BASE} element={<SecondHand />}>
           <Route path={''} element={<Home />}>
+            <Route
+              path={`${PATH.CATEGORY_ID}/:categoryId`}
+              element={<Home />}
+            />
             <Route path={`${PATH.ITEM_DETAIL}/*`} element={<ProductDetail />} />
           </Route>
           <Route path={PATH.SALES_HISTORY} element={<SalesHistory />} />
