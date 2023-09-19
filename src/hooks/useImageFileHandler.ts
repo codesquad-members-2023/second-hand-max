@@ -10,10 +10,10 @@ export const useImageFileHandler = (initialImageSrc?: string) => {
       if (target?.result) {
         setImageSrc(target.result as string);
       }
-
-      reader.readAsDataURL(file);
-      setFile(file);
     };
+
+    reader.readAsDataURL(file);
+    setFile(file);
   };
 
   return { imageSrc, file, onImageChange };
