@@ -12,7 +12,7 @@ type UserStore = {
   currentRegion: Address;
   getTokens: () => Tokens;
   setTokens: (tokens: Tokens) => void;
-  handleTokenExpiry: () => void;
+  handleTokenExpiry: () => Promise<void>;
   setUserAuth: ({ user, tokens }: { user: User; tokens: Tokens }) => void;
   setAddAddress: (address: Address) => void;
   setCurrentRegion: (address: Address) => void;

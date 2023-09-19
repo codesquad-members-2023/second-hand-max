@@ -1,4 +1,4 @@
-import { fetchData } from 'apis/fetchData';
+import { fetchData, fetchDataWithToken } from 'apis/fetchData';
 import {
   SignInUserResponse,
   SignUpUserResponse,
@@ -56,13 +56,14 @@ export const signInUser = async ({
 };
 
 export const signOutUser = () => {
-  const { accessToken } = useUserStore.getState().getTokens();
+  const { refreshToken } = useUserStore.getState().getTokens();
 
-  return fetchData('/auth/logout', {
+  return fetchDataWithToken('/auth/logout', {
     method: 'POST',
     headers: {
-      Authorization: 'Bearer ' + accessToken,
+      'Content-Type': 'application/json',
     },
+    body: JSON.stringify({ refreshToken }),
   });
 };
 
