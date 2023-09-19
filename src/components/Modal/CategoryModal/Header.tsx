@@ -23,6 +23,7 @@ const Container = styled(TopBar)`
     align-items: center;
     box-sizing: border-box;
     height: 56px;
+    flex-shrink: 0;
     ${fonts.display.strong16}
     stroke: ${colors.neutral.text};
   `}

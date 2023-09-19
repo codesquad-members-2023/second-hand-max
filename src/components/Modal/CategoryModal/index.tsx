@@ -1,6 +1,6 @@
 import { css, styled } from 'styled-components';
 import { Header } from './Header';
-import CategoryList from './CategoryList';
+import { CategoryList } from './CategoryList';
 
 export const CategoryModal: React.FC = () => {
   return (
@@ -19,5 +19,7 @@ const StyledCategoryModal = styled.div`
     position: absolute;
     top: 0;
     z-index: 1;
+    display: flex;
+    flex-direction: column;
   `};
 `;
