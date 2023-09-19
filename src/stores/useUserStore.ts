@@ -10,9 +10,11 @@ type UserStore = {
   user: User | null;
   tokens: Tokens | null;
   currentRegion: Address;
+  getUser: () => User;
+  setUserProfileUrl: (profileUrl: string) => void;
   getTokens: () => Tokens;
   setTokens: (tokens: Tokens) => void;
-  handleTokenExpiry: () => void;
+  handleTokenExpiry: () => Promise<void>;
   setUserAuth: ({ user, tokens }: { user: User; tokens: Tokens }) => void;
   setAddAddress: (address: Address) => void;
   setCurrentRegion: (address: Address) => void;
@@ -33,6 +35,30 @@ export const useUserStore = create<UserStore>()(
   persist(
     (set, get) => ({
       ...initialState,
+      getUser: () => {
+        const user = get().user;
+
+        if (!user) {
+          throw new Error(ERROR_MESSAGE.USER_NOT_FOUND);
+        }
+
+        return user;
+      },
+      setUserProfileUrl: (profileUrl: string) =>
+        set((prevState) => {
+          if (!prevState.user) {
+            console.error(ERROR_MESSAGE.USER_NOT_FOUND);
+            return { ...prevState };
+          }
+
+          return {
+            ...prevState,
+            user: {
+              ...prevState.user,
+              profileUrl,
+            },
+          };
+        }),
       getTokens: () => {
         const tokens = get().tokens;
 
