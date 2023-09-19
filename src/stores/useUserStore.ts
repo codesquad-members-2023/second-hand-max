@@ -11,6 +11,7 @@ type UserStore = {
   tokens: Tokens | null;
   currentRegion: Address;
   getUser: () => User;
+  setUserProfileUrl: (profileUrl: string) => void;
   getTokens: () => Tokens;
   setTokens: (tokens: Tokens) => void;
   handleTokenExpiry: () => Promise<void>;
@@ -43,6 +44,21 @@ export const useUserStore = create<UserStore>()(
 
         return user;
       },
+      setUserProfileUrl: (profileUrl: string) =>
+        set((prevState) => {
+          if (!prevState.user) {
+            console.error(ERROR_MESSAGE.USER_NOT_FOUND);
+            return { ...prevState };
+          }
+
+          return {
+            ...prevState,
+            user: {
+              ...prevState.user,
+              profileUrl,
+            },
+          };
+        }),
       getTokens: () => {
         const tokens = get().tokens;
 

@@ -2,19 +2,23 @@ import { css, styled } from 'styled-components';
 import Button from '@components/Button';
 import ProfileImageUploader from '@components/ProfileImageUploader';
 import { signOutUser } from 'apis/auth';
-import { useImageFileHandler } from '@hooks/useImageFileHandler';
+// import { useImageFileHandler } from '@hooks/useImageFileHandler';
 import { useUserStore } from 'stores/useUserStore';
 import { updateUserProfileImage } from 'apis/user';
 
 const Profile: React.FC = () => {
   const userReset = useUserStore(({ reset }) => reset);
   const user = useUserStore(({ user }) => user);
-  const initialImageSrc = user?.profileUrl;
-  const { imageSrc, onImageChange } = useImageFileHandler(initialImageSrc);
+  const setUserProfileUrl = useUserStore(
+    ({ setUserProfileUrl }) => setUserProfileUrl,
+  );
 
   const onProfileImageChange = async (file: File) => {
-    onImageChange(file);
-    const { message } = await updateUserProfileImage(file);
+    const {
+      message,
+      data: { profileImageUrl },
+    } = await updateUserProfileImage(file);
+    setUserProfileUrl(profileImageUrl);
     alert(message);
   };
 
@@ -30,7 +34,10 @@ const Profile: React.FC = () => {
 
       <UserProfile>
         <ProfileImageUploader
-          {...{ imageSrc, onImageChange: onProfileImageChange }}
+          {...{
+            imageSrc: user?.profileUrl,
+            onImageChange: onProfileImageChange,
+          }}
         />
         <UserName>{user?.loginId || '사용자 이름'}</UserName>
       </UserProfile>
