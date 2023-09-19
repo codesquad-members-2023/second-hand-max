@@ -1,13 +1,15 @@
 import { css, styled } from 'styled-components';
+import { useDropdownContext } from './useDropdownContext';
 
 type Props = {
   children: React.ReactNode;
-  onClick: () => void;
 };
 
-export const DropdownIndicator: React.FC<Props> = ({ children, onClick }) => {
+export const DropdownIndicator: React.FC<Props> = ({ children }) => {
+  const { openDropdown } = useDropdownContext();
+
   return (
-    <StyledDropdownIndicator onClick={onClick}>
+    <StyledDropdownIndicator onClick={openDropdown}>
       {children}
     </StyledDropdownIndicator>
   );

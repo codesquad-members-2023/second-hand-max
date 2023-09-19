@@ -56,13 +56,7 @@ export const signInUser = async ({
 };
 
 export const signOutUser = () => {
-  const { tokens } = useUserStore.getState();
-
-  if (!tokens) {
-    throw new Error('로컬스토리지에 token이 없습니다.');
-  }
-
-  const { accessToken } = tokens;
+  const { accessToken } = useUserStore.getState().getTokens();
 
   return fetchData('/auth/logout', {
     method: 'POST',
