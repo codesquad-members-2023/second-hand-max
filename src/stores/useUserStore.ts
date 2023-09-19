@@ -10,6 +10,7 @@ type UserStore = {
   user: User | null;
   tokens: Tokens | null;
   currentRegion: Address;
+  getUser: () => User;
   getTokens: () => Tokens;
   setTokens: (tokens: Tokens) => void;
   handleTokenExpiry: () => Promise<void>;
@@ -33,6 +34,15 @@ export const useUserStore = create<UserStore>()(
   persist(
     (set, get) => ({
       ...initialState,
+      getUser: () => {
+        const user = get().user;
+
+        if (!user) {
+          throw new Error(ERROR_MESSAGE.USER_NOT_FOUND);
+        }
+
+        return user;
+      },
       getTokens: () => {
         const tokens = get().tokens;
 
