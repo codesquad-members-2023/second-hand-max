@@ -1,4 +1,6 @@
+import { ERROR_MESSAGE } from '@constants/ERROR_MESSAGE';
 import { LOCAL_STORAGE_KEY } from '@constants/LOCAL_STORAGE_KEY';
+import { updateAccessToken } from 'apis/auth';
 import { Tokens, User } from 'types';
 import { Address } from 'types/region';
 import { create } from 'zustand';
@@ -8,7 +10,9 @@ type UserStore = {
   user: User | null;
   tokens: Tokens | null;
   currentRegion: Address;
+  getTokens: () => Tokens;
   setTokens: (tokens: Tokens) => void;
+  handleTokenExpiry: () => void;
   setUserAuth: ({ user, tokens }: { user: User; tokens: Tokens }) => void;
   setAddAddress: (address: Address) => void;
   setCurrentRegion: (address: Address) => void;
@@ -27,9 +31,37 @@ const initialState = {
 
 export const useUserStore = create<UserStore>()(
   persist(
-    (set) => ({
+    (set, get) => ({
       ...initialState,
+      getTokens: () => {
+        const tokens = get().tokens;
+
+        if (!tokens) {
+          throw new Error(ERROR_MESSAGE.TOKEN_NOT_FOUND);
+        }
+
+        return tokens;
+      },
       setTokens: (tokens) => set({ tokens }),
+      handleTokenExpiry: async () => {
+        try {
+          const { getTokens, setTokens } = get();
+          const tokens = getTokens();
+
+          const tokenResponse = await updateAccessToken(tokens.refreshToken);
+          const isSuccess = tokenResponse.statusCode === 200;
+
+          if (isSuccess) {
+            const { accessToken } = tokenResponse.data.jwt;
+
+            setTokens({ ...tokens, accessToken });
+          } else {
+            throw new Error(ERROR_MESSAGE.TOKEN_REFRESH_FAILED);
+          }
+        } catch (error) {
+          console.error(error);
+        }
+      },
       setUserAuth: ({ user, tokens }) => set({ user, tokens }),
       setAddAddress: (address) =>
         set(({ user }) => {

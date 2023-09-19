@@ -2,6 +2,8 @@ import { useNavigate } from 'react-router-dom';
 import PATH from '@constants/PATH';
 import { signInUser, signUpUser } from 'apis/auth';
 import { useUserStore } from 'stores/useUserStore';
+import { ERROR_MESSAGE } from '@constants/ERROR_MESSAGE';
+import { useRef } from 'react';
 
 type Action = 'sign-up' | 'sign-in';
 
@@ -17,6 +19,7 @@ export type InitOAuthType = (params: InitOAuthParams) => void;
 const useOAuth = () => {
   const navigate = useNavigate();
   const setUserAuth = useUserStore(({ setUserAuth }) => setUserAuth);
+  const oauthWindowRef = useRef<Window | null>(null);
 
   const onSignIn = async ({ code, id }: { code: string; id: string }) => {
     const userData = await signInUser({ code, id });
@@ -73,20 +76,35 @@ const useOAuth = () => {
 
   const initOAuth = ({ action, id, file, addressIds }: InitOAuthParams) => {
     const onMessageReceive = ({ origin, data }: MessageEvent) => {
-      const isSameOrigin = origin === window.location.origin;
-      const { status, code } = data;
+      try {
+        const isSameOrigin = origin === window.location.origin;
+        const { status, code } = data;
 
-      if (!isSameOrigin || status === 'error' || !id) {
-        throw new Error('비정상적인 접근입니다.');
+        if (!isSameOrigin || status === 'error' || !id) {
+          throw new Error(ERROR_MESSAGE.INVALID_ACCESS);
+        }
+
+        actionHandlerMap[action]({ code, id, file, addressIds });
+      } catch (error) {
+        console.error(error);
+
+        if (error instanceof Error) {
+          alert(error.message);
+        }
       }
-
-      actionHandlerMap[action]({ code, id, file, addressIds });
     };
 
-    const oauthUrl = `${import.meta.env.VITE_APP_OAUTH_URL}&state=${action}`;
+    // 이미 oauth 팝업이 떠 있는 경우
+    if (oauthWindowRef.current && !oauthWindowRef.current.closed) {
+      oauthWindowRef.current.focus();
+      return;
+    }
 
+    window.removeEventListener('message', onMessageReceive);
     window.addEventListener('message', onMessageReceive, { once: true });
-    window.open(oauthUrl, '_blank', 'popup');
+
+    const oauthUrl = `${import.meta.env.VITE_APP_OAUTH_URL}&state=${action}`;
+    oauthWindowRef.current = window.open(oauthUrl, '_blank', 'popup');
   };
 
   return { initOAuth };
