@@ -6,7 +6,7 @@ import defaultProfileImage from '@assets/default-profile-image.png';
 
 type Props = {
   imageSrc?: string;
-  onImageChange: ({ target }: React.ChangeEvent<HTMLInputElement>) => void;
+  onImageChange: (file: File) => void;
 };
 
 const ProfileImageUploader: React.FC<Props> = ({ imageSrc, onImageChange }) => {
@@ -17,7 +17,13 @@ const ProfileImageUploader: React.FC<Props> = ({ imageSrc, onImageChange }) => {
         type="file"
         name="profile"
         accept={ACCEPTED_EXTENSIONS.PROFILE_IMAGE}
-        onChange={onImageChange}
+        onChange={({ target }) => {
+          const file = target.files?.[0];
+
+          if (file) {
+            onImageChange(file);
+          }
+        }}
       />
       {<Image src={imageSrc || defaultProfileImage} alt="프로필 이미지" />}
     </CircularProfileImage>
