@@ -1,5 +1,6 @@
 package com.codesquad.secondhand.api.service.item;
 
+import com.codesquad.secondhand.api.controller.item.response.ItemPostResponse;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
@@ -54,7 +55,7 @@ public class ItemService {
 	}
 
 	@Transactional
-	public void postItem(ItemPostServiceRequest request, Long userId) {
+	public ItemPostResponse postItem(ItemPostServiceRequest request, Long userId) {
 		User seller = userRepository.findById(userId).orElseThrow(NoSuchUserException::new);
 		Region region = regionRepository.findById(request.getRegionId()).orElseThrow(NoSuchRegionException::new);
 		seller.validateHasRegion(region);
@@ -65,6 +66,7 @@ public class ItemService {
 		Item item = request.toEntity(seller, category, region, status);
 		item.addItemImages(request.getImages());
 		itemRepository.save(item);
+		return ItemPostResponse.from(item);
 	}
 
 	// todo : incrementView

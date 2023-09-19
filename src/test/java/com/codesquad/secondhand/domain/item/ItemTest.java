@@ -1,5 +1,18 @@
 package com.codesquad.secondhand.domain.item;
 
+import static org.assertj.core.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.*;
+
+import java.util.Collection;
+import java.util.List;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.DynamicTest;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+
 import com.codesquad.secondhand.FixtureFactory;
 import com.codesquad.secondhand.IntegrationTestSupport;
 import com.codesquad.secondhand.domain.category.Category;
@@ -15,15 +28,6 @@ import com.codesquad.secondhand.domain.user.UserRepository;
 import com.codesquad.secondhand.exception.ErrorResponse;
 import com.codesquad.secondhand.exception.auth.PermissionDeniedException;
 import com.codesquad.secondhand.exception.item_image.NoSuchItemImageException;
-import org.junit.jupiter.api.*;
-import org.springframework.beans.factory.annotation.Autowired;
-
-import java.util.Collection;
-import java.util.List;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.assertAll;
 
 public class ItemTest extends IntegrationTestSupport {
 
@@ -168,7 +172,7 @@ public class ItemTest extends IntegrationTestSupport {
 					() -> assertThat(myItem.getTitle()).isEqualTo("new Title"),
 					() -> assertThat(myItem.getContent()).isEqualTo("new Content"),
 					() -> assertThat(myItem.getPrice()).isEqualTo(100),
-					() -> assertThat(myItem.listImage()).isEmpty()
+					() -> assertThat(myItem.listImage()).isNull()
 				);
 			}),
 			DynamicTest.dynamicTest("새로운 내용 및 새로운 이미지가 반영되도록 수정한다.", () -> {
