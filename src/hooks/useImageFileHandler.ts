@@ -5,19 +5,15 @@ export const useImageFileHandler = (initialImageSrc?: string) => {
   const [file, setFile] = useState<File>();
   const reader = useMemo(() => new FileReader(), []);
 
-  const onImageChange = ({ target }: React.ChangeEvent<HTMLInputElement>) => {
-    const file = target.files?.[0];
-
-    if (file) {
-      reader.onload = ({ target }) => {
-        if (target?.result) {
-          setImageSrc(target.result as string);
-        }
-      };
+  const onImageChange = (file: File) => {
+    reader.onload = ({ target }) => {
+      if (target?.result) {
+        setImageSrc(target.result as string);
+      }
 
       reader.readAsDataURL(file);
       setFile(file);
-    }
+    };
   };
 
   return { imageSrc, file, onImageChange };
