@@ -14,11 +14,9 @@ export const Title: React.FC = () => {
   const setCurrentRegion = useUserStore(
     ({ setCurrentRegion }) => setCurrentRegion,
   );
-  const setIsRegionSettingModalOpen = useModalStore(
-    ({ setIsRegionSettingModalOpen }) => setIsRegionSettingModalOpen,
+  const openRegionSettingModal = useModalStore(
+    ({ openRegionSettingModal }) => openRegionSettingModal,
   );
-
-  const regionSettingModalOpen = () => setIsRegionSettingModalOpen(true);
 
   useEffect(() => {
     if (user && user.addresses[0]) {
@@ -36,7 +34,7 @@ export const Title: React.FC = () => {
         <Dropdown.Menus>
           <Dropdown.MenuItem onClick={() => {}}>역삼 1동</Dropdown.MenuItem>
           <Dropdown.MenuItem onClick={() => {}}>공릉 2동</Dropdown.MenuItem>
-          <SetRegionButton onClick={regionSettingModalOpen}>
+          <SetRegionButton onClick={openRegionSettingModal}>
             내 동네 설정하기
           </SetRegionButton>
         </Dropdown.Menus>

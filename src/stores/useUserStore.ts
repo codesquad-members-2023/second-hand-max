@@ -27,6 +27,7 @@ const initialState = {
     addressId: 1,
     addressName: '역삼 1동',
     fullAddressName: '역삼 1동',
+    isSelected: true,
   },
 };
 

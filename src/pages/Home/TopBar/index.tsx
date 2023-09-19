@@ -1,22 +1,9 @@
 import TopBarStyle from '@components/TopBar';
-import { useEffect } from 'react';
-import { useUserStore } from 'stores/useUserStore';
 import { css, styled } from 'styled-components';
 import { RegionDropdown } from './RegionDropdown';
 import { CategoryButton } from './CategoryButton';
 
 export const TopBar: React.FC = () => {
-  const user = useUserStore(({ user }) => user);
-  const setCurrentRegion = useUserStore(
-    ({ setCurrentRegion }) => setCurrentRegion,
-  );
-
-  useEffect(() => {
-    if (user && user.addresses[0]) {
-      setCurrentRegion(user.addresses[0]);
-    }
-  }, []);
-
   return (
     <StyledTopBar>
       <RegionDropdown />

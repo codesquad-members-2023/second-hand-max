@@ -4,7 +4,7 @@ import Icons from '@design/Icons';
 import noThumbnailImage from '../../assets/no-thumbnail-image.png';
 import PATH from '@constants/PATH';
 import { Link } from 'react-router-dom';
-import { ProductListItem } from 'types';
+import { ProductListItem } from 'types/product';
 
 const ListItem: React.FC<ProductListItem> = ({
   itemId,
