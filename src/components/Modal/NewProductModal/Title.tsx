@@ -1,11 +1,16 @@
 import { BackButton as BackButtonStyle } from '@components/BackButton';
 import TopBarStyle from '@components/TopBar';
+import { useModalStore } from 'stores/useModalStore';
 import styled, { css } from 'styled-components';
 
 export const Title: React.FC = () => {
+  const closeNewProductModal = useModalStore(
+    ({ closeNewProductModal }) => closeNewProductModal,
+  );
+
   return (
     <TopBar>
-      <BackButton>닫기</BackButton>
+      <BackButton onClick={closeNewProductModal}>닫기</BackButton>
       <div>내 물건 팔기</div>
       <SubmitButton>완료</SubmitButton>
     </TopBar>
