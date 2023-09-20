@@ -14,7 +14,9 @@ const SignUpForm: React.FC<{ initOAuth: InitOAuthType }> = ({ initOAuth }) => {
   const { imageSrc, file, onImageChange } = useImageFileHandler();
   const [id, setId] = useState('');
   const [isAddRegionModalOpen, setIsAddRegionModalOpen] = useState(false);
-  const [addresses, setAddresses] = useState<Address[]>([]);
+  const [addresses, setAddresses] = useState<
+    Omit<Address, 'fullAddressName' | 'isSelected'>[]
+  >([]);
 
   const onIdChange = (id: string) => {
     setId(id);

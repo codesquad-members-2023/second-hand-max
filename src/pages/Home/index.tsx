@@ -1,14 +1,35 @@
 import Fab from '@components/Fab';
-import ProductList from '@components/ProductList';
+import { ProductList } from '@components/ProductList';
 import { styled } from 'styled-components';
-import { Title } from './Title';
+import { TopBar } from './TopBar';
+import { useUserStore } from 'stores/useUserStore';
+import { useParams } from 'react-router-dom';
+import { useProductQuery } from '@hooks/queries/useProductQuery';
+import { Loader } from '@components/Loader';
 
 export const Home: React.FC = () => {
+  const user = useUserStore(({ user }) => user);
+  const setCurrentRegion = useUserStore(
+    ({ setCurrentRegion }) => setCurrentRegion,
+  );
+  const { categoryId } = useParams();
+
+  const { isLoading, data: productListItems } = useProductQuery(
+    '역삼', // TODO: 실제 currentRegion 가져와서 넣기.
+    categoryId,
+  );
+
+  console.log(productListItems);
+
   return (
     <>
-      <Title />
+      <TopBar />
       <Content>
-        <ProductList />
+        {isLoading ? (
+          <Loader />
+        ) : (
+          <ProductList productListItems={productListItems} />
+        )}
         <Fab />
       </Content>
     </>
