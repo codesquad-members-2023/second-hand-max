@@ -1,6 +1,6 @@
 export type Address = {
   addressId: number;
   addressName: string;
-  fullAddressName?: string;
+  fullAddressName: string;
   isSelected: boolean;
 };
