@@ -90,12 +90,18 @@ public class UserService {
 
 	@Transactional(readOnly = true)
 	public ItemTransactionSliceResponse findUserTransactionList(Long userId, List<Long> statusIds, Pageable pageable) {
-		if (!statusRepository.existsByIdIn(statusIds)) {
-			throw new NoSuchStatusException();
+		if (statusIds != null && !statusIds.isEmpty()) {
+			validStatus(statusIds);
 		}
 		Slice<Item> responses = queryItemRepository.filteredByUserIdAndStatusIds(userId, statusIds, pageable);
 		return new ItemTransactionSliceResponse(responses.hasNext(),
 			ItemTransactionResponse.from(responses.getContent()));
+	}
+
+	private void validStatus(List<Long> statusIds) {
+		if (!statusRepository.existsByIdIn(statusIds)) {
+			throw new NoSuchStatusException();
+		}
 	}
 
 }
