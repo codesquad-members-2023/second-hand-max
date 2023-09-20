@@ -6,8 +6,12 @@ import { useUserStore } from 'stores/useUserStore';
 import { useParams } from 'react-router-dom';
 import { useProductQuery } from '@hooks/queries/useProductQuery';
 import { Loader } from '@components/Loader';
+import { useModalStore } from 'stores/useModalStore';
 
 export const Home: React.FC = () => {
+  const openNewProductModal = useModalStore(
+    ({ openNewProductModal }) => openNewProductModal,
+  );
   const user = useUserStore(({ user }) => user);
   const setCurrentRegion = useUserStore(
     ({ setCurrentRegion }) => setCurrentRegion,
@@ -30,7 +34,7 @@ export const Home: React.FC = () => {
         ) : (
           <ProductList productListItems={productListItems} />
         )}
-        <Fab />
+        <Fab onClick={openNewProductModal} />
       </Content>
     </>
   );
