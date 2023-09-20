@@ -1,12 +1,12 @@
 package com.codesquad.secondhand.api.service.item;
 
-import com.codesquad.secondhand.api.controller.item.response.ItemPostResponse;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.codesquad.secondhand.api.controller.item.response.ItemDetailResponse;
+import com.codesquad.secondhand.api.controller.item.response.ItemPostResponse;
 import com.codesquad.secondhand.api.service.item.request.ItemPostServiceRequest;
 import com.codesquad.secondhand.api.service.item.request.ItemStatusUpdateServiceRequest;
 import com.codesquad.secondhand.api.service.item.request.ItemUpdateServiceRequest;
@@ -14,6 +14,7 @@ import com.codesquad.secondhand.api.service.item.response.ItemResponse;
 import com.codesquad.secondhand.api.service.item.response.ItemSliceResponse;
 import com.codesquad.secondhand.api.service.item.response.ItemStatusUpdateResponse;
 import com.codesquad.secondhand.api.service.item.response.ItemUpdateResponse;
+import com.codesquad.secondhand.api.service.redis.RedisService;
 import com.codesquad.secondhand.domain.category.Category;
 import com.codesquad.secondhand.domain.category.CategoryRepository;
 import com.codesquad.secondhand.domain.item.Item;
@@ -39,6 +40,7 @@ public class ItemService {
 
 	private static final Long FOR_SALE_ID = 1L;
 
+	private final RedisService redisService;
 	private final ItemRepository itemRepository;
 	private final UserRepository userRepository;
 	private final CategoryRepository categoryRepository;
@@ -72,7 +74,8 @@ public class ItemService {
 	// todo : incrementView
 	@Transactional(readOnly = true)
 	public ItemDetailResponse getItemDetail(Long itemId, Long userId) {
-		Item item = itemRepository.findDetailById(itemId).orElseThrow(NoSuchItemException::new);
+		redisService.incrementViews(itemId);
+		Item item = itemRepository.findItemDetailById(itemId).orElseThrow(NoSuchItemException::new);
 		return ItemDetailResponse.from(item, userId);
 	}
 
@@ -80,13 +83,13 @@ public class ItemService {
 	@Transactional
 	public void deleteItem(Long itemId, Long userId) {
 		userRepository.findById(userId).orElseThrow(NoSuchUserException::new);
-		Item item = itemRepository.findDetailById(itemId).orElseThrow(NoSuchItemException::new);
+		Item item = itemRepository.findItemDetailById(itemId).orElseThrow(NoSuchItemException::new);
 		item.delete(userId);
 	}
 
 	@Transactional
 	public ItemUpdateResponse updateItem(ItemUpdateServiceRequest request, Long userId) {
-		Item item = itemRepository.findDetailById(request.getId()).orElseThrow(NoSuchItemException::new);
+		Item item = itemRepository.findItemDetailById(request.getId()).orElseThrow(NoSuchItemException::new);
 		Region region = regionRepository.findById(request.getRegionId()).orElseThrow(NoSuchRegionException::new);
 		Category category = categoryRepository.findById(request.getCategoryId())
 			.orElseThrow(NoSuchCategoryException::new);
@@ -98,7 +101,7 @@ public class ItemService {
 
 	@Transactional
 	public ItemStatusUpdateResponse updateItemStatus(ItemStatusUpdateServiceRequest request, Long userId) {
-		Item item = itemRepository.findDetailById(request.getItemId()).orElseThrow(NoSuchItemException::new);
+		Item item = itemRepository.findItemDetailById(request.getItemId()).orElseThrow(NoSuchItemException::new);
 		Status status = statusRepository.findById(request.getStatus()).orElseThrow(NoSuchStatusException::new);
 		item.updateStatus(userId, status);
 		return new ItemStatusUpdateResponse(item.getId());

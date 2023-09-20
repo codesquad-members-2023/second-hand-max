@@ -157,7 +157,7 @@ public class ItemServiceTest extends IntegrationTestSupport {
 
 		// when
 		itemService.postItem(request, loginUser.getId());
-		Item postedItem = itemRepository.findDetailById(1L).orElseThrow(NoSuchItemException::new);
+		Item postedItem = itemRepository.findItemDetailById(1L).orElseThrow(NoSuchItemException::new);
 
 		// then
 		assertAll(
@@ -317,7 +317,7 @@ public class ItemServiceTest extends IntegrationTestSupport {
 				itemService.updateItem(request, loginUser.getId());
 
 				// then
-				Item updatedItem = itemRepository.findDetailById(1L).get();
+				Item updatedItem = itemRepository.findItemDetailById(1L).get();
 				assertAll(
 					() -> assertThat(updatedItem.getTitle()).isEqualTo("new title"),
 					() -> assertThat(updatedItem.getPrice()).isEqualTo(100),
@@ -336,7 +336,7 @@ public class ItemServiceTest extends IntegrationTestSupport {
 				itemService.updateItem(request, loginUser.getId());
 
 				// then
-				Item updatedItem = itemRepository.findDetailById(1L).get();
+				Item updatedItem = itemRepository.findItemDetailById(1L).get();
 				assertAll(
 					() -> assertThat(updatedItem.getTitle()).isEqualTo("new title2"),
 					() -> assertThat(updatedItem.getPrice()).isEqualTo(200),
@@ -362,7 +362,7 @@ public class ItemServiceTest extends IntegrationTestSupport {
 		itemService.updateItemStatus(request, loginUser.getId());
 
 		// then
-		Item updatedItem = itemRepository.findDetailById(1L).get();
+		Item updatedItem = itemRepository.findItemDetailById(1L).get();
 		assertAll(
 			() -> assertThat(updatedItem.getStatus().getId()).isEqualTo(3L),
 			() -> assertThat(updatedItem.getStatus().getType()).isEqualTo("예약중")

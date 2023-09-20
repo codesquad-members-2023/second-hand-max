@@ -73,7 +73,7 @@ public class Item extends BaseTimeEntity {
 	private String title;
 	private String content;
 	private Integer price;
-	private Long views;
+	private int views;
 	private boolean isDeleted;
 
 	public Item(User user, Category category, Region region, Status status,
@@ -87,7 +87,7 @@ public class Item extends BaseTimeEntity {
 		this.title = title;
 		this.content = content;
 		this.price = price;
-		this.views = 0L;
+		this.views = 0;
 		this.isDeleted = false;
 	}
 
