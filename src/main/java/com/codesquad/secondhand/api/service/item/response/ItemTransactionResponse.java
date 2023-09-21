@@ -19,6 +19,8 @@ public class ItemTransactionResponse {
 	private String thumbnailUrl;
 	private LocalDateTime updatedAt;
 	private Integer price;
+	private int numChat;
+	private int numLikes;
 
 	public static ItemTransactionResponse from(Item item) {
 		return new ItemTransactionResponse(
@@ -27,7 +29,9 @@ public class ItemTransactionResponse {
 			item.getRegion().getTitle(),
 			item.getThumbnailUrl(),
 			item.getUpdatedAt(),
-			item.getPrice()
+			item.getPrice(),
+			item.getNumChat(),
+			item.getNumLikes()
 		);
 	}
 
