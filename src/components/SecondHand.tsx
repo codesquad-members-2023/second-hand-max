@@ -9,7 +9,7 @@ const SecondHand: React.FC = () => {
   return (
     <ViewBox ref={viewBoxRef}>
       <Tabs />
-      <ModalOutlet parentElement={viewBoxRef.current} />
+      <ModalOutlet parentElement={viewBoxRef} />
     </ViewBox>
   );
 };

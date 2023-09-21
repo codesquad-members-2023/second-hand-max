@@ -7,6 +7,7 @@ const PATH = {
   CHATTING: 'chatting',
   MY_ACCOUNT: 'my-account',
 
+  CATEGORY_ID: 'category-id',
   ITEM_DETAIL: 'items',
 
   SIGN_UP: 'sign-up',

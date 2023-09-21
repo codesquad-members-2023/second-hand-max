@@ -19,6 +19,9 @@ export type InitOAuthType = (params: InitOAuthParams) => void;
 const useOAuth = () => {
   const navigate = useNavigate();
   const setUserAuth = useUserStore(({ setUserAuth }) => setUserAuth);
+  const setCurrentRegion = useUserStore(
+    ({ setCurrentRegion }) => setCurrentRegion,
+  );
   const oauthWindowRef = useRef<Window | null>(null);
 
   const onSignIn = async ({ code, id }: { code: string; id: string }) => {
@@ -27,8 +30,12 @@ const useOAuth = () => {
 
     if (isSuccess) {
       const { jwt: tokens, user } = userData.data;
-      setUserAuth({ user, tokens });
+      const currentRegion = user.addresses.find(
+        (address) => address.isSelected,
+      );
 
+      setUserAuth({ user, tokens });
+      setCurrentRegion(currentRegion!);
       navigate(`${PATH.BASE}`);
     }
 

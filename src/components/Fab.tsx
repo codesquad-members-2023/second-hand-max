@@ -1,15 +1,20 @@
 import Icons from '@design/Icons';
 import { css, styled } from 'styled-components';
+import Button from './Button';
 
-const Fab: React.FC = () => {
+type Props = {
+  onClick: () => void;
+};
+
+const Fab: React.FC<Props> = ({ onClick }) => {
   return (
-    <Container>
+    <Container onClick={onClick}>
       <Icons.Plus />
     </Container>
   );
 };
 
-const Container = styled.button`
+const Container = styled(Button)`
   ${({ theme: { colors, radius } }) => css`
     height: 56px;
     width: 56px;
