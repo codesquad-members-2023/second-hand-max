@@ -1,14 +1,14 @@
 package com.codesquad.secondhand.api.controller.item.response;
 
+import java.time.LocalDateTime;
+import java.util.List;
+
 import com.codesquad.secondhand.domain.image.Image;
 import com.codesquad.secondhand.domain.item.Item;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
-import java.time.LocalDateTime;
-import java.util.List;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -29,10 +29,10 @@ public class ItemDetailResponse {
 	private Boolean isLiked;
 	private List<Image> images;
 
-	public static ItemDetailResponse from(Item item, Long userId) {
+	public static ItemDetailResponse from(Item item, Long increasedViews, Long userId) {
 		return new ItemDetailResponse(item.getId(), item.getTitle(), item.getStatus().getType(), item.getContent(),
 			item.getUpdatedAt(), item.getPrice(), ItemCategoryResponse.from(item.getCategory()),
-			ItemSellerResponse.from(item.getUser()), item.getNumChat(), item.getNumLikes(), item.getViews(),
+			ItemSellerResponse.from(item.getUser()), item.getNumChat(), item.getNumLikes(), increasedViews,
 			item.isInWishlist(userId), item.listImage());
 	}
 

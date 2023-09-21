@@ -157,7 +157,7 @@ public class ItemServiceTest extends IntegrationTestSupport {
 
 		// when
 		itemService.postItem(request, loginUser.getId());
-		Item postedItem = itemRepository.findDetailById(1L).orElseThrow(NoSuchItemException::new);
+		Item postedItem = itemRepository.findItemDetailById(1L).orElseThrow(NoSuchItemException::new);
 
 		// then
 		assertAll(
@@ -254,8 +254,40 @@ public class ItemServiceTest extends IntegrationTestSupport {
 			() -> assertThat(postedItem.getSeller().getId()).isEqualTo(seller.getId()),
 			() -> assertThat(postedItem.getNumChat()).isEqualTo(0),
 			() -> assertThat(postedItem.getNumLikes()).isEqualTo(0),
-			() -> assertThat(postedItem.getNumViews()).isEqualTo(0),
+			() -> assertThat(postedItem.getNumViews()).isEqualTo(1L),
 			() -> assertThat(postedItem.getImages()).hasSize(images.size())
+		);
+	}
+
+	@DisplayName("상품 조회수 증가 시나리오")
+	@TestFactory
+	Collection<DynamicTest> increaseItemViews() {
+		// given
+		Item myItem = FixtureFactory.createItemFixture(loginUser, categories.get(0), regions.get(0), statusList.get(0));
+		itemRepository.save(myItem);
+
+		return List.of(
+			DynamicTest.dynamicTest("상품을 1번 조회하면 조회수가 1이 된다", () -> {
+				// when
+				ItemDetailResponse postedItem = itemService.getItemDetail(1L, loginUser.getId());
+
+				// then
+				assertThat(postedItem.getNumViews()).isEqualTo(1L);
+			}),
+			DynamicTest.dynamicTest("상품을 2번 조회하면 조회수가 2가 된다", () -> {
+				// when
+				ItemDetailResponse postedItem = itemService.getItemDetail(1L, loginUser.getId());
+
+				// then
+				assertThat(postedItem.getNumViews()).isEqualTo(2L);
+			}),
+			DynamicTest.dynamicTest("상품을 3번 조회하면 조회수가 3이 된다", () -> {
+				// when
+				ItemDetailResponse postedItem = itemService.getItemDetail(1L, loginUser.getId());
+
+				// then
+				assertThat(postedItem.getNumViews()).isEqualTo(3L);
+			})
 		);
 	}
 
@@ -317,7 +349,7 @@ public class ItemServiceTest extends IntegrationTestSupport {
 				itemService.updateItem(request, loginUser.getId());
 
 				// then
-				Item updatedItem = itemRepository.findDetailById(1L).get();
+				Item updatedItem = itemRepository.findItemDetailById(1L).get();
 				assertAll(
 					() -> assertThat(updatedItem.getTitle()).isEqualTo("new title"),
 					() -> assertThat(updatedItem.getPrice()).isEqualTo(100),
@@ -336,7 +368,7 @@ public class ItemServiceTest extends IntegrationTestSupport {
 				itemService.updateItem(request, loginUser.getId());
 
 				// then
-				Item updatedItem = itemRepository.findDetailById(1L).get();
+				Item updatedItem = itemRepository.findItemDetailById(1L).get();
 				assertAll(
 					() -> assertThat(updatedItem.getTitle()).isEqualTo("new title2"),
 					() -> assertThat(updatedItem.getPrice()).isEqualTo(200),
@@ -362,7 +394,7 @@ public class ItemServiceTest extends IntegrationTestSupport {
 		itemService.updateItemStatus(request, loginUser.getId());
 
 		// then
-		Item updatedItem = itemRepository.findDetailById(1L).get();
+		Item updatedItem = itemRepository.findItemDetailById(1L).get();
 		assertAll(
 			() -> assertThat(updatedItem.getStatus().getId()).isEqualTo(3L),
 			() -> assertThat(updatedItem.getStatus().getType()).isEqualTo("예약중")

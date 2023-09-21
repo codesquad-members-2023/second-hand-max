@@ -56,7 +56,7 @@ public class ItemControllerTest extends ControllerTestSupport {
 		ItemSellerResponse sellerResponse = new ItemSellerResponse(1L, "nickname");
 		ItemCategoryResponse categoryResponse = new ItemCategoryResponse(2L, "가전");
 		ItemDetailResponse itemResponse = new ItemDetailResponse(1L, "title", "판매중", "content", LocalDateTime.now(),
-			null, categoryResponse, sellerResponse, 0, 0, 0L, false, null);
+			null, categoryResponse, sellerResponse, 0, 0, 1L, false, null);
 
 		when(itemService.getItemDetail(anyLong(), anyLong())).thenReturn(itemResponse);
 
@@ -76,7 +76,7 @@ public class ItemControllerTest extends ControllerTestSupport {
 			.andExpect(jsonPath("$.data.seller.nickname").value("nickname"))
 			.andExpect(jsonPath("$.data.numChat").value(0))
 			.andExpect(jsonPath("$.data.numLikes").value(0))
-			.andExpect(jsonPath("$.data.numViews").value(0L))
+			.andExpect(jsonPath("$.data.numViews").value(1L))
 			.andExpect(jsonPath("$.data.isLiked").value(false))
 			.andExpect(jsonPath("$.data.images").doesNotExist());
 	}
