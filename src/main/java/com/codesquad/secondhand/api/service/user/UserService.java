@@ -17,9 +17,11 @@ import com.codesquad.secondhand.domain.item.Item;
 import com.codesquad.secondhand.domain.item.QueryItemRepository;
 import com.codesquad.secondhand.domain.provider.Provider;
 import com.codesquad.secondhand.domain.region.Region;
+import com.codesquad.secondhand.domain.status.StatusRepository;
 import com.codesquad.secondhand.domain.user.User;
 import com.codesquad.secondhand.domain.user.UserRepository;
 import com.codesquad.secondhand.exception.auth.SignInFailedException;
+import com.codesquad.secondhand.exception.status.NoSuchStatusException;
 import com.codesquad.secondhand.exception.user.DuplicatedEmailException;
 import com.codesquad.secondhand.exception.user.DuplicatedNicknameException;
 import com.codesquad.secondhand.exception.user.NoSuchUserException;
@@ -32,6 +34,7 @@ import lombok.RequiredArgsConstructor;
 public class UserService {
 
 	private final UserRepository userRepository;
+	private final StatusRepository statusRepository;
 	private final PasswordEncoder passwordEncoder;
 	private final QueryItemRepository queryItemRepository;
 
@@ -85,13 +88,20 @@ public class UserService {
 				Region.ofDefault())));
 	}
 
-	// todo : 존재하지 않는 statusId에 대한 valid 넣을지 말지 결정
 	@Transactional(readOnly = true)
 	public ItemTransactionSliceResponse findUserTransactionList(Long userId, List<Long> statusIds, Pageable pageable) {
+		if (statusIds != null && !statusIds.isEmpty()) {
+			validStatus(statusIds);
+		}
 		Slice<Item> responses = queryItemRepository.filteredByUserIdAndStatusIds(userId, statusIds, pageable);
-
 		return new ItemTransactionSliceResponse(responses.hasNext(),
 			ItemTransactionResponse.from(responses.getContent()));
+	}
+
+	private void validStatus(List<Long> statusIds) {
+		if (!statusRepository.existsByIdIn(statusIds)) {
+			throw new NoSuchStatusException();
+		}
 	}
 
 }
