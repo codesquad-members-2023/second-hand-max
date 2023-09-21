@@ -4,7 +4,7 @@ import {
   SignUpUserResponse,
   UpdateAccessTokenResponse,
 } from './types';
-import { BASE_URL } from '@constants/BASE_URL';
+import { BASE_URL, OAUTH_PROVIDER } from '@constants/ENV_VARIABLES';
 import { useUserStore } from 'stores/useUserStore';
 
 export const signUpUser = async ({
@@ -27,10 +27,13 @@ export const signUpUser = async ({
   const data = JSON.stringify({ loginId: id, addressIds });
   formData.append('signupData', new Blob([data], { type: 'application/json' }));
 
-  const response = await fetchData(`/auth/naver/signup?code=${code}`, {
-    method: 'POST',
-    body: formData,
-  });
+  const response = await fetchData(
+    `/auth/${OAUTH_PROVIDER}/signup?code=${code}`,
+    {
+      method: 'POST',
+      body: formData,
+    },
+  );
 
   return response.json();
 };
@@ -42,15 +45,18 @@ export const signInUser = async ({
   code: string;
   id: string;
 }): Promise<SignInUserResponse> => {
-  const response = await fetchData(`/auth/naver/login?code=${code}`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
+  const response = await fetchData(
+    `/auth/${OAUTH_PROVIDER}/login?code=${code}`,
+    {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        loginId: id,
+      }),
     },
-    body: JSON.stringify({
-      loginId: id,
-    }),
-  });
+  );
 
   return response.json();
 };

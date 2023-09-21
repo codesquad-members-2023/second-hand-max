@@ -1,4 +1,4 @@
-import { BASE_URL } from '@constants/BASE_URL';
+import { BASE_URL } from '@constants/ENV_VARIABLES';
 import { useUserStore } from 'stores/useUserStore';
 
 export const fetchData = async (path: string, options?: RequestInit) => {
