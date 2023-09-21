@@ -1,20 +1,19 @@
-import { useMemo, useState } from 'react';
+import { useMemo } from 'react';
 
-export const useImageFileHandler = (initialImageSrc?: string) => {
-  const [imageSrc, setImageSrc] = useState(initialImageSrc);
-  const [file, setFile] = useState<File>();
+export const useImageFileHandler = (
+  onImageLoadSuccess: (result: string, file: File) => void,
+) => {
   const reader = useMemo(() => new FileReader(), []);
 
   const onImageChange = (file: File) => {
     reader.onload = ({ target }) => {
       if (target?.result) {
-        setImageSrc(target.result as string);
+        onImageLoadSuccess(target.result as string, file);
       }
     };
 
     reader.readAsDataURL(file);
-    setFile(file);
   };
 
-  return { imageSrc, file, onImageChange };
+  return { onImageChange };
 };
