@@ -2,6 +2,7 @@ package com.codesquad.secondhand.api.service.wishlist.response;
 
 import java.time.LocalDateTime;
 
+import com.codesquad.secondhand.domain.item.Item;
 import com.codesquad.secondhand.domain.wishlist.Wishlist;
 
 import lombok.AllArgsConstructor;
@@ -19,25 +20,26 @@ public class WishlistResponse {
 	private String status;
 	private Long sellerId;
 	private String thumbnailUrl;
-	private WishlistCategory category;
 	private LocalDateTime updatedAt;
 	private Integer price;
 	private int numChat;
 	private int numLikes;
+	private WishlistCategory category;
 
 	public static WishlistResponse from(Wishlist wishlist) {
+		final Item item = wishlist.getItem();
 		return new WishlistResponse(
-			wishlist.getItemId(),
-			wishlist.getItemTitle(),
-			wishlist.getItemRegionTitle(),
-			wishlist.getItemStatusType(),
-			wishlist.getItemSellerId(),
-			wishlist.getItemThumbnailUrl(),
-			WishlistCategory.from(wishlist.getItem().getCategory()),
-			wishlist.getItemUpdatedAt(),
-			wishlist.getItemPrice(),
-			wishlist.getItemNumChat(),
-			wishlist.getItemNumLikes());
+			item.getId(),
+			item.getTitle(),
+			item.getRegion().getTitle(),
+			item.getStatus().getType(),
+			item.getUser().getId(),
+			item.getThumbnailUrl(),
+			item.getUpdatedAt(),
+			item.getPrice(),
+			item.getNumChat(),
+			item.getNumLikes(),
+			WishlistCategory.from(item.getCategory()));
 	}
 
 }

@@ -1,5 +1,19 @@
 package com.codesquad.secondhand.domain.user;
 
+import static org.assertj.core.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.*;
+
+import java.util.Collection;
+import java.util.List;
+
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.DynamicTest;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+
 import com.codesquad.secondhand.FixtureFactory;
 import com.codesquad.secondhand.IntegrationTestSupport;
 import com.codesquad.secondhand.domain.category.Category;
@@ -12,25 +26,11 @@ import com.codesquad.secondhand.domain.region.Region;
 import com.codesquad.secondhand.domain.region.RegionRepository;
 import com.codesquad.secondhand.domain.status.Status;
 import com.codesquad.secondhand.domain.status.StatusRepository;
-import com.codesquad.secondhand.domain.wishlist.WishlistRepository;
+import com.codesquad.secondhand.domain.wishlist.QueryWishlistRepository;
 import com.codesquad.secondhand.exception.ErrorResponse;
 import com.codesquad.secondhand.exception.user_region.NoSuchUserRegionException;
 import com.codesquad.secondhand.exception.wishlist.DuplicatedWishlistException;
 import com.codesquad.secondhand.exception.wishlist.NoSuchWishlistException;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.DynamicTest;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-
-import java.util.Collection;
-import java.util.List;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.assertAll;
 
 public class UserTest extends IntegrationTestSupport {
 
@@ -53,7 +53,7 @@ public class UserTest extends IntegrationTestSupport {
 	private ItemRepository itemRepository;
 
 	@Autowired
-	private WishlistRepository wishlistRepository;
+	private QueryWishlistRepository wishlistRepository;
 
 	@DisplayName("사용자를 등록한다.")
 	@Test
@@ -176,7 +176,8 @@ public class UserTest extends IntegrationTestSupport {
 				items.get(0).delete(user.getId());
 
 				//then
-				assertThat(wishlistRepository.findSliceByUserId(pageable, user.getId())).isEmpty();
+				assertThat(wishlistRepository.filteredByUserIdAndCategoryId(user.getId(), Category.ofAll().getId(),
+					pageable)).isEmpty();
 			})
 		);
 	}

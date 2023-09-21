@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -15,6 +16,8 @@ import com.codesquad.secondhand.annotation.SignInUser;
 import com.codesquad.secondhand.api.ApiResponse;
 import com.codesquad.secondhand.api.ResponseMessage;
 import com.codesquad.secondhand.api.service.wishlist.WishlistService;
+import com.codesquad.secondhand.api.service.wishlist.request.WishlistServiceRequest;
+import com.codesquad.secondhand.api.service.wishlist.response.WishlistCategoryResponse;
 import com.codesquad.secondhand.api.service.wishlist.response.WishlistSliceResponse;
 
 import lombok.RequiredArgsConstructor;
@@ -27,9 +30,17 @@ public class WishlistController {
 	private final WishlistService wishlistService;
 
 	@GetMapping
-	public ApiResponse<WishlistSliceResponse> listWishlists(@SignIn SignInUser signInUser, Pageable pageable) {
+	public ApiResponse<WishlistSliceResponse> listWishlists(@SignIn SignInUser signInUser,
+		@RequestParam Long category,
+		Pageable pageable) {
 		return ApiResponse.of(HttpStatus.OK, ResponseMessage.WISHLIST_FETCH_SUCCESS.getMessage(),
-			wishlistService.listWishlists(signInUser.getId(), pageable));
+			wishlistService.listWishlists(new WishlistServiceRequest(signInUser.getId(), category, pageable)));
+	}
+
+	@GetMapping("/categories")
+	public ApiResponse<WishlistCategoryResponse> listWishlistCategories(@SignIn SignInUser signInUser) {
+		return ApiResponse.of(HttpStatus.OK, ResponseMessage.WISHLIST_CATEGORY_FETCH_SUCCESS.getMessage(),
+			wishlistService.listWishlistCategories(signInUser.getId()));
 	}
 
 	@ResponseStatus(HttpStatus.CREATED)

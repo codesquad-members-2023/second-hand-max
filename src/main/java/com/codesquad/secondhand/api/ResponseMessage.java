@@ -40,6 +40,7 @@ public enum ResponseMessage {
 
 	// Wishlist
 	WISHLIST_FETCH_SUCCESS("관심목록 조회를 성공하였습니다"),
+	WISHLIST_CATEGORY_FETCH_SUCCESS("관심목록 카테고리 조회를 성공하였습니다"),
 	WISHLIST_CREATE_SUCCESS("관심목록 추가를 성공하였습니다"),
 	WISHLIST_DELETE_SUCCESS("관심목록 삭제를 성공하였습니다");
 
