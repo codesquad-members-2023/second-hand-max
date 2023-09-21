@@ -75,6 +75,7 @@ public class User extends BaseTimeEntity {
 
 	public void removeUserRegion(Region region) {
 		myRegion.removeRegion(region);
+		selectedRegion = myRegion.findFirstRegion();
 	}
 
 	public void updateSelectedRegion(Region region) {

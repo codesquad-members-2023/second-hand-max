@@ -30,6 +30,10 @@ public class MyRegion {
 		return List.copyOf(userRegions);
 	}
 
+	public Region findFirstRegion() {
+		return userRegions.get(0).getRegion();
+	}
+
 	public void addRegion(UserRegion userRegion) {
 		validateUserRegionLimit();
 		validateDuplicateUserRegion(userRegion);
