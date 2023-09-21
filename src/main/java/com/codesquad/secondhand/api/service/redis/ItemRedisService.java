@@ -15,24 +15,26 @@ import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 @Service
-public class RedisService {
+public class ItemRedisService {
 
 	public static final String ITEM_KEY = "itemViews";
 	public static final int SCAN_COUNT = 100;
-	// public static final int DURATION = 1800;
-	// public static final int REPEAT_CYCLE = 600 * 1000;
-
-	public static final int DURATION = 30;
-	public static final int REPEAT_CYCLE = 5 * 1000;
+	public static final int DURATION = 3600 * 3;
+	public static final int REPEAT_CYCLE = 3600 * 1000;
 	private final ItemRepository itemRepository;
 	private final RedisUtils redisUtils;
 
-	public void incrementViews(Long itemId) {
+	public Long incrementViews(Long itemId) {
 		String viewKey = redisUtils.createKey(ITEM_KEY, itemId);
+		getViews(itemId, viewKey);
+		return redisUtils.increment(viewKey);
+	}
+
+	public void getViews(Long itemId, String viewKey) {
 		if (redisUtils.getData(viewKey) == null) {
-			redisUtils.setData(viewKey, String.valueOf(0), Duration.ofSeconds(DURATION));
+			redisUtils.setData(viewKey, String.valueOf(itemRepository.findItemViewsById(itemId)),
+				Duration.ofSeconds(DURATION));
 		}
-		redisUtils.increment(viewKey);
 	}
 
 	@Scheduled(fixedDelay = REPEAT_CYCLE)
@@ -46,7 +48,7 @@ public class RedisService {
 
 		for (String key : viewKeys) {
 			Long id = redisUtils.extractIdFrom(key);
-			int numViews = Integer.parseInt(redisUtils.getData(key));
+			Long numViews = Long.parseLong(redisUtils.getData(key));
 			itemRepository.saveViewsFromRedis(id, numViews);
 			redisUtils.deleteData(key);
 		}

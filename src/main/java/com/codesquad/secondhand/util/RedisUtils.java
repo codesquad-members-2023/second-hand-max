@@ -38,8 +38,8 @@ public class RedisUtils {
 		template.delete(key);
 	}
 
-	public void increment(String key) {
-		valueOperations.increment(key);
+	public Long increment(String key) {
+		return valueOperations.increment(key);
 	}
 
 	// 커서가 0이 될 때까지 count만큼씩 나눠서 key를 가져옴

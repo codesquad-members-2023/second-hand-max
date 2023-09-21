@@ -14,7 +14,7 @@ import com.codesquad.secondhand.api.service.item.response.ItemResponse;
 import com.codesquad.secondhand.api.service.item.response.ItemSliceResponse;
 import com.codesquad.secondhand.api.service.item.response.ItemStatusUpdateResponse;
 import com.codesquad.secondhand.api.service.item.response.ItemUpdateResponse;
-import com.codesquad.secondhand.api.service.redis.RedisService;
+import com.codesquad.secondhand.api.service.redis.ItemRedisService;
 import com.codesquad.secondhand.domain.category.Category;
 import com.codesquad.secondhand.domain.category.CategoryRepository;
 import com.codesquad.secondhand.domain.item.Item;
@@ -40,7 +40,7 @@ public class ItemService {
 
 	private static final Long FOR_SALE_ID = 1L;
 
-	private final RedisService redisService;
+	private final ItemRedisService itemRedisService;
 	private final ItemRepository itemRepository;
 	private final UserRepository userRepository;
 	private final CategoryRepository categoryRepository;
@@ -71,12 +71,11 @@ public class ItemService {
 		return ItemPostResponse.from(item);
 	}
 
-	// todo : incrementView
 	@Transactional(readOnly = true)
 	public ItemDetailResponse getItemDetail(Long itemId, Long userId) {
-		redisService.incrementViews(itemId);
 		Item item = itemRepository.findItemDetailById(itemId).orElseThrow(NoSuchItemException::new);
-		return ItemDetailResponse.from(item, userId);
+		Long increasedViews = itemRedisService.incrementViews(itemId);
+		return ItemDetailResponse.from(item, increasedViews, userId);
 	}
 
 	// todo : 이미지 삭제 여부

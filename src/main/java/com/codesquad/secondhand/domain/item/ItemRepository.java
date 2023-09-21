@@ -19,8 +19,11 @@ public interface ItemRepository extends JpaRepository<Item, Long> {
 		+ "WHERE i.id = :id AND i.isDeleted = FALSE")
 	Optional<Item> findItemDetailById(@Param("id") Long itemId);
 
+	@Query("SELECT i.views FROM Item i WHERE i.id = :id")
+	int findItemViewsById(@Param("id") Long itemId);
+
 	@Modifying(clearAutomatically = true)
 	@Query("UPDATE Item i SET i.views = i.views + :views WHERE i.id = :id")
-	void saveViewsFromRedis(@Param("id") Long id, @Param("views") int views);
+	void saveViewsFromRedis(@Param("id") Long id, @Param("views") Long views);
 
 }

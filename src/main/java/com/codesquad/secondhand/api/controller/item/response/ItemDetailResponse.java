@@ -25,14 +25,14 @@ public class ItemDetailResponse {
 	private ItemSellerResponse seller;
 	private int numChat;
 	private int numLikes;
-	private int numViews;
+	private Long numViews;
 	private Boolean isLiked;
 	private List<Image> images;
 
-	public static ItemDetailResponse from(Item item, Long userId) {
+	public static ItemDetailResponse from(Item item, Long increasedViews, Long userId) {
 		return new ItemDetailResponse(item.getId(), item.getTitle(), item.getStatus().getType(), item.getContent(),
 			item.getUpdatedAt(), item.getPrice(), ItemCategoryResponse.from(item.getCategory()),
-			ItemSellerResponse.from(item.getUser()), item.getNumChat(), item.getNumLikes(), item.getViews(),
+			ItemSellerResponse.from(item.getUser()), item.getNumChat(), item.getNumLikes(), increasedViews,
 			item.isInWishlist(userId), item.listImage());
 	}
 
