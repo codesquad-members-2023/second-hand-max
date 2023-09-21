@@ -1,31 +1,27 @@
 import ACCEPTED_EXTENSIONS from '@constants/ACCEPTED_EXTENSIONS';
 import Icons from '@design/Icons';
-import { useImageFileReader } from '@hooks/useImageFileReader';
-import { useState } from 'react';
 import styled, { css } from 'styled-components';
 import { PictureItem } from './PictureItem';
 import { useDraggable } from '@hooks/useDraggable';
 
-export const PictureList: React.FC = () => {
-  const [imageSrcList, setImageSrcList] = useState<string[]>();
-  const [, setFiles] = useState<File[]>();
-  const [thumbnailIndex, setThumbnailIndex] = useState<number>(0);
+type Props = {
+  imageSrcList?: string[];
+  thumbnailIndex: number;
+  selectThumbnail: (index: number) => void;
+  onImageChange: (file: File) => void;
+};
+
+export const PictureList: React.FC<Props> = ({
+  imageSrcList,
+  thumbnailIndex,
+  selectThumbnail,
+  onImageChange,
+}) => {
   const { scrollContainerRef, onDragStart, onDragMove, onDragEnd } =
     useDraggable();
 
-  const onImageLoadSuccess = (result: string, file: File) => {
-    setImageSrcList((prev) => (prev ? [...prev, result] : [result]));
-    setFiles((prev) => (prev ? [...prev, file] : [file]));
-  };
-
-  const { onImageChange } = useImageFileReader(onImageLoadSuccess);
-
   const onDragSlideEnd = () => {
     onDragEnd();
-  };
-
-  const selectThumbnail = (index: number) => {
-    setThumbnailIndex(index);
   };
 
   return (

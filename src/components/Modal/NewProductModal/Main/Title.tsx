@@ -3,7 +3,11 @@ import TopBarStyle from '@components/TopBar';
 import { useModalStore } from 'stores/useModalStore';
 import styled, { css } from 'styled-components';
 
-export const Title: React.FC = () => {
+type Props = {
+  onSubmitButtonClick: () => void;
+};
+
+export const Title: React.FC<Props> = ({ onSubmitButtonClick }) => {
   const closeNewProductModal = useModalStore(
     ({ closeNewProductModal }) => closeNewProductModal,
   );
@@ -12,7 +16,7 @@ export const Title: React.FC = () => {
     <TopBar>
       <BackButton onClick={closeNewProductModal}>닫기</BackButton>
       <div>내 물건 팔기</div>
-      <SubmitButton>완료</SubmitButton>
+      <SubmitButton onClick={onSubmitButtonClick}>완료</SubmitButton>
     </TopBar>
   );
 };

@@ -10,3 +10,15 @@ export type getProductsResponse = {
     };
   };
 };
+
+export type PostProductRequestData = {
+  thumbnailImage: File;
+  images?: File[];
+  title: string;
+  price?: number;
+  content?: string;
+  region: string;
+  status: '판매중' | '판매완료' | '예약중';
+  categoryId: number;
+  categoryName: string;
+};
