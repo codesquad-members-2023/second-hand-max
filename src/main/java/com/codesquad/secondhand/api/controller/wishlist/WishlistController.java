@@ -17,6 +17,7 @@ import com.codesquad.secondhand.api.ApiResponse;
 import com.codesquad.secondhand.api.ResponseMessage;
 import com.codesquad.secondhand.api.service.wishlist.WishlistService;
 import com.codesquad.secondhand.api.service.wishlist.request.WishlistServiceRequest;
+import com.codesquad.secondhand.api.service.wishlist.response.WishlistCategoryResponse;
 import com.codesquad.secondhand.api.service.wishlist.response.WishlistSliceResponse;
 
 import lombok.RequiredArgsConstructor;
@@ -34,6 +35,12 @@ public class WishlistController {
 		Pageable pageable) {
 		return ApiResponse.of(HttpStatus.OK, ResponseMessage.WISHLIST_FETCH_SUCCESS.getMessage(),
 			wishlistService.listWishlists(new WishlistServiceRequest(signInUser.getId(), category, pageable)));
+	}
+
+	@GetMapping("/categories")
+	public ApiResponse<WishlistCategoryResponse> listWishlistCategories(@SignIn SignInUser signInUser) {
+		return ApiResponse.of(HttpStatus.OK, ResponseMessage.WISHLIST_CATEGORY_FETCH_SUCCESS.getMessage(),
+			wishlistService.listWishlistCategories(signInUser.getId()));
 	}
 
 	@ResponseStatus(HttpStatus.CREATED)
