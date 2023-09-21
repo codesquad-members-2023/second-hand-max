@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 
-export const useImageFileHandler = (
+export const useImageFileReader = (
   onImageLoadSuccess: (result: string, file: File) => void,
 ) => {
   const reader = useMemo(() => new FileReader(), []);

@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { styled } from 'styled-components';
 import ProfileImageUploader from '@components/ProfileImageUploader';
 import { InitOAuthType } from '@hooks/useOAuth';
-import { useImageFileHandler } from '@hooks/useImageFileHandler';
+import { useImageFileReader } from '@hooks/useImageFileReader';
 import { SignUpFormTitle } from './SignUpFormTitle';
 import { SignUpField } from './SignUpField';
 import { AddRegionButton } from './AddRegionButton';
@@ -24,7 +24,7 @@ const SignUpForm: React.FC<{ initOAuth: InitOAuthType }> = ({ initOAuth }) => {
     setFile(file);
   };
 
-  const { onImageChange } = useImageFileHandler(onImageLoadSuccess);
+  const { onImageChange } = useImageFileReader(onImageLoadSuccess);
 
   const onIdChange = (id: string) => {
     setId(id);
