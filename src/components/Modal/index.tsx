@@ -18,7 +18,6 @@ export const ModalOutlet: React.FC<{
   );
 
   const portalRoot = parentElement.current ?? document.body;
-  console.log(portalRoot);
 
   return (
     <>

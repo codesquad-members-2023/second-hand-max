@@ -23,8 +23,6 @@ export const Home: React.FC = () => {
     categoryId,
   );
 
-  console.log(productListItems);
-
   return (
     <>
       <TopBar />

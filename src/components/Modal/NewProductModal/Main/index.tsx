@@ -5,60 +5,80 @@ import { useState } from 'react';
 import { Tag } from '@components/Tag';
 import { useCategoryQuery } from '@hooks/queries/useCategoryQuery';
 import Icons from '@design/Icons';
-
-const EXAMPLE_TAG_COUNT = 3;
+import { Title } from './Title';
+import { CategoryListModal } from '@components/Modal/CategoryListModal';
+import { Category } from 'types/category';
 
 export const Main: React.FC = () => {
   const currentRegion = useUserStore(({ currentRegion }) => currentRegion);
   const [title, setTitle] = useState('');
   const [price, setPrice] = useState('');
   const [content, setContent] = useState('');
-  const { data: categories } = useCategoryQuery();
-  const [selectCategory, setSelectCategory] = useState<{
-    categoryId: number;
-    categoryName: string;
-  }>();
+  const { withoutPopularCategories: categories } = useCategoryQuery();
+  const [selectCategory, setSelectCategory] = useState<Category>();
+  const [isCategoryListModalOpen, setIsCategoryListModalOpen] = useState(false);
+
+  const openCategoryListModalOpen = () => setIsCategoryListModalOpen(true);
+  const closeCategoryListModalOpen = () => setIsCategoryListModalOpen(false);
+
+  const exampleCategories =
+    categories && selectCategory ? [selectCategory, ...categories] : categories;
 
   return (
-    <StyledMain>
-      <PictureList />
-      <TitleInput
-        placeholder={'제목을 입력하세요.'}
-        value={title}
-        onChange={({ target }) => setTitle(target.value)}
-      />
-      {title && categories && (
-        <CategoryContainer>
-          <Tags>
-            {categories.slice(1, EXAMPLE_TAG_COUNT + 1).map((category) => (
-              <Tag
-                {...{
-                  title: category.name,
-                  isSelected: selectCategory?.categoryId === category.id,
-                  onClick: () =>
-                    setSelectCategory({
-                      categoryId: category.id,
-                      categoryName: category.name,
-                    }),
-                }}
-              />
-            ))}
-          </Tags>
-          <Icons.ChevronRight />
-        </CategoryContainer>
+    <>
+      <Title />
+      {isCategoryListModalOpen && (
+        <CategoryListModal
+          {...{
+            closeCategoryListModalOpen,
+            categoryListSelect: (category: Category) => {
+              setSelectCategory(category);
+              closeCategoryListModalOpen();
+            },
+          }}
+        />
       )}
-      <PriceInput
-        placeholder={'가격(선택사항)'}
-        type="number"
-        value={price}
-        onChange={({ target }) => setPrice(target.value)}
-      />
-      <ContentInput
-        placeholder={`${currentRegion.addressName}에 올릴 게시물을 작성해주세요.(판매금지 물품은 게시가 제한될 수 있어요.)`}
-        value={content}
-        onChange={({ target }) => setContent(target.value)}
-      />
-    </StyledMain>
+
+      <StyledMain>
+        <PictureList />
+        <TitleInput
+          placeholder={'제목을 입력하세요.'}
+          value={title}
+          onChange={({ target }) => setTitle(target.value)}
+        />
+        {title && (
+          <CategoryContainer>
+            <Tags>
+              {exampleCategories &&
+                exampleCategories.slice(0, 3).map((category) => {
+                  return (
+                    <Tag
+                      key={category.id}
+                      {...{
+                        title: category.name,
+                        isSelected: selectCategory?.id === category.id,
+                        onClick: () => setSelectCategory(category),
+                      }}
+                    />
+                  );
+                })}
+            </Tags>
+            <Icons.ChevronRight onClick={openCategoryListModalOpen} />
+          </CategoryContainer>
+        )}
+        <PriceInput
+          placeholder={'가격(선택사항)'}
+          type="number"
+          value={price}
+          onChange={({ target }) => setPrice(target.value)}
+        />
+        <ContentInput
+          placeholder={`${currentRegion.addressName}에 올릴 게시물을 작성해주세요.(판매금지 물품은 게시가 제한될 수 있어요.)`}
+          value={content}
+          onChange={({ target }) => setContent(target.value)}
+        />
+      </StyledMain>
+    </>
   );
 };
 
@@ -89,6 +109,9 @@ const CategoryContainer = styled.div`
     align-items: center;
     justify-content: space-between;
 
-    stroke: ${colors.neutral.text};
+    & svg {
+      stroke: ${colors.neutral.text};
+      cursor: pointer;
+    }
   `};
 `;
