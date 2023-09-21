@@ -22,7 +22,9 @@ export const Main: React.FC = () => {
   const closeCategoryListModalOpen = () => setIsCategoryListModalOpen(false);
 
   const exampleCategories =
-    categories && selectCategory ? [selectCategory, ...categories] : categories;
+    categories && selectCategory
+      ? [...new Set([selectCategory, ...categories])]
+      : categories;
 
   return (
     <>
