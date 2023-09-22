@@ -16,6 +16,8 @@ public class ItemTransactionResponse {
 	private Long id;
 	private String title;
 	private String region;
+	private String status;
+	private Long sellerId;
 	private String thumbnailUrl;
 	private LocalDateTime updatedAt;
 	private Integer price;
@@ -27,6 +29,8 @@ public class ItemTransactionResponse {
 			item.getId(),
 			item.getTitle(),
 			item.getRegion().getTitle(),
+			item.getStatus().getType(),
+			item.getUser().getId(),
 			item.getThumbnailUrl(),
 			item.getUpdatedAt(),
 			item.getPrice(),
