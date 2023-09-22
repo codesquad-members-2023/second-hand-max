@@ -8,13 +8,13 @@ type Props = {
 };
 
 export const Title: React.FC<Props> = ({ onSubmitButtonClick }) => {
-  const closeNewProductModal = useModalStore(
-    ({ closeNewProductModal }) => closeNewProductModal,
+  const closePostProductModal = useModalStore(
+    ({ closePostProductModal }) => closePostProductModal,
   );
 
   return (
     <TopBar>
-      <BackButton onClick={closeNewProductModal}>닫기</BackButton>
+      <BackButton onClick={closePostProductModal}>닫기</BackButton>
       <div>내 물건 팔기</div>
       <SubmitButton onClick={onSubmitButtonClick}>완료</SubmitButton>
     </TopBar>

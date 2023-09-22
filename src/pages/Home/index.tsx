@@ -9,8 +9,8 @@ import { Loader } from '@components/Loader';
 import { useModalStore } from 'stores/useModalStore';
 
 export const Home: React.FC = () => {
-  const openNewProductModal = useModalStore(
-    ({ openNewProductModal }) => openNewProductModal,
+  const openPostProductModal = useModalStore(
+    ({ openPostProductModal }) => openPostProductModal,
   );
   const user = useUserStore(({ user }) => user);
   const setCurrentRegion = useUserStore(
@@ -32,7 +32,7 @@ export const Home: React.FC = () => {
         ) : (
           <ProductList productListItems={productListItems} />
         )}
-        <Fab onClick={openNewProductModal} />
+        <Fab onClick={openPostProductModal} />
       </Content>
     </>
   );
