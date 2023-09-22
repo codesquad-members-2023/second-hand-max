@@ -15,8 +15,8 @@ export const PictureItem: React.FC<Props> = ({
   onDeleteButtonClick,
 }) => {
   return (
-    <StyledPictureItem onClick={onClick}>
-      <Picture src={imageSrc} />
+    <StyledPictureItem>
+      <Picture src={imageSrc} onClick={onClick} />
       <Icons.XCross onClick={onDeleteButtonClick} />
       {isThumbnail && <ThumbnailLabel>대표 사진</ThumbnailLabel>}
     </StyledPictureItem>

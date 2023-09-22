@@ -11,6 +11,7 @@ import { Category } from 'types/category';
 import { useImageFileReader } from '@hooks/useImageFileReader';
 import { usePostProductMutation } from '@hooks/queries/usePostProductMutation';
 
+const THUMBNAIL_INITIAL_INDEX = 0;
 const EXAMPLE_CATEGORY_MAX_COUNT = 3;
 
 export const Main: React.FC = () => {
@@ -25,7 +26,9 @@ export const Main: React.FC = () => {
 
   const [imageSrcList, setImageSrcList] = useState<string[]>();
   const [imageFiles, setImageFiles] = useState<File[]>();
-  const [thumbnailIndex, setThumbnailIndex] = useState<number>(0);
+  const [thumbnailIndex, setThumbnailIndex] = useState<number>(
+    THUMBNAIL_INITIAL_INDEX,
+  );
 
   const { mutate: postProductMutate } = usePostProductMutation();
 
@@ -35,6 +38,19 @@ export const Main: React.FC = () => {
   };
 
   const { onImageChange } = useImageFileReader(onImageLoadSuccess);
+
+  const deleteImageFile = (index: number) => {
+    setImageSrcList(
+      (prev) => prev?.filter((_, filterIndex) => filterIndex !== index),
+    );
+    setImageFiles(
+      (prev) => prev?.filter((_, filterIndex) => filterIndex !== index),
+    );
+
+    if (thumbnailIndex === index) {
+      setThumbnailIndex(THUMBNAIL_INITIAL_INDEX);
+    }
+  };
 
   const selectThumbnail = (index: number) => {
     setThumbnailIndex(index);
@@ -90,7 +106,13 @@ export const Main: React.FC = () => {
 
       <StyledMain>
         <PictureList
-          {...{ imageSrcList, thumbnailIndex, selectThumbnail, onImageChange }}
+          {...{
+            imageSrcList,
+            thumbnailIndex,
+            selectThumbnail,
+            onImageChange,
+            onDeleteButtonClick: deleteImageFile,
+          }}
         />
         <TitleInput
           placeholder={'제목을 입력하세요.'}
