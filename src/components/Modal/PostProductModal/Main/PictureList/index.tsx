@@ -9,6 +9,7 @@ type Props = {
   thumbnailIndex: number;
   selectThumbnail: (index: number) => void;
   onImageChange: (file: File) => void;
+  onDeleteButtonClick: (index: number) => void;
 };
 
 export const PictureList: React.FC<Props> = ({
@@ -16,6 +17,7 @@ export const PictureList: React.FC<Props> = ({
   thumbnailIndex,
   selectThumbnail,
   onImageChange,
+  onDeleteButtonClick,
 }) => {
   const { scrollContainerRef, onDragStart, onDragMove, onDragEnd } =
     useDraggable();
@@ -55,6 +57,7 @@ export const PictureList: React.FC<Props> = ({
               imageSrc,
               isThumbnail: thumbnailIndex === index,
               onClick: () => selectThumbnail(index),
+              onDeleteButtonClick: () => onDeleteButtonClick(index),
             }}
           />
         ))}

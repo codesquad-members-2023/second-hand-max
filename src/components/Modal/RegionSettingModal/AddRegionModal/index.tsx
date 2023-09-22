@@ -3,7 +3,7 @@ import { AddRegionModalHeader } from './AddRegionModalHeader';
 import { SearchBar } from './SearchBar';
 import { Address } from 'types/region';
 import { useState } from 'react';
-import { useRegionQuery } from '@hooks/queries/useRegionQuery';
+import { useRegionInfiniteQuery } from '@hooks/queries/useRegionInfiniteQuery';
 import { Loader } from '@components/Loader';
 import { RegionList } from './RegionList';
 import { useDebounce } from '@hooks/useDebounce';
@@ -19,7 +19,7 @@ export const AddRegionModal: React.FC<Props> = ({
 }) => {
   const [searchWord, setSearchWord] = useState('');
   const debouncedSearchWord = useDebounce(searchWord, 300);
-  const regionQuery = useRegionQuery(debouncedSearchWord);
+  const regionQuery = useRegionInfiniteQuery(debouncedSearchWord);
 
   const onSearchWordChange = (word: string) => setSearchWord(word);
 

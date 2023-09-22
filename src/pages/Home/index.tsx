@@ -2,23 +2,23 @@ import Fab from '@components/Fab';
 import { ProductList } from '@components/ProductList';
 import { styled } from 'styled-components';
 import { TopBar } from './TopBar';
-import { useUserStore } from 'stores/useUserStore';
+// import { useUserStore } from 'stores/useUserStore';
 import { useParams } from 'react-router-dom';
-import { useProductQuery } from '@hooks/queries/useProductQuery';
+import { useProductInfiniteQuery } from '@hooks/queries/useProductInfiniteQuery';
 import { Loader } from '@components/Loader';
 import { useModalStore } from 'stores/useModalStore';
 
 export const Home: React.FC = () => {
-  const openNewProductModal = useModalStore(
-    ({ openNewProductModal }) => openNewProductModal,
+  const openPostProductModal = useModalStore(
+    ({ openPostProductModal }) => openPostProductModal,
   );
-  const user = useUserStore(({ user }) => user);
-  const setCurrentRegion = useUserStore(
-    ({ setCurrentRegion }) => setCurrentRegion,
-  );
+  // const user = useUserStore(({ user }) => user);
+  // const setCurrentRegion = useUserStore(
+  //   ({ setCurrentRegion }) => setCurrentRegion,
+  // );
   const { categoryId } = useParams();
 
-  const { isLoading, data: productListItems } = useProductQuery(
+  const { isLoading, data: productListItems } = useProductInfiniteQuery(
     '역삼', // TODO: 실제 currentRegion 가져와서 넣기.
     categoryId,
   );
@@ -32,7 +32,7 @@ export const Home: React.FC = () => {
         ) : (
           <ProductList productListItems={productListItems} />
         )}
-        <Fab onClick={openNewProductModal} />
+        <Fab onClick={openPostProductModal} />
       </Content>
     </>
   );

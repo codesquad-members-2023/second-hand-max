@@ -9,7 +9,10 @@ import { Title } from './Title';
 import { CategoryListModal } from '@components/Modal/CategoryListModal';
 import { Category } from 'types/category';
 import { useImageFileReader } from '@hooks/useImageFileReader';
-import { postProduct } from 'apis/product';
+import { usePostProductMutation } from '@hooks/queries/usePostProductMutation';
+
+const THUMBNAIL_INITIAL_INDEX = 0;
+const EXAMPLE_CATEGORY_MAX_COUNT = 3;
 
 export const Main: React.FC = () => {
   const currentRegion = useUserStore(({ currentRegion }) => currentRegion);
@@ -23,7 +26,11 @@ export const Main: React.FC = () => {
 
   const [imageSrcList, setImageSrcList] = useState<string[]>();
   const [imageFiles, setImageFiles] = useState<File[]>();
-  const [thumbnailIndex, setThumbnailIndex] = useState<number>(0);
+  const [thumbnailIndex, setThumbnailIndex] = useState<number>(
+    THUMBNAIL_INITIAL_INDEX,
+  );
+
+  const { mutate: postProductMutate } = usePostProductMutation();
 
   const onImageLoadSuccess = (result: string, file: File) => {
     setImageSrcList((prev) => (prev ? [...prev, result] : [result]));
@@ -31,6 +38,19 @@ export const Main: React.FC = () => {
   };
 
   const { onImageChange } = useImageFileReader(onImageLoadSuccess);
+
+  const deleteImageFile = (index: number) => {
+    setImageSrcList(
+      (prev) => prev?.filter((_, filterIndex) => filterIndex !== index),
+    );
+    setImageFiles(
+      (prev) => prev?.filter((_, filterIndex) => filterIndex !== index),
+    );
+
+    if (thumbnailIndex === index) {
+      setThumbnailIndex(THUMBNAIL_INITIAL_INDEX);
+    }
+  };
 
   const selectThumbnail = (index: number) => {
     setThumbnailIndex(index);
@@ -45,7 +65,7 @@ export const Main: React.FC = () => {
       (_, index) => index !== thumbnailIndex,
     );
 
-    postProduct({
+    postProductMutate({
       thumbnailImage,
       images: imagesWithoutThumbnail,
       title,
@@ -63,9 +83,15 @@ export const Main: React.FC = () => {
       ? [...new Set([selectCategory, ...categories])]
       : categories;
 
+  const canSubmit = !!(
+    title &&
+    selectCategory?.id &&
+    imageFiles?.[thumbnailIndex]
+  );
+
   return (
     <>
-      <Title {...{ onSubmitButtonClick: onSubmitProduct }} />
+      <Title {...{ onSubmitButtonClick: onSubmitProduct, canSubmit }} />
       {isCategoryListModalOpen && (
         <CategoryListModal
           {...{
@@ -80,7 +106,13 @@ export const Main: React.FC = () => {
 
       <StyledMain>
         <PictureList
-          {...{ imageSrcList, thumbnailIndex, selectThumbnail, onImageChange }}
+          {...{
+            imageSrcList,
+            thumbnailIndex,
+            selectThumbnail,
+            onImageChange,
+            onDeleteButtonClick: deleteImageFile,
+          }}
         />
         <TitleInput
           placeholder={'제목을 입력하세요.'}
@@ -91,8 +123,9 @@ export const Main: React.FC = () => {
           <CategoryContainer>
             <Tags>
               {exampleCategories &&
-                exampleCategories.slice(0, 3).map((category) => {
-                  return (
+                exampleCategories
+                  .slice(0, EXAMPLE_CATEGORY_MAX_COUNT)
+                  .map((category) => (
                     <Tag
                       key={category.id}
                       {...{
@@ -101,8 +134,7 @@ export const Main: React.FC = () => {
                         onClick: () => setSelectCategory(category),
                       }}
                     />
-                  );
-                })}
+                  ))}
             </Tags>
             <Icons.ChevronRight onClick={openCategoryListModalOpen} />
           </CategoryContainer>

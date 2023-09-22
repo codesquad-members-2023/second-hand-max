@@ -2,7 +2,7 @@ import { useModalStore } from 'stores/useModalStore';
 import { RegionSettingModal } from './RegionSettingModal';
 import { createPortal } from 'react-dom';
 import { CategoryModal } from './CategoryModal';
-import { NewProductModal } from './NewProductModal';
+import { PostProductModal } from './PostProductModal';
 
 export const ModalOutlet: React.FC<{
   parentElement: React.MutableRefObject<HTMLDivElement | null>;
@@ -13,8 +13,8 @@ export const ModalOutlet: React.FC<{
   const isCategoryModalOpen = useModalStore(
     ({ isCategoryModalOpen }) => isCategoryModalOpen,
   );
-  const isNewProductModalOpen = useModalStore(
-    ({ isNewProductModalOpen }) => isNewProductModalOpen,
+  const isPostProductModalOpen = useModalStore(
+    ({ isPostProductModalOpen }) => isPostProductModalOpen,
   );
 
   const portalRoot = parentElement.current ?? document.body;
@@ -24,7 +24,7 @@ export const ModalOutlet: React.FC<{
       {isRegionSettingModalOpen &&
         createPortal(<RegionSettingModal />, portalRoot)}
       {isCategoryModalOpen && createPortal(<CategoryModal />, portalRoot)}
-      {isNewProductModalOpen && createPortal(<NewProductModal />, portalRoot)}
+      {isPostProductModalOpen && createPortal(<PostProductModal />, portalRoot)}
     </>
   );
 };
