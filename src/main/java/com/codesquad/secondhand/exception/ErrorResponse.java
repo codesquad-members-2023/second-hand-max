@@ -16,6 +16,7 @@ public enum ErrorResponse {
 
 	// Item
 	NO_SUCH_ITEM_EXCEPTION(HttpStatus.BAD_REQUEST, "존재하지 않는 상품입니다"),
+	INVALID_FORMAT_EXCEPTION(HttpStatus.BAD_REQUEST, "유효하지 않은 형식입니다"),
 
 	// Auth
 	EXPIRED_TOKEN_EXCEPTION(HttpStatus.FORBIDDEN, "토큰이 만료되었습니다"),
