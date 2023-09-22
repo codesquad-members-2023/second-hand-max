@@ -30,7 +30,7 @@ public class ItemControllerTest extends ControllerTestSupport {
 	void postItem() throws Exception {
 		// given
 		mockingJwtService();
-		ItemPostRequest request = new ItemPostRequest("title", null, "content", List.of(1L, 2L), 1L, 1L);
+		ItemPostRequest request = new ItemPostRequest("title", null, "content", List.of(1L, 2L), 2L, 1L);
 
 		// when
 		ObjectMapper objectMapper = new ObjectMapper();
