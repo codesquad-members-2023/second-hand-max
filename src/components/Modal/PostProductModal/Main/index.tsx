@@ -11,6 +11,8 @@ import { Category } from 'types/category';
 import { useImageFileReader } from '@hooks/useImageFileReader';
 import { usePostProductMutation } from '@hooks/queries/usePostProductMutation';
 
+const EXAMPLE_CATEGORY_MAX_COUNT = 3;
+
 export const Main: React.FC = () => {
   const currentRegion = useUserStore(({ currentRegion }) => currentRegion);
 
@@ -65,9 +67,15 @@ export const Main: React.FC = () => {
       ? [...new Set([selectCategory, ...categories])]
       : categories;
 
+  const canSubmit = !!(
+    title &&
+    selectCategory?.id &&
+    imageFiles?.[thumbnailIndex]
+  );
+
   return (
     <>
-      <Title {...{ onSubmitButtonClick: onSubmitProduct }} />
+      <Title {...{ onSubmitButtonClick: onSubmitProduct, canSubmit }} />
       {isCategoryListModalOpen && (
         <CategoryListModal
           {...{
@@ -93,8 +101,9 @@ export const Main: React.FC = () => {
           <CategoryContainer>
             <Tags>
               {exampleCategories &&
-                exampleCategories.slice(0, 3).map((category) => {
-                  return (
+                exampleCategories
+                  .slice(0, EXAMPLE_CATEGORY_MAX_COUNT)
+                  .map((category) => (
                     <Tag
                       key={category.id}
                       {...{
@@ -103,8 +112,7 @@ export const Main: React.FC = () => {
                         onClick: () => setSelectCategory(category),
                       }}
                     />
-                  );
-                })}
+                  ))}
             </Tags>
             <Icons.ChevronRight onClick={openCategoryListModalOpen} />
           </CategoryContainer>
