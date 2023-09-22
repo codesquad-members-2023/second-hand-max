@@ -18,6 +18,7 @@ export const PostProductModal: React.FC = () => {
   const [title, setTitle] = useState('');
   const [price, setPrice] = useState('');
   const [content, setContent] = useState('');
+
   const [selectCategory, setSelectCategory] = useState<Category>();
   const [isCategoryListModalOpen, setIsCategoryListModalOpen] = useState(false);
   const { withoutPopularCategories: categories } = useCategoryQuery();
