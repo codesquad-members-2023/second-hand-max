@@ -2,8 +2,6 @@ package com.codesquad.secondhand.api.controller.item;
 
 import javax.validation.Valid;
 
-import com.codesquad.secondhand.api.controller.item.response.ItemPostResponse;
-
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -26,6 +24,7 @@ import com.codesquad.secondhand.api.controller.item.request.ItemPostRequest;
 import com.codesquad.secondhand.api.controller.item.request.ItemStatusUpdateRequest;
 import com.codesquad.secondhand.api.controller.item.request.ItemUpdateRequest;
 import com.codesquad.secondhand.api.controller.item.response.ItemDetailResponse;
+import com.codesquad.secondhand.api.controller.item.response.ItemPostResponse;
 import com.codesquad.secondhand.api.service.image.ImageService;
 import com.codesquad.secondhand.api.service.item.ItemService;
 import com.codesquad.secondhand.api.service.item.response.ItemSliceResponse;
@@ -75,7 +74,8 @@ public class ItemController {
 
 	@ResponseStatus(HttpStatus.OK)
 	@PutMapping("/{id}")
-	public ApiResponse<ItemUpdateResponse> updateItem(@PathVariable Long id, @RequestBody ItemUpdateRequest request,
+	public ApiResponse<ItemUpdateResponse> updateItem(@PathVariable Long id,
+		@RequestBody @Valid ItemUpdateRequest request,
 		@SignIn SignInUser signInUser) {
 		ItemUpdateResponse response = itemService.updateItem(
 			request.toService(id, imageService.findImagesByIds(request.getImageIds())), signInUser.getId());
