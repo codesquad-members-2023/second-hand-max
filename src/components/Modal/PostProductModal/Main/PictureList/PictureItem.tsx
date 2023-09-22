@@ -1,19 +1,23 @@
+import Icons from '@design/Icons';
 import styled, { css } from 'styled-components';
 
 type Props = {
   imageSrc: string;
   isThumbnail: boolean;
   onClick: () => void;
+  onDeleteButtonClick: () => void;
 };
 
 export const PictureItem: React.FC<Props> = ({
   imageSrc,
   isThumbnail,
   onClick,
+  onDeleteButtonClick,
 }) => {
   return (
     <StyledPictureItem onClick={onClick}>
       <Picture src={imageSrc} />
+      <Icons.XCross onClick={onDeleteButtonClick} />
       {isThumbnail && <ThumbnailLabel>대표 사진</ThumbnailLabel>}
     </StyledPictureItem>
   );
@@ -29,6 +33,24 @@ const StyledPictureItem = styled.div`
     overflow: hidden;
     position: relative;
     flex-shrink: 0;
+    cursor: pointer;
+
+    svg {
+      width: 15px;
+      height: 15px;
+      stroke: ${colors.neutral.text};
+      background-color: ${colors.neutral.backgroundWeak};
+      border-radius: ${radius.half};
+      position: absolute;
+      z-index: 200;
+      top: 5px;
+      right: 5px;
+      cursor: pointer;
+
+      &:hover {
+        background-color: ${colors.neutral.backgroundWeak};
+      }
+    }
   `};
 `;
 
