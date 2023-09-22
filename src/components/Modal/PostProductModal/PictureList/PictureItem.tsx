@@ -42,7 +42,6 @@ const StyledPictureItem = styled.div`
       background-color: ${colors.neutral.backgroundWeak};
       border-radius: ${radius.half};
       position: absolute;
-      z-index: 200;
       top: 5px;
       right: 5px;
       cursor: pointer;
