@@ -5,6 +5,8 @@ services:
     image: ojeegu/second-hand-04-a #cicd.yml에서 설정한 이미지 이름 (변수?)
     ports:
       - 8080:8080
+    environment:
+      - TZ=Asia/Seoul
 
   nginx: # 서비스 이름
     container_name: proxy_server
