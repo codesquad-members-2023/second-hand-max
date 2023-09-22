@@ -2,7 +2,7 @@ import Fab from '@components/Fab';
 import { ProductList } from '@components/ProductList';
 import { styled } from 'styled-components';
 import { TopBar } from './TopBar';
-import { useUserStore } from 'stores/useUserStore';
+// import { useUserStore } from 'stores/useUserStore';
 import { useParams } from 'react-router-dom';
 import { useProductInfiniteQuery } from '@hooks/queries/useProductInfiniteQuery';
 import { Loader } from '@components/Loader';
@@ -12,10 +12,10 @@ export const Home: React.FC = () => {
   const openPostProductModal = useModalStore(
     ({ openPostProductModal }) => openPostProductModal,
   );
-  const user = useUserStore(({ user }) => user);
-  const setCurrentRegion = useUserStore(
-    ({ setCurrentRegion }) => setCurrentRegion,
-  );
+  // const user = useUserStore(({ user }) => user);
+  // const setCurrentRegion = useUserStore(
+  //   ({ setCurrentRegion }) => setCurrentRegion,
+  // );
   const { categoryId } = useParams();
 
   const { isLoading, data: productListItems } = useProductInfiniteQuery(
