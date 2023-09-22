@@ -18,6 +18,7 @@ import org.springframework.data.domain.Pageable;
 
 import com.codesquad.secondhand.FixtureFactory;
 import com.codesquad.secondhand.IntegrationTestSupport;
+import com.codesquad.secondhand.api.controller.item.request.ItemPostRequest;
 import com.codesquad.secondhand.api.controller.item.response.ItemDetailResponse;
 import com.codesquad.secondhand.api.service.item.request.ItemPostServiceRequest;
 import com.codesquad.secondhand.api.service.item.request.ItemStatusUpdateServiceRequest;
@@ -37,6 +38,7 @@ import com.codesquad.secondhand.domain.user.User;
 import com.codesquad.secondhand.domain.user.UserRepository;
 import com.codesquad.secondhand.exception.ErrorResponse;
 import com.codesquad.secondhand.exception.auth.PermissionDeniedException;
+import com.codesquad.secondhand.exception.category.InvalidCategoryException;
 import com.codesquad.secondhand.exception.category.NoSuchCategoryException;
 import com.codesquad.secondhand.exception.item.NoSuchItemException;
 import com.codesquad.secondhand.exception.region.NoSuchRegionException;
@@ -198,6 +200,20 @@ public class ItemServiceTest extends IntegrationTestSupport {
 		assertThatThrownBy(() -> itemService.postItem(request, loginUser.getId()))
 			.isInstanceOf(NoSuchCategoryException.class)
 			.hasMessage(ErrorResponse.NO_SUCH_CATEGORY_EXCEPTION.getMessage());
+	}
+
+	@DisplayName("전체 카테고리로 상품 등록을 요청 하면 예외가 발생한다.")
+	@Test
+	void postItemAndThrowCategoryIDException() {
+		// given
+		Long allCategory = 1L;
+		ItemPostRequest request = new ItemPostRequest("title", null, "content", List.of(1L, 2L, 3L),
+			allCategory, 1L);
+
+		// when & then
+		assertThatThrownBy(() -> itemService.postItem(request.toService(images), loginUser.getId()))
+			.isInstanceOf(InvalidCategoryException.class)
+			.hasMessage(ErrorResponse.INVALID_CATEGORY_EXCEPTION.getMessage());
 	}
 
 	@DisplayName("상품 등록 시 존재하지 않는 지역을 설정하면 예외가 발생한다.")
