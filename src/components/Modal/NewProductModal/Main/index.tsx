@@ -9,7 +9,7 @@ import { Title } from './Title';
 import { CategoryListModal } from '@components/Modal/CategoryListModal';
 import { Category } from 'types/category';
 import { useImageFileReader } from '@hooks/useImageFileReader';
-import { postProduct } from 'apis/product';
+import { usePostProductMutation } from '@hooks/queries/usePostProductMutation';
 
 export const Main: React.FC = () => {
   const currentRegion = useUserStore(({ currentRegion }) => currentRegion);
@@ -24,6 +24,8 @@ export const Main: React.FC = () => {
   const [imageSrcList, setImageSrcList] = useState<string[]>();
   const [imageFiles, setImageFiles] = useState<File[]>();
   const [thumbnailIndex, setThumbnailIndex] = useState<number>(0);
+
+  const { mutate: postProductMutate } = usePostProductMutation();
 
   const onImageLoadSuccess = (result: string, file: File) => {
     setImageSrcList((prev) => (prev ? [...prev, result] : [result]));
@@ -45,7 +47,7 @@ export const Main: React.FC = () => {
       (_, index) => index !== thumbnailIndex,
     );
 
-    postProduct({
+    postProductMutate({
       thumbnailImage,
       images: imagesWithoutThumbnail,
       title,
