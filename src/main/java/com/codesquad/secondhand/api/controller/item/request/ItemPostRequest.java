@@ -2,8 +2,10 @@ package com.codesquad.secondhand.api.controller.item.request;
 
 import java.util.List;
 
+import javax.validation.constraints.Max;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.PositiveOrZero;
 import javax.validation.constraints.Size;
 
 import org.hibernate.validator.constraints.Length;
@@ -24,6 +26,8 @@ public class ItemPostRequest {
 	@Length(max = 60, message = "제목은 최대 60자 입니다")
 	private String title;
 
+	@PositiveOrZero(message = "음수는 등록할 수 없습니다")
+	@Max(value = 999_999_999, message = "등록 가능한 금액 한도를 초과했습니다")
 	private Integer price;
 
 	@NotBlank(message = "내용은 공백일 수 없습니다")

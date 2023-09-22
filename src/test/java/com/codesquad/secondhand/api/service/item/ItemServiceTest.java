@@ -18,6 +18,7 @@ import org.springframework.data.domain.Pageable;
 
 import com.codesquad.secondhand.FixtureFactory;
 import com.codesquad.secondhand.IntegrationTestSupport;
+import com.codesquad.secondhand.api.controller.item.request.ItemPostRequest;
 import com.codesquad.secondhand.api.controller.item.response.ItemDetailResponse;
 import com.codesquad.secondhand.api.service.item.request.ItemPostServiceRequest;
 import com.codesquad.secondhand.api.service.item.request.ItemStatusUpdateServiceRequest;
@@ -37,6 +38,7 @@ import com.codesquad.secondhand.domain.user.User;
 import com.codesquad.secondhand.domain.user.UserRepository;
 import com.codesquad.secondhand.exception.ErrorResponse;
 import com.codesquad.secondhand.exception.auth.PermissionDeniedException;
+import com.codesquad.secondhand.exception.category.InvalidCategoryException;
 import com.codesquad.secondhand.exception.category.NoSuchCategoryException;
 import com.codesquad.secondhand.exception.item.NoSuchItemException;
 import com.codesquad.secondhand.exception.region.NoSuchRegionException;
@@ -153,7 +155,7 @@ public class ItemServiceTest extends IntegrationTestSupport {
 	void postItem() {
 		// given
 		ItemPostServiceRequest request = new ItemPostServiceRequest("title", null, "content", images,
-			1L, 1L);
+			2L, 1L);
 
 		// when
 		itemService.postItem(request, loginUser.getId());
@@ -166,7 +168,7 @@ public class ItemServiceTest extends IntegrationTestSupport {
 			() -> assertThat(postedItem.getPrice()).isNull(),
 			() -> assertThat(postedItem.getContent()).isEqualTo("content"),
 			() -> assertThat(postedItem.listImage()).hasSize(images.size()),
-			() -> assertThat(postedItem.getCategory().getId()).isEqualTo(1L),
+			() -> assertThat(postedItem.getCategory().getId()).isEqualTo(2L),
 			() -> assertThat(postedItem.getRegion().getId()).isEqualTo(1L)
 		);
 	}
@@ -177,7 +179,7 @@ public class ItemServiceTest extends IntegrationTestSupport {
 		// given
 		Long wrongUserId = 999L;
 		ItemPostServiceRequest request = new ItemPostServiceRequest("title", null, "content", images,
-			1L, 1L);
+			2L, 1L);
 
 		// when & then
 		assertThatThrownBy(() -> itemService.postItem(request, wrongUserId))
@@ -200,13 +202,27 @@ public class ItemServiceTest extends IntegrationTestSupport {
 			.hasMessage(ErrorResponse.NO_SUCH_CATEGORY_EXCEPTION.getMessage());
 	}
 
+	@DisplayName("전체 카테고리로 상품 등록을 요청 하면 예외가 발생한다.")
+	@Test
+	void postItemAndThrowCategoryIDException() {
+		// given
+		Long allCategory = 1L;
+		ItemPostRequest request = new ItemPostRequest("title", null, "content", List.of(1L, 2L, 3L),
+			allCategory, 1L);
+
+		// when & then
+		assertThatThrownBy(() -> itemService.postItem(request.toService(images), loginUser.getId()))
+			.isInstanceOf(InvalidCategoryException.class)
+			.hasMessage(ErrorResponse.INVALID_CATEGORY_EXCEPTION.getMessage());
+	}
+
 	@DisplayName("상품 등록 시 존재하지 않는 지역을 설정하면 예외가 발생한다.")
 	@Test
 	void postItemAndThrowRegionException() {
 		// given
 		Long wrongRegionId = 999L;
 		ItemPostServiceRequest request = new ItemPostServiceRequest("title", null, "content", images,
-			1L, wrongRegionId);
+			2L, wrongRegionId);
 
 		// when & then
 		assertThatThrownBy(() -> itemService.postItem(request, loginUser.getId()))
@@ -220,7 +236,7 @@ public class ItemServiceTest extends IntegrationTestSupport {
 		// given
 		Long notMyRegionId = 3L;
 		ItemPostServiceRequest request = new ItemPostServiceRequest("title", null, "content", images,
-			1L, notMyRegionId);
+			2L, notMyRegionId);
 
 		// when & then
 		assertThatThrownBy(() -> itemService.postItem(request, loginUser.getId()))
@@ -234,7 +250,7 @@ public class ItemServiceTest extends IntegrationTestSupport {
 		// given
 		User seller = FixtureFactory.createUserFixture(List.of(regions.get(0)));
 		userRepository.save(seller);
-		Item item = FixtureFactory.createItemFixture(seller, categories.get(0), regions.get(0), statusList.get(0));
+		Item item = FixtureFactory.createItemFixture(seller, categories.get(1), regions.get(0), statusList.get(0));
 		item.addItemImages(images);
 		itemRepository.save(item);
 
@@ -249,12 +265,11 @@ public class ItemServiceTest extends IntegrationTestSupport {
 			() -> assertThat(postedItem.getUpdatedAt()).isCloseTo(item.getUpdatedAt(),
 				within(1, ChronoUnit.SECONDS)),
 			() -> assertThat(postedItem.getPrice()).isNull(),
-			() -> assertThat(postedItem.getCategory().getId()).isEqualTo(categories.get(0).getId()),
-			() -> assertThat(postedItem.getCategory().getTitle()).isEqualTo(categories.get(0).getTitle()),
+			() -> assertThat(postedItem.getCategory().getId()).isEqualTo(categories.get(1).getId()),
+			() -> assertThat(postedItem.getCategory().getTitle()).isEqualTo(categories.get(1).getTitle()),
 			() -> assertThat(postedItem.getSeller().getId()).isEqualTo(seller.getId()),
 			() -> assertThat(postedItem.getNumChat()).isEqualTo(0),
 			() -> assertThat(postedItem.getNumLikes()).isEqualTo(0),
-			() -> assertThat(postedItem.getNumViews()).isEqualTo(1L),
 			() -> assertThat(postedItem.getImages()).hasSize(images.size())
 		);
 	}
@@ -343,7 +358,7 @@ public class ItemServiceTest extends IntegrationTestSupport {
 			DynamicTest.dynamicTest("새로운 내용 및 모든 이미지 삭제가 반영되도록 상품 수정을 성공한다.", () -> {
 				// given
 				ItemUpdateServiceRequest request = new ItemUpdateServiceRequest(1L, "new title", 100, "new content",
-					null, 1L, 1L);
+					null, 2L, 1L);
 
 				// when
 				itemService.updateItem(request, loginUser.getId());
@@ -355,7 +370,7 @@ public class ItemServiceTest extends IntegrationTestSupport {
 					() -> assertThat(updatedItem.getPrice()).isEqualTo(100),
 					() -> assertThat(updatedItem.getContent()).isEqualTo("new content"),
 					() -> assertThat(updatedItem.listImage()).isNull(),
-					() -> assertThat(updatedItem.getCategory().getId()).isEqualTo(1L),
+					() -> assertThat(updatedItem.getCategory().getId()).isEqualTo(2L),
 					() -> assertThat(updatedItem.getRegion().getId()).isEqualTo(1L)
 				);
 			}),

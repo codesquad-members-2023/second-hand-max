@@ -9,12 +9,14 @@ public enum ErrorResponse {
 
 	// Category
 	NO_SUCH_CATEGORY_EXCEPTION(HttpStatus.BAD_REQUEST, "존재하지 않는 카테고리입니다"),
+	INVALID_CATEGORY_EXCEPTION(HttpStatus.BAD_REQUEST, "유효하지 않은 카테고리입니다"),
 
 	// Region
 	NO_SUCH_REGION_EXCEPTION(HttpStatus.BAD_REQUEST, "존재하지 않는 동네입니다"),
 
 	// Item
 	NO_SUCH_ITEM_EXCEPTION(HttpStatus.BAD_REQUEST, "존재하지 않는 상품입니다"),
+	INVALID_FORMAT_EXCEPTION(HttpStatus.BAD_REQUEST, "유효하지 않은 형식입니다"),
 
 	// Auth
 	EXPIRED_TOKEN_EXCEPTION(HttpStatus.FORBIDDEN, "토큰이 만료되었습니다"),
