@@ -1,5 +1,6 @@
 import { BackButton } from '@components/BackButton';
 import TopBar from '@components/TopBar';
+import Icons from '@design/Icons';
 import { useModalStore } from 'stores/useModalStore';
 import { css, styled } from 'styled-components';
 
@@ -10,7 +11,10 @@ export const Header: React.FC = () => {
 
   return (
     <Container>
-      <BackButton onClick={closeCategoryModal} />
+      <BackButton onClick={closeCategoryModal}>
+        <Icons.ChevronLeft />
+        <span>뒤로</span>
+      </BackButton>
       <span>카테고리</span>
     </Container>
   );

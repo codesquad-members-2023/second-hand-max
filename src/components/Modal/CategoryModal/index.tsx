@@ -1,25 +1,12 @@
-import { css, styled } from 'styled-components';
 import { Header } from './Header';
 import { CategoryList } from './CategoryList';
+import { FullScreenModalSheet } from '../FullScreenModalSheet';
 
 export const CategoryModal: React.FC = () => {
   return (
-    <StyledCategoryModal>
+    <FullScreenModalSheet>
       <Header />
       <CategoryList />
-    </StyledCategoryModal>
+    </FullScreenModalSheet>
   );
 };
-
-const StyledCategoryModal = styled.div`
-  ${({ theme: { colors } }) => css`
-    width: 100%;
-    height: 100%;
-    background-color: ${colors.neutral.background};
-    position: absolute;
-    top: 0;
-    z-index: 1;
-    display: flex;
-    flex-direction: column;
-  `};
-`;

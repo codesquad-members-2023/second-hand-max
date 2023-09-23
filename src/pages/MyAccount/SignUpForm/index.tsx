@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { styled } from 'styled-components';
 import ProfileImageUploader from '@components/ProfileImageUploader';
 import { InitOAuthType } from '@hooks/useOAuth';
-import { useImageFileHandler } from '@hooks/useImageFileHandler';
+import { useImageFileReader } from '@hooks/useImageFileReader';
 import { SignUpFormTitle } from './SignUpFormTitle';
 import { SignUpField } from './SignUpField';
 import { AddRegionButton } from './AddRegionButton';
@@ -11,12 +11,20 @@ import { Address } from 'types/region';
 import { AddedRegionItem } from '@components/Modal/AddedRegionItem';
 
 const SignUpForm: React.FC<{ initOAuth: InitOAuthType }> = ({ initOAuth }) => {
-  const { imageSrc, file, onImageChange } = useImageFileHandler();
+  const [imageSrc, setImageSrc] = useState<string>();
+  const [file, setFile] = useState<File>();
   const [id, setId] = useState('');
   const [isAddRegionModalOpen, setIsAddRegionModalOpen] = useState(false);
   const [addresses, setAddresses] = useState<
     Omit<Address, 'fullAddressName' | 'isSelected'>[]
   >([]);
+
+  const onImageLoadSuccess = (result: string, file: File) => {
+    setImageSrc(result);
+    setFile(file);
+  };
+
+  const { onImageChange } = useImageFileReader(onImageLoadSuccess);
 
   const onIdChange = (id: string) => {
     setId(id);

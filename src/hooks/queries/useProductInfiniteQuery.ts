@@ -1,7 +1,10 @@
 import { useInfiniteQuery } from '@tanstack/react-query';
 import { getProducts } from 'apis/product';
 
-export const useProductQuery = (region: string, categoryId?: string) => {
+export const useProductInfiniteQuery = (
+  region: string,
+  categoryId?: string,
+) => {
   return useInfiniteQuery(
     ['product', region, categoryId],
     ({ pageParam = 0 }) =>
