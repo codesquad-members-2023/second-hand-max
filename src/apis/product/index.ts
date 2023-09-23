@@ -25,7 +25,7 @@ export const getProducts = async ({
     params.append('categoryId', String(nextPageParam));
   }
 
-  const response = await fetchData(`/items/?${params}`);
+  const response = await fetchData(`/items?${params}`);
 
   return response.json();
 };
@@ -71,3 +71,7 @@ export const postProduct = async ({
 
   return response.json();
 };
+
+// export const getProductDetail =async () => {
+//   const response = await fetchData
+// }

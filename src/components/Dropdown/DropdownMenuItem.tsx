@@ -4,21 +4,27 @@ import { css, styled } from 'styled-components';
 type Props = {
   children: React.ReactNode;
   onClick: () => void;
+  $isSelected: boolean;
 };
 
-export const DropdownMenuItem: React.FC<Props> = ({ children, onClick }) => {
+export const DropdownMenuItem: React.FC<Props> = ({
+  children,
+  onClick,
+  $isSelected,
+}) => {
   return (
-    <StyledDropdownMenuItem onClick={onClick}>
+    <StyledDropdownMenuItem onClick={onClick} $isSelected={$isSelected}>
       {children}
     </StyledDropdownMenuItem>
   );
 };
 
-export const StyledDropdownMenuItem = styled(Button)`
-  ${({ theme: { colors, fonts } }) => css`
+export const StyledDropdownMenuItem = styled(Button)<{ $isSelected: boolean }>`
+  ${({ theme: { colors, fonts }, $isSelected }) => css`
     width: 208px;
     padding: 16px;
-    ${fonts.enabled.strong16};
+    ${$isSelected ? fonts.enabled.strong16 : fonts.available.default16};
+
     justify-content: start;
     border-radius: 0;
 
