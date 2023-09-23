@@ -2,7 +2,9 @@ import { useQuery } from '@tanstack/react-query';
 import { getCategories } from 'apis/category';
 
 export const useCategoryQuery = () => {
-  const queryResult = useQuery(['category'], getCategories, {
+  const queryResult = useQuery({
+    queryKey: ['category'],
+    queryFn: getCategories,
     select: (data) => data.data.categories,
   });
 

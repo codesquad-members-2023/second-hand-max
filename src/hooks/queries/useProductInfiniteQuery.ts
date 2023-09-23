@@ -5,20 +5,14 @@ export const useProductInfiniteQuery = (
   region: string,
   categoryId?: string,
 ) => {
-  return useInfiniteQuery(
-    ['product', region, categoryId],
-    ({ pageParam = 0 }) =>
+  return useInfiniteQuery({
+    queryKey: ['product', region, categoryId],
+    queryFn: ({ pageParam = 0 }) =>
       getProducts({ region, categoryId, nextPageParam: pageParam }),
-    {
-      getNextPageParam: (lastPage) => {
-        return lastPage.data.paging.nextCursor;
-      },
-      select: (data) => {
-        return {
-          pages: [...data.pages.map((page) => page.data.contents)],
-          pageParams: [...data.pageParams],
-        };
-      },
-    },
-  );
+    getNextPageParam: (lastPage) => lastPage.data.paging.nextCursor,
+    select: (data) => ({
+      pages: [...data.pages.map((page) => page.data.contents)],
+      pageParams: [...data.pageParams],
+    }),
+  });
 };
