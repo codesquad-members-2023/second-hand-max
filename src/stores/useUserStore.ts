@@ -1,5 +1,6 @@
 import { ERROR_MESSAGE } from '@constants/ERROR_MESSAGE';
 import { LOCAL_STORAGE_KEY } from '@constants/LOCAL_STORAGE_KEY';
+import PATH from '@constants/PATH';
 import { updateAccessToken } from 'apis/auth';
 import { Tokens, User } from 'types';
 import { Address } from 'types/region';
@@ -133,6 +134,9 @@ export const useUserStore = create<UserStore>()(
             throw new Error(ERROR_MESSAGE.TOKEN_REFRESH_FAILED);
           }
         } catch (error) {
+          get().reset();
+          alert('로그인 정보가 만료됐습니다. 다시 로그인하여 주시기 바랍니다.');
+          location.href = PATH.MY_ACCOUNT;
           console.error(error);
         }
       },
