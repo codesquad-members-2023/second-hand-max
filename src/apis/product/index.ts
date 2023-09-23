@@ -1,6 +1,10 @@
 import { fetchData } from 'apis/fetchData';
 import { fetchDataWithToken } from 'apis/fetchData';
-import { PostProductRequestData, getProductsResponse } from './types';
+import {
+  PostProductRequestData,
+  getProductDetailResponse,
+  getProductsResponse,
+} from './types';
 
 export const getProducts = async ({
   region,
@@ -72,6 +76,10 @@ export const postProduct = async ({
   return response.json();
 };
 
-// export const getProductDetail =async () => {
-//   const response = await fetchData
-// }
+export const getProductDetail = async (
+  itemId: string,
+): Promise<getProductDetailResponse> => {
+  const response = await fetchData(`/items/${itemId}`);
+
+  return response.json();
+};

@@ -22,3 +22,21 @@ export type PostProductRequestData = {
   categoryId: number;
   categoryName: string;
 };
+
+export type getProductDetailResponse = {
+  statusCode: number;
+  data: {
+    isSeller: boolean;
+    imageUrls: string[];
+    seller: string;
+    status?: string;
+    title: string;
+    categoryName: string;
+    createdAt: string;
+    content: string;
+    chatCount: number;
+    wishCount: number;
+    viewCount: number;
+    price: number;
+  };
+};
