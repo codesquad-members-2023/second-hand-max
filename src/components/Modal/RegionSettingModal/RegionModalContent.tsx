@@ -7,7 +7,7 @@ import { useState } from 'react';
 import { AddRegionModal } from './AddRegionModal';
 
 export const RegionModalContent: React.FC = () => {
-  const { addresses } = useUserStore(({ getUser }) => getUser)();
+  const { addresses } = useUserStore(({ getUser }) => getUser());
   const addUserAddress = useUserStore(({ addUserAddress }) => addUserAddress);
   const deleteUserAddress = useUserStore(
     ({ deleteUserAddress }) => deleteUserAddress,
@@ -35,11 +35,7 @@ export const RegionModalContent: React.FC = () => {
             }}
           />
         ))}
-        <AddRegion
-          onClick={() => {
-            onAddRegionModalOpen();
-          }}
-        >
+        <AddRegion onClick={onAddRegionModalOpen}>
           <Icons.Plus />
           <span>추가</span>
         </AddRegion>
