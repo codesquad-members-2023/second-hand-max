@@ -2,8 +2,22 @@ import Button from '@components/Button';
 import Icons from '@design/Icons';
 import { css, styled } from 'styled-components';
 import { AddedRegionItem } from '../AddedRegionItem';
+import { useUserStore } from 'stores/useUserStore';
+import { useState } from 'react';
+import { AddRegionModal } from './AddRegionModal';
 
 export const RegionModalContent: React.FC = () => {
+  const { addresses } = useUserStore(({ getUser }) => getUser)();
+  const addUserAddress = useUserStore(({ addUserAddress }) => addUserAddress);
+  const deleteUserAddress = useUserStore(
+    ({ deleteUserAddress }) => deleteUserAddress,
+  );
+
+  const [isAddRegionModalOpen, setIsAddRegionModalOpen] = useState(false);
+
+  const onAddRegionModalOpen = () => setIsAddRegionModalOpen(true);
+  const onAddRegionModalClose = () => setIsAddRegionModalOpen(false);
+
   return (
     <Content>
       <Notice>
@@ -12,17 +26,35 @@ export const RegionModalContent: React.FC = () => {
         최대 2개까지 설정 가능해요.
       </Notice>
       <AddedRegions>
-        <AddedRegionItem
-          {...{
-            addressName: '',
-            onDeleteButtonClick: () => {},
+        {addresses.map((address) => (
+          <AddedRegionItem
+            key={address.addressId}
+            {...{
+              addressName: address.addressName,
+              onDeleteButtonClick: () => deleteUserAddress(address.addressId),
+            }}
+          />
+        ))}
+        <AddRegion
+          onClick={() => {
+            onAddRegionModalOpen();
           }}
-        />
-        <AddRegion onClick={() => {}}>
+        >
           <Icons.Plus />
           <span>추가</span>
         </AddRegion>
       </AddedRegions>
+      {isAddRegionModalOpen && (
+        <AddRegionModal
+          {...{
+            onModalClose: onAddRegionModalClose,
+            addRegion: (address) => {
+              addUserAddress(address);
+              onAddRegionModalClose();
+            },
+          }}
+        />
+      )}
     </Content>
   );
 };

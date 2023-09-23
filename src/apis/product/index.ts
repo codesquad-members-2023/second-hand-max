@@ -1,3 +1,4 @@
+import { fetchData } from 'apis/fetchData';
 import { fetchDataWithToken } from 'apis/fetchData';
 import { PostProductRequestData, getProductsResponse } from './types';
 
@@ -24,7 +25,7 @@ export const getProducts = async ({
     params.append('categoryId', String(nextPageParam));
   }
 
-  const response = await fetchDataWithToken(`/items/?${params}`);
+  const response = await fetchData(`/items/?${params}`);
 
   return response.json();
 };

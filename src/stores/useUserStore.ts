@@ -12,6 +12,8 @@ type UserStore = {
   currentRegion: Address;
   getUser: () => User;
   setUserProfileUrl: (profileUrl: string) => void;
+  addUserAddress: (address: Address) => void;
+  deleteUserAddress: (addressId: Address['addressId']) => void;
   getTokens: () => Tokens;
   setTokens: (tokens: Tokens) => void;
   handleTokenExpiry: () => Promise<void>;
@@ -26,8 +28,8 @@ const initialState = {
   tokens: null,
   currentRegion: {
     addressId: 1,
-    addressName: '역삼 1동',
-    fullAddressName: '역삼 1동',
+    addressName: '역삼1동',
+    fullAddressName: '서울특별시 강남구 역삼1동',
     isSelected: true,
   },
 };
@@ -45,7 +47,8 @@ export const useUserStore = create<UserStore>()(
 
         return user;
       },
-      setUserProfileUrl: (profileUrl: string) =>
+
+      setUserProfileUrl: (profileUrl) =>
         set((prevState) => {
           if (!prevState.user) {
             console.error(ERROR_MESSAGE.USER_NOT_FOUND);
@@ -60,6 +63,48 @@ export const useUserStore = create<UserStore>()(
             },
           };
         }),
+
+      addUserAddress: (address) =>
+        set((prevState) => {
+          if (!prevState.user) {
+            console.error(ERROR_MESSAGE.USER_NOT_FOUND);
+            return { ...prevState };
+          }
+
+          return {
+            ...prevState,
+            user: {
+              ...prevState.user,
+              addresses: prevState.user.addresses
+                ? [...prevState.user.addresses, address]
+                : [address],
+            },
+          };
+        }),
+
+      deleteUserAddress: (addressId) =>
+        set((prevState) => {
+          if (!prevState.user) {
+            console.error(ERROR_MESSAGE.USER_NOT_FOUND);
+            return { ...prevState };
+          }
+
+          if (prevState.user.addresses.length === 1) {
+            alert('동네는 최소 1개는 설정해야 합니다.');
+            return { ...prevState };
+          }
+
+          return {
+            ...prevState,
+            user: {
+              ...prevState.user,
+              addresses: prevState.user.addresses.filter(
+                (address) => address.addressId !== addressId,
+              ),
+            },
+          };
+        }),
+
       getTokens: () => {
         const tokens = get().tokens;
 
@@ -69,7 +114,9 @@ export const useUserStore = create<UserStore>()(
 
         return tokens;
       },
+
       setTokens: (tokens) => set({ tokens }),
+
       handleTokenExpiry: async () => {
         try {
           const { getTokens, setTokens } = get();
@@ -89,7 +136,9 @@ export const useUserStore = create<UserStore>()(
           console.error(error);
         }
       },
+
       setUserAuth: ({ user, tokens }) => set({ user, tokens }),
+
       setAddAddress: (address) =>
         set(({ user }) => {
           if (!user) {
@@ -105,7 +154,9 @@ export const useUserStore = create<UserStore>()(
             },
           };
         }),
+
       setCurrentRegion: (address) => set({ currentRegion: address }),
+
       reset: () => set({ ...initialState }),
     }),
     { name: LOCAL_STORAGE_KEY.USER },
