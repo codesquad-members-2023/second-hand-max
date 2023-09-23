@@ -54,7 +54,9 @@ const ListItem: React.FC<ProductListItem> = ({
               )}
 
               <div className="blind">가격</div>
-              <div className="price">{price.toLocaleString('ko')}원</div>
+              <div className="price">
+                {price === 0 ? '나눔' : `${price.toLocaleString('ko')}원`}
+              </div>
             </div>
           </Information>
 
