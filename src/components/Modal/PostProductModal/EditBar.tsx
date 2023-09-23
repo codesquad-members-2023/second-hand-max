@@ -1,17 +1,14 @@
 import BottomBar from '@components/BottomBar';
 import Icons from '@design/Icons';
 import styled from 'styled-components';
-import { useModalStore } from 'stores/useModalStore';
+
 import { useUserStore } from 'stores/useUserStore';
 
 export const EditBar: React.FC = () => {
   const currentRegion = useUserStore(({ currentRegion }) => currentRegion);
-  const openRegionSettingModal = useModalStore(
-    ({ openRegionSettingModal }) => openRegionSettingModal,
-  );
 
   return (
-    <StyleEditBar onClick={openRegionSettingModal}>
+    <StyleEditBar>
       <Icons.MapPinFilled />
       <div>{currentRegion.addressName}</div>
     </StyleEditBar>
@@ -21,5 +18,5 @@ export const EditBar: React.FC = () => {
 const StyleEditBar = styled(BottomBar)`
   padding: 16px;
   gap: 8px;
-  cursor: pointer;
+  user-select: none;
 `;
