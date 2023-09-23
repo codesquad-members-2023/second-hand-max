@@ -10,14 +10,13 @@ type Props = {
 export const CategoryList: React.FC<Props> = ({ categories, onClick }) => {
   return (
     <Categories>
-      {categories &&
-        categories.map((category) => (
-          <CategoryItem key={category.id}>
-            <CategoryButton onClick={() => onClick(category)}>
-              {category.name}
-            </CategoryButton>
-          </CategoryItem>
-        ))}
+      {categories.map((category) => (
+        <CategoryItem key={category.id}>
+          <CategoryButton onClick={() => onClick(category)}>
+            {category.name}
+          </CategoryButton>
+        </CategoryItem>
+      ))}
     </Categories>
   );
 };
