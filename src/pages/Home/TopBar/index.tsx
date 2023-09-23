@@ -2,11 +2,14 @@ import TopBarStyle from '@components/TopBar';
 import { css, styled } from 'styled-components';
 import { RegionDropdown } from './RegionDropdown';
 import { CategoryButton } from './CategoryButton';
+import { Dropdown } from '@components/Dropdown';
 
 export const TopBar: React.FC = () => {
   return (
     <StyledTopBar>
-      <RegionDropdown />
+      <Dropdown>
+        <RegionDropdown />
+      </Dropdown>
       <CategoryButton />
     </StyledTopBar>
   );

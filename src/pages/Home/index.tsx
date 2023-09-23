@@ -8,18 +8,13 @@ import { useProductQuery } from '@hooks/queries/useProductQuery';
 import { Loader } from '@components/Loader';
 
 export const Home: React.FC = () => {
-  const user = useUserStore(({ user }) => user);
-  const setCurrentRegion = useUserStore(
-    ({ setCurrentRegion }) => setCurrentRegion,
-  );
+  const currentRegion = useUserStore(({ currentRegion }) => currentRegion);
   const { categoryId } = useParams();
 
   const { isLoading, data: productListItems } = useProductQuery(
-    '역삼', // TODO: 실제 currentRegion 가져와서 넣기.
+    currentRegion.addressName,
     categoryId,
   );
-
-  console.log(productListItems);
 
   return (
     <>
