@@ -8,9 +8,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.codesquad.secondhand.domain.category.dto.response.CategoryResponse;
+import com.codesquad.secondhand.domain.chat.service.ChatQueryService;
 import com.codesquad.secondhand.domain.member.entity.Member;
 import com.codesquad.secondhand.domain.member.service.MemberQueryService;
-import com.codesquad.secondhand.domain.product.dto.response.ProductFindAllResponse;
+import com.codesquad.secondhand.domain.product.dto.response.ProductResponse;
 import com.codesquad.secondhand.domain.product.entity.Product;
 import com.codesquad.secondhand.domain.product.service.ProductQueryService;
 import com.codesquad.secondhand.domain.reaction.dto.ReactionUpdateRequest;
@@ -26,6 +27,7 @@ public class ReactionService {
 	private final ReactionQueryService reactionQueryService;
 	private final MemberQueryService memberQueryService;
 	private final ProductQueryService productQueryService;
+	private final ChatQueryService chatQueryService;
 
 	@Transactional
 	public void update(Long productId, Long memberId, ReactionUpdateRequest reactionUpdateRequest) {
@@ -54,7 +56,7 @@ public class ReactionService {
 		return reactionQueryService.findAllByMember(member);
 	}
 
-	public List<ProductFindAllResponse> findAllOfReactedProducts(Long memberId, Long categoryId) {
+	public List<ProductResponse> findAllOfReactedProducts(Long memberId, Long categoryId) {
 		List<Reaction> reactions = findAllByMemberId(memberId);
 		Stream<Reaction> reactionStream = reactions.stream();
 
@@ -63,13 +65,14 @@ public class ReactionService {
 				reaction -> reaction.isProductInCategory(categoryId));
 		}
 
-		return reactionStream.map(this::mapToProductFindAllResponse)
+		return reactionStream.map(this::mapToProductResponse)
 			.collect(Collectors.toUnmodifiableList());
 	}
 
-	private ProductFindAllResponse mapToProductFindAllResponse(Reaction reaction) {
+	private ProductResponse mapToProductResponse(Reaction reaction) {
 		Product product = reaction.getProduct();
-		long reactionCount = reactionQueryService.countByProduct(product);
-		return ProductFindAllResponse.of(product, reactionCount);
+		Long reactionCount = reactionQueryService.countByProduct(product);
+		Long chattingCount = chatQueryService.countByProduct(product);
+		return ProductResponse.of(product, reactionCount, chattingCount);
 	}
 }

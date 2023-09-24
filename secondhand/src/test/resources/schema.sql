@@ -5,7 +5,6 @@ DROP TABLE IF EXISTS image;
 DROP TABLE IF EXISTS reaction;
 DROP TABLE IF EXISTS chat_room;
 DROP TABLE IF EXISTS chat_message;
-DROP TABLE IF EXISTS chat_member;
 DROP TABLE IF EXISTS chat_status;
 DROP TABLE IF EXISTS report;
 DROP TABLE IF EXISTS member;
@@ -23,7 +22,7 @@ CREATE TABLE product
     price           BIGINT NULL,
     content         VARCHAR(1000) NOT NULL,
     created_at      DATETIME      NOT NULL,
-    status          INT           NOT NULL DEFAULT 1,
+    status          INT           NOT NULL DEFAULT 0,
     thumbnail_image VARCHAR(1000) NOT NULL,
     view_count      BIGINT        NOT NULL DEFAULT 0
 );
@@ -57,26 +56,19 @@ CREATE TABLE reaction
 
 CREATE TABLE chat_room
 (
-    id         BIGINT   NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    product_id BIGINT   NOT NULL,
-    created_at DATETIME NOT NULL
-);
-
-CREATE TABLE chat_member
-(
-    id              BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    chat_room_id    BIGINT NOT NULL,
-    member_id       BIGINT NOT NULL,
-    is_read_message BIGINT NULL
+    id         BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    product_id BIGINT NOT NULL,
+    member_id  BIGINT NOT NULL
 );
 
 CREATE TABLE chat_message
 (
     id           BIGINT       NOT NULL AUTO_INCREMENT PRIMARY KEY,
     chat_room_id BIGINT       NOT NULL,
-    memebere_id  BIGINT       NOT NULL,
+    member_id    BIGINT       NOT NULL,
     message      VARCHAR(100) NOT NULL,
-    send_at      DATETIME     NOT NULL
+    send_at      DATETIME     NOT NULL,
+    is_read      TINYINT(1) DEFAULT 0
 );
 
 CREATE TABLE chat_status

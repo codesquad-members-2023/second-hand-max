@@ -3,11 +3,14 @@ package com.codesquad.secondhand.domain.product.service;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.codesquad.secondhand.domain.category.entity.Category;
 import com.codesquad.secondhand.domain.category.service.CategoryQueryService;
+import com.codesquad.secondhand.domain.chat.service.ChatQueryService;
 import com.codesquad.secondhand.domain.image.service.ImageQueryService;
 import com.codesquad.secondhand.domain.member.entity.Member;
 import com.codesquad.secondhand.domain.member.service.MemberQueryService;
@@ -15,12 +18,15 @@ import com.codesquad.secondhand.domain.product.dto.request.ProductSaveAndUpdateR
 import com.codesquad.secondhand.domain.product.dto.request.ProductUpdateRequest;
 import com.codesquad.secondhand.domain.product.dto.response.ProductDetailResponse;
 import com.codesquad.secondhand.domain.product.dto.response.ProductFindAllResponse;
+import com.codesquad.secondhand.domain.product.dto.response.ProductResponse;
+import com.codesquad.secondhand.domain.product.dto.response.ProductStatResponse;
 import com.codesquad.secondhand.domain.product.entity.Image;
 import com.codesquad.secondhand.domain.product.entity.Product;
 import com.codesquad.secondhand.domain.product.utils.ProductStatus;
 import com.codesquad.secondhand.domain.reaction.service.ReactionQueryService;
 import com.codesquad.secondhand.domain.region.entity.Region;
 import com.codesquad.secondhand.domain.region.service.RegionQueryService;
+import com.codesquad.secondhand.redis.util.RedisUtil;
 
 import lombok.RequiredArgsConstructor;
 
@@ -35,6 +41,8 @@ public class ProductService {
 	private final MemberQueryService memberQueryService;
 	private final ImageQueryService imageQueryService;
 	private final ReactionQueryService reactionQueryService;
+	private final ChatQueryService chatQueryService;
+	private final RedisUtil redisUtil;
 
 	@Transactional
 	public Long save(ProductSaveAndUpdateRequest productSaveAndUpdateRequest, Long memberId) {
@@ -48,7 +56,10 @@ public class ProductService {
 		return productQueryService.save(product);
 	}
 
-	public ProductDetailResponse findDetail(Long productId) {
+	public ProductDetailResponse findDetail(Long productId, Long memberId) {
+		if (memberId != null) {
+			redisUtil.addViewCount(productId, memberId);
+		}
 		return ProductDetailResponse.from(productQueryService.findById(productId));
 	}
 
@@ -74,31 +85,38 @@ public class ProductService {
 		product.changeStatus(productStatus.getCode());
 	}
 
-	public List<ProductFindAllResponse> findAll(Long regionId, Long categoryId) {
+	public ProductFindAllResponse findAll(Long regionId, Long categoryId, Pageable pageable) {
 		//검증을 위한 메서드
 		regionQueryService.findById(regionId);
 		if (categoryId != null) {
 			categoryQueryService.findById(categoryId);
 		}
-		return productQueryService.findAll(regionId, categoryId).stream()
-			.map(this::mapToProductFindAllResponse)
-			.collect(Collectors.toUnmodifiableList());
+
+		Slice<Product> productSlice = productQueryService.findAll(regionId, categoryId, pageable);
+
+		List<ProductResponse> products =
+			productSlice.stream()
+				.map(this::mapToProductResponse)
+				.collect(Collectors.toUnmodifiableList());
+
+		return ProductFindAllResponse.of(products, productSlice.hasNext(), productSlice.getNumber());
 	}
 
-	public List<ProductFindAllResponse> findSalesProducts(Long memberId, Integer statusId) {
+	public List<ProductResponse> findSalesProducts(Long memberId, Integer statusId) {
 		//validate 을 위한 호출
 		if (statusId != null) {
 			ProductStatus.fromCode(statusId);
 		}
 		Member member = memberQueryService.findById(memberId);
 		return productQueryService.findSalesProduct(member, statusId).stream()
-			.map(this::mapToProductFindAllResponse)
+			.map(this::mapToProductResponse)
 			.collect(Collectors.toUnmodifiableList());
 	}
 
-	private ProductFindAllResponse mapToProductFindAllResponse(Product product) {
-		long reactionCount = reactionQueryService.countByProduct(product);
-		return ProductFindAllResponse.of(product, reactionCount);
+	private ProductResponse mapToProductResponse(Product product) {
+		Long chattingCount = chatQueryService.countByProduct(product);
+		Long reactionCount = reactionQueryService.countByProduct(product);
+		return ProductResponse.of(product, reactionCount, chattingCount);
 	}
 
 	@Transactional
@@ -106,5 +124,17 @@ public class ProductService {
 		imagesId.stream()
 			.map(imageId -> imageQueryService.findById(imageId))
 			.forEach(imageFromDb -> imageFromDb.updateProduct(product));
+	}
+
+	public ProductStatResponse findStat(Long productId, Long memberId) {
+		Product product = productQueryService.findById(productId);
+		Long viewCount = redisUtil.getViewCount(productId) + product.getViewCount();
+		Long reactionCount = reactionQueryService.countByProduct(product);
+		Long chattingCount = chatQueryService.countByProduct(product);
+
+		// memberId가 null이 아닐 때만 isLiked를 확인
+		Boolean isLiked = (memberId != null) ? reactionQueryService.isLiked(memberId, product) : false;
+
+		return ProductStatResponse.of(viewCount, reactionCount, chattingCount, isLiked);
 	}
 }

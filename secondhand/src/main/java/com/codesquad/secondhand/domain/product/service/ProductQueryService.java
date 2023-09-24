@@ -2,6 +2,8 @@ package com.codesquad.secondhand.domain.product.service;
 
 import java.util.List;
 
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -41,7 +43,13 @@ public class ProductQueryService {
 			.orElseThrow(() -> new CustomRuntimeException(ProductException.NOT_FOUND_PRODUCT));
 	}
 
-	public List<Product> findAll(Long regionId, Long categoryId) {
-		return productQueryRepository.findAll(regionId, categoryId);
+	public Slice<Product> findAll(Long regionId, Long categoryId, Pageable pageable) {
+		return productQueryRepository.findAll(regionId, categoryId, pageable);
+	}
+
+	@Transactional
+	public void applyViewCntToDB(Long productId, Long viewCount) {
+		Product product = findById(productId);
+		productJpaRepository.updateViewCount(productId, viewCount + product.getViewCount());
 	}
 }
