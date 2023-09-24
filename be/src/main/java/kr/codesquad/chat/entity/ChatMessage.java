@@ -1,4 +1,4 @@
-package kr.codesquad.jwt.entity;
+package kr.codesquad.chat.entity;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -6,6 +6,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
+import kr.codesquad.util.TimeStamped;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -13,19 +14,19 @@ import lombok.NoArgsConstructor;
 @Getter
 @Entity
 @NoArgsConstructor
-public class UserRefreshToken {
+public class ChatMessage extends TimeStamped {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	@Column(nullable = false)
-	private String userLoginId;
-
-	private String refreshToken;
+	private Long chatRoomId;
+	@Column(nullable = false, length = 200)
+	private String content;
 
 	@Builder
-	public UserRefreshToken(Long id, String userLoginId, String refreshToken) {
+	public ChatMessage(Long id, Long chatRoomId, String content) {
 		this.id = id;
-		this.userLoginId = userLoginId;
-		this.refreshToken = refreshToken;
+		this.chatRoomId = chatRoomId;
+		this.content = content;
 	}
 }

@@ -1,6 +1,6 @@
 package kr.codesquad.item.repository;
 
-import static kr.codesquad.chat.entity.QChat.*;
+import static kr.codesquad.chat.entity.QChatRoom.*;
 import static kr.codesquad.favorite.entity.QFavorite.*;
 import static kr.codesquad.item.entity.QItem.*;
 
@@ -33,17 +33,16 @@ public class ItemPaginationRepository {
 				item.createdAt,
 				item.price,
 				item.status,
-				chat.countDistinct().as("chat"),
+				chatRoom.countDistinct().as("chat"),
 				favorite.countDistinct().as("favorite"),
 				item.userId
 			))
 			.from(item)
-			.leftJoin(chat).on(item.id.eq(chat.itemId))
+			.leftJoin(chatRoom).on(item.id.eq(chatRoom.itemId))
 			.leftJoin(favorite).on(item.id.eq(favorite.itemId))
 			.where(lessThanItemId(itemConditions.getItemId()), equalLocationName(itemConditions.getLocationName())
-				, equalCategoryId(itemConditions.getCategoryId()), checkStatus(itemConditions.getIsSold()),
-				equalUserId(itemConditions.getUserId())
-				, lookForFavorite(itemConditions.getIsFavorite(), itemConditions.getUserId())
+				, equalCategoryId(itemConditions.getCategoryId()), checkStatus(itemConditions.getIsSold())
+				, checkFavoriteOrUserItem(itemConditions.getIsFavorite(), itemConditions.getUserId())
 			)
 			.groupBy(item.id, item.thumbnailUrl, item.title, item.locationName, item.createdAt, item.price, item.status,
 				item.userId)
@@ -53,12 +52,9 @@ public class ItemPaginationRepository {
 			.fetch();
 	}
 
-	private BooleanExpression lookForFavorite(Boolean isFavorite, Long userId) {
+	private BooleanExpression checkFavoriteOrUserItem(Boolean isFavorite, Long userId) {
 		if (isFavorite == null) {
-			return null;
-		}
-		if (userId == null) {
-			return null;
+			return equalUserId(userId);
 		}
 
 		return favorite.userId.eq(userId);

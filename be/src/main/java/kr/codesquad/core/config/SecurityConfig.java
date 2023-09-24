@@ -24,6 +24,7 @@ import kr.codesquad.jwt.service.JwtAuthenticationSuccessHandler;
 import kr.codesquad.jwt.service.JwtProvider;
 import kr.codesquad.user.service.UserService;
 import kr.codesquad.util.Constants;
+import kr.codesquad.util.RedisUtil;
 import lombok.RequiredArgsConstructor;
 
 @EnableWebSecurity // spring security 설정을 활성화시켜주는 어노테이션
@@ -31,6 +32,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class SecurityConfig {
 	private final UserService userService;
+	private final RedisUtil redisUtil;
 	private final PasswordEncoder passwordEncoder;
 	private final OAuthService oAuthService;
 	private final JwtAuthenticationSuccessHandler jwtAuthenticationSuccessHandler;
@@ -48,7 +50,7 @@ public class SecurityConfig {
 		authenticationFilter.setAuthenticationSuccessHandler(jwtAuthenticationSuccessHandler);
 		authenticationFilter.setFilterProcessesUrl("/api/login");
 
-		AuthorizationFilter authorizationFilter = new AuthorizationFilter(jwtProvider);
+		AuthorizationFilter authorizationFilter = new AuthorizationFilter(jwtProvider, redisUtil);
 
 		http.csrf()
 			.disable()
@@ -62,7 +64,7 @@ public class SecurityConfig {
 			.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
 			.and()
 			.authorizeRequests()
-			.antMatchers("/h2-console/**", "/api/locations**").permitAll()
+			.antMatchers("/h2-console/**", "/api/locations**", "/api/ws/**").permitAll()
 			.antMatchers(HttpMethod.POST, "/api/users").permitAll()
 			.anyRequest()
 			.authenticated()  //다른 요청은 인증 필요함

@@ -6,7 +6,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
-import kr.codesquad.util.TimeStamped;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -14,19 +13,22 @@ import lombok.NoArgsConstructor;
 @Getter
 @Entity
 @NoArgsConstructor
-public class Message extends TimeStamped {
+public class ChatRoom {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	@Column(nullable = false)
-	private Long chatId;
-	@Column(nullable = false, length = 200)
-	private String content;
+	private Long itemId;
+	@Column(length = 45)
+	private String lastMessageId;
+	@Column(nullable = false)
+	private Long senderId;
 
 	@Builder
-	public Message(Long id, Long chatId, String content) {
+	public ChatRoom(Long id, Long itemId, String lastMessageId, Long senderId) {
 		this.id = id;
-		this.chatId = chatId;
-		this.content = content;
+		this.itemId = itemId;
+		this.lastMessageId = lastMessageId;
+		this.senderId = senderId;
 	}
 }
