@@ -31,18 +31,20 @@ public class ChatRoom {
 	private LocalDateTime createdAt;
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "member_id")
-	private Member member;
+	private Member buyer;
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "item_id")
 	private Item item;
 
-	private ChatRoom(LocalDateTime createdAt, Member member, Item item) {
+	public ChatRoom(LocalDateTime createdAt, Member buyer, Item item) {
 		this.createdAt = createdAt;
-		this.member = member;
+		this.buyer = buyer;
 		this.item = item;
 	}
 
-	public static ChatRoom create(LocalDateTime createdAt, Member member, Item item) {
-		return new ChatRoom(createdAt, member, item);
+	@Override
+	public String toString() {
+		return String.format("%s, %s(id=%d, buyerLoginId=%s, itemTitle=%s)", "회원", this.getClass().getSimpleName(), id,
+			buyer.getLoginId(), item.getTitle());
 	}
 }

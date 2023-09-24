@@ -4,6 +4,9 @@ import java.time.LocalDateTime;
 
 import javax.validation.constraints.NotBlank;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+
+import codesquard.app.api.converter.ItemRequestConverter;
 import codesquard.app.domain.category.Category;
 import codesquard.app.domain.item.Item;
 import codesquard.app.domain.item.ItemStatus;
@@ -22,12 +25,13 @@ public class ItemRegisterRequest {
 	private Long price;
 	private String content;
 	private String region;
+	@JsonDeserialize(converter = ItemRequestConverter.class)
 	private ItemStatus status;
 	private Long categoryId;
 	private String categoryName;
 
 	public Item toEntity(Member member, String thumbnailUrl) {
-		Item item = Item.builder()
+		return Item.builder()
 			.title(title)
 			.content(content)
 			.price(price)
@@ -39,8 +43,7 @@ public class ItemRegisterRequest {
 			.chatCount(0L)
 			.viewCount(0L)
 			.member(member)
+			.category(new Category(categoryId))
 			.build();
-		item.changeCategory(new Category(categoryId));
-		return item;
 	}
 }

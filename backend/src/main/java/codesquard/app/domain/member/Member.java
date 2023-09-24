@@ -35,14 +35,10 @@ public class Member {
 		this.id = id;
 	}
 
-	private Member(String avatarUrl, String email, String loginId) {
+	public Member(String avatarUrl, String email, String loginId) {
 		this.avatarUrl = avatarUrl;
 		this.email = email;
 		this.loginId = loginId;
-	}
-
-	public static Member create(String avatarUrl, String email, String loginId) {
-		return new Member(avatarUrl, email, loginId);
 	}
 
 	public void changeAvatarUrl(String avatarUrl) {

@@ -1,7 +1,6 @@
 package codesquard.app.domain.item;
 
 import java.time.LocalDateTime;
-import java.util.Objects;
 
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -20,7 +19,6 @@ import codesquard.app.api.errors.errorcode.ItemErrorCode;
 import codesquard.app.api.errors.exception.RestApiException;
 import codesquard.app.domain.category.Category;
 import codesquard.app.domain.member.Member;
-import codesquard.app.domain.oauth.support.Principal;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
@@ -86,7 +84,7 @@ public class Item {
 	}
 
 	public static Item create(String title, String content, Long price, ItemStatus status, String region,
-		LocalDateTime createdAt, Long viewCount, Member member) {
+		LocalDateTime createdAt, Long wishCount, Long viewCount, Long chatCount, Member member, Category category) {
 		return Item.builder()
 			.title(title)
 			.content(content)
@@ -94,21 +92,22 @@ public class Item {
 			.status(status)
 			.region(region)
 			.createdAt(createdAt)
+			.wishCount(wishCount)
 			.viewCount(viewCount)
+			.chatCount(chatCount)
 			.member(member)
+			.category(category)
 			.build();
 	}
 
-	public void changeCategory(Category category) {
+	public void change(Category category, Item changeItem, String thumbnailUrl) {
 		this.category = category;
-	}
-
-	public void changeBy(Item changeItem) {
 		this.title = changeItem.title;
 		this.price = changeItem.price;
 		this.content = changeItem.content;
 		this.region = changeItem.region;
 		this.status = changeItem.status;
+		this.thumbnailUrl = thumbnailUrl;
 	}
 
 	public void changeStatus(ItemStatus status) {
@@ -129,9 +128,16 @@ public class Item {
 			"상품", this.getClass().getSimpleName(), id, title, price, status, region, viewCount);
 	}
 
-	public void validateAuthorization(Principal writer) {
-		if (!Objects.equals(member.getId(), writer.getMemberId())) {
+	public void validateSeller(Long memberId) {
+		if (!member.getId().equals(memberId)) {
 			throw new RestApiException(ItemErrorCode.ITEM_FORBIDDEN);
 		}
+	}
+
+	public boolean equalThumnailImageUrl(String requestThumnailImage) {
+		if (thumbnailUrl == null) {
+			return false;
+		}
+		return thumbnailUrl.equals(requestThumnailImage);
 	}
 }

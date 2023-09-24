@@ -9,25 +9,28 @@ import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import codesquard.app.api.region.request.RegionListRequest;
 import codesquard.app.api.region.response.RegionItemResponse;
 import codesquard.app.api.region.response.RegionListResponse;
+import codesquard.app.domain.membertown.MemberTownRepository;
 import codesquard.app.domain.region.Region;
 import codesquard.app.domain.region.RegionPaginationRepository;
+import codesquard.app.domain.region.RegionRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 @Service
-public class RegionQueryService {
+public class RegionService {
 
 	private final RegionPaginationRepository regionPaginationRepository;
+	private final MemberTownRepository memberTownRepository;
+	private final RegionRepository regionRepository;
 
-	public RegionListResponse searchBySlice(RegionListRequest request) {
-		Long lastRegionId = request.getLastRegionId();
-		String region = request.getRegion();
-		Pageable pageable = PageRequest.ofSize(request.getSize());
-		Slice<Region> slice = regionPaginationRepository.searchBySlice(lastRegionId, region, pageable);
+	public RegionListResponse searchBySlice(int size, Long cursor, String region) {
+		Pageable pageable = PageRequest.ofSize(size);
+		Slice<Region> slice = regionPaginationRepository.searchBySlice(cursor, region, pageable);
 
 		List<RegionItemResponse> contents = slice.getContent().stream()
 			.map(RegionItemResponse::from)
@@ -35,7 +38,7 @@ public class RegionQueryService {
 		boolean hasNext = slice.hasNext();
 		Long nextCursor = getNextCursor(contents, hasNext);
 
-		return RegionListResponse.create(contents, hasNext, nextCursor);
+		return new RegionListResponse(contents, hasNext, nextCursor);
 	}
 
 	private Long getNextCursor(List<RegionItemResponse> contents, boolean hasNext) {

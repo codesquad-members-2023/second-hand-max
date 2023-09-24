@@ -7,8 +7,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import codesquard.app.api.item.response.ItemResponses;
 import codesquard.app.api.response.ApiResponse;
-import codesquard.app.api.response.ItemResponses;
 import codesquard.app.domain.oauth.support.AuthPrincipal;
 import codesquard.app.domain.oauth.support.Principal;
 import codesquard.app.domain.wish.WishStatus;
@@ -22,9 +22,9 @@ public class WishItemController {
 	private final WishItemService wishItemService;
 
 	@PostMapping("/{itemId}")
-	public ApiResponse<Void> wishStatus(@PathVariable Long itemId, @RequestParam WishStatus wish,
+	public ApiResponse<Void> wishStatus(@PathVariable Long itemId, @RequestParam WishStatus status,
 		@AuthPrincipal Principal principal) {
-		wish.doMethod(wishItemService, itemId, principal.getMemberId());
+		wishItemService.changeWishStatus(itemId, principal.getMemberId(), status);
 		return ApiResponse.ok("관심상품 변경이 완료되었습니다.", null);
 	}
 

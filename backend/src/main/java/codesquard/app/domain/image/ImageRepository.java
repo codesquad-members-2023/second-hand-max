@@ -11,8 +11,23 @@ public interface ImageRepository extends JpaRepository<Image, Long> {
 	List<Image> findAllByItemId(Long itemId);
 
 	@Modifying
-	@Query("delete from Image image where image.imageUrl in :imageUrls")
-	int deleteImagesByImageUrlIn(@Param("imageUrls") List<String> imageUrls);
+	@Query("delete from Image image where image.item.id = :itemId and image.imageUrl in :imageUrls")
+	int deleteImagesByItemIdAndImageUrlIn(
+		@Param("itemId") Long itemId,
+		@Param("imageUrls") List<String> imageUrls);
 
 	int countImageByItemId(Long itemId);
+
+	@Modifying
+	@Query("update Image set thumbnail = false where item.id = :itemId and thumbnail = true")
+	int updateThumnailToFalseByItemIdAndThumbnailIsTrue(@Param("itemId") Long itemId);
+
+	@Modifying
+	@Query("update Image set thumbnail = :thumbnail where item.id = :itemId and imageUrl = :imageUrl")
+	int updateThumbnailByItemIdAndImageUrl(
+		@Param("itemId") Long itemId,
+		@Param("imageUrl") String imageUrl,
+		@Param("thumbnail") boolean thumbnail);
+
+	int deleteByItemId(Long itemId);
 }

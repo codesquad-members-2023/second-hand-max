@@ -1,19 +1,15 @@
 package codesquard.app;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
 import org.junit.jupiter.api.AfterEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import codesquard.app.api.category.CategoryQueryService;
-import codesquard.app.api.item.ItemQueryService;
 import codesquard.app.api.item.ItemService;
 import codesquard.app.api.member.MemberService;
 import codesquard.app.api.membertown.MemberTownService;
 import codesquard.app.api.oauth.OauthService;
-import codesquard.app.api.region.RegionQueryService;
+import codesquard.app.api.region.RegionService;
 import codesquard.app.api.sales.SalesItemService;
 import codesquard.app.domain.category.CategoryRepository;
 import codesquard.app.domain.chat.ChatLogRepository;
@@ -22,7 +18,6 @@ import codesquard.app.domain.image.ImageRepository;
 import codesquard.app.domain.item.ItemRepository;
 import codesquard.app.domain.member.MemberRepository;
 import codesquard.app.domain.membertown.MemberTownRepository;
-import codesquard.app.domain.region.Region;
 import codesquard.app.domain.region.RegionPaginationRepository;
 import codesquard.app.domain.region.RegionRepository;
 import codesquard.app.domain.wish.WishRepository;
@@ -50,9 +45,6 @@ public abstract class IntegrationTestSupport {
 	protected ItemRepository itemRepository;
 
 	@Autowired
-	protected ItemQueryService itemQueryService;
-
-	@Autowired
 	protected ImageRepository imageRepository;
 
 	@Autowired
@@ -71,7 +63,7 @@ public abstract class IntegrationTestSupport {
 	protected RegionRepository regionRepository;
 
 	@Autowired
-	protected RegionQueryService regionQueryService;
+	protected RegionService regionService;
 
 	@Autowired
 	protected MemberService memberService;
@@ -98,23 +90,5 @@ public abstract class IntegrationTestSupport {
 		categoryRepository.deleteAllInBatch();
 		memberTownRepository.deleteAllInBatch();
 		memberRepository.deleteAllInBatch();
-	}
-
-	protected List<Long> getAddressIds(String name) {
-		List<Region> regions = regionRepository.findAllByNameIn(List.of(name));
-		return regions.stream()
-			.map(Region::getId)
-			.collect(Collectors.toUnmodifiableList());
-	}
-
-	protected List<Region> getRegions(List<String> names) {
-		return regionRepository.findAllByNameIn(names);
-	}
-
-	protected Region getRegion(String name) {
-		return regionRepository.findAllByNameIn(List.of(name))
-			.stream()
-			.findAny()
-			.orElseThrow();
 	}
 }

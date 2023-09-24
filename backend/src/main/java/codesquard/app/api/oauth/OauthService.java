@@ -1,18 +1,17 @@
 package codesquard.app.api.oauth;
 
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
-import java.util.concurrent.TimeUnit;
+import static codesquard.app.domain.membertown.MemberTown.*;
 
-import org.springframework.data.redis.core.RedisTemplate;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import codesquard.app.api.errors.errorcode.JwtTokenErrorCode;
 import codesquard.app.api.errors.errorcode.MemberErrorCode;
 import codesquard.app.api.errors.errorcode.OauthErrorCode;
 import codesquard.app.api.errors.exception.RestApiException;
@@ -22,11 +21,11 @@ import codesquard.app.api.oauth.request.OauthLogoutRequest;
 import codesquard.app.api.oauth.request.OauthRefreshRequest;
 import codesquard.app.api.oauth.request.OauthSignUpRequest;
 import codesquard.app.api.oauth.response.OauthAccessTokenResponse;
-import codesquard.app.api.oauth.response.OauthLoginMemberResponse;
 import codesquard.app.api.oauth.response.OauthLoginResponse;
 import codesquard.app.api.oauth.response.OauthRefreshResponse;
 import codesquard.app.api.oauth.response.OauthSignUpResponse;
 import codesquard.app.api.oauth.response.OauthUserProfileResponse;
+import codesquard.app.api.redis.RedisService;
 import codesquard.app.domain.jwt.Jwt;
 import codesquard.app.domain.jwt.JwtProvider;
 import codesquard.app.domain.member.Member;
@@ -52,20 +51,18 @@ public class OauthService {
 	private final RegionRepository regionRepository;
 	private final ImageService imageService;
 	private final JwtProvider jwtProvider;
-	private final RedisTemplate<String, Object> redisTemplate;
+	private final RedisService redisService;
 
 	public OauthSignUpResponse signUp(MultipartFile profile, OauthSignUpRequest request, String provider,
 		String authorizationCode) {
 		log.info("{}, provider : {}, authorizationCode : {}", request, provider,
 			authorizationCode);
-		Optional<MultipartFile> optionalProfile = Optional.ofNullable(profile);
-
 		validateDuplicateLoginId(request.getLoginId());
 
 		OauthUserProfileResponse userProfileResponse = getOauthUserProfileResponse(provider, authorizationCode);
-
 		validateMultipleSignUp(userProfileResponse.getEmail());
 
+		Optional<MultipartFile> optionalProfile = Optional.ofNullable(profile);
 		String avatarUrl = optionalProfile.map(imageService::uploadImage)
 			.orElse(userProfileResponse.getProfileImage());
 		log.debug("회원 가입 서비스에서 생성한 아바타 주소 : {}", avatarUrl);
@@ -74,12 +71,27 @@ public class OauthService {
 		Member saveMember = memberRepository.save(member);
 		log.debug("회원 엔티티 저장 결과 : {}", saveMember);
 
-		List<Region> regions = regionRepository.findAllById(request.getAddressIds());
-		List<MemberTown> memberTowns = MemberTown.create(regions, member);
-		memberTownRepository.saveAll(memberTowns);
-		log.debug("회원 동네 저장 결과 : {}", memberTowns);
+		saveMemberTowns(request.getAddressIds(), member);
 
 		return OauthSignUpResponse.from(saveMember);
+	}
+
+	private void saveMemberTowns(List<Long> addressIds, Member member) {
+		List<Region> regions = regionRepository.findAllById(addressIds);
+		Region selectedRegion = regions.get(0); // 제일 앞의 지역 선택
+		List<Region> notSelectedRegion = regions.stream()
+			.skip(1)
+			.collect(Collectors.toUnmodifiableList()); // 선택된 동네를 제외한 나머지 동네
+
+		MemberTown selectedMemberTown = selectedMemberTown(selectedRegion, member);
+		List<MemberTown> notSelectedMemberTowns = createMemberTowns(notSelectedRegion, member);
+
+		List<MemberTown> memberTowns = new ArrayList<>();
+		memberTowns.add(selectedMemberTown);
+		memberTowns.addAll(notSelectedMemberTowns);
+		memberTownRepository.saveAll(memberTowns);
+
+		log.debug("회원 동네 저장 결과 : memberTowns={}", memberTowns);
 	}
 
 	private void validateDuplicateLoginId(String loginId) {
@@ -121,13 +133,9 @@ public class OauthService {
 		Jwt jwt = jwtProvider.createJwtBasedOnMember(member, now);
 		log.debug("로그인 서비스 요청 중 jwt 객체 생성 : {}", jwt);
 
-		// key: "RT:" + email, value : 리프레쉬 토큰값
-		redisTemplate.opsForValue().set(member.createRedisKey(),
-			jwt.getRefreshToken(),
-			jwt.convertExpireDateRefreshTokenTimeWithLong(),
-			TimeUnit.MILLISECONDS);
+		redisService.saveRefreshToken(member, jwt);
 
-		return OauthLoginResponse.create(jwt, OauthLoginMemberResponse.from(member, memberTowns));
+		return OauthLoginResponse.of(jwt, member, memberTowns);
 	}
 
 	private Member getLoginMember(OauthLoginRequest request, OauthUserProfileResponse userProfileResponse) {
@@ -137,27 +145,33 @@ public class OauthService {
 			.orElseThrow(() -> new RestApiException(OauthErrorCode.FAIL_LOGIN));
 	}
 
-	public void logout(OauthLogoutRequest request) {
-		log.info("로그아웃 서비스 요청 : {}", request);
-		String accessToken = request.getAccessToken();
+	public void logout(String accessToken, OauthLogoutRequest request) {
+		log.info("로그아웃 서비스 요청 : accessToken={}, request={}", accessToken, request);
 		String refreshToken = request.getRefreshToken();
 
 		deleteRefreshTokenBy(refreshToken);
-		registerAccessTokenToBlackList(accessToken);
+		banAccessToken(accessToken);
 	}
 
 	private void deleteRefreshTokenBy(String refreshToken) {
-		String email = findEmailByRefreshToken(refreshToken);
-		redisTemplate.delete(String.format("RT:%s", email));
+		try {
+			String email = redisService.findEmailByRefreshTokenValue(refreshToken);
+			log.debug("리프레시 토큰 값에 따른 이메일 조회 결과 : email={}", email);
+			boolean result = redisService.delete(String.format("RT:%s", email));
+			log.debug("리프레쉬 토큰 삭제 결과 : {}", result);
+		} catch (RestApiException e) {
+			log.error("리프레시 토큰에 따른 이메일 없음 : {}", e.getErrorCode().getMessage());
+		}
 	}
 
-	private void registerAccessTokenToBlackList(String accessToken) {
+	private void banAccessToken(String accessToken) {
 		try {
 			long expiration = ((Integer)jwtProvider.getClaims(accessToken).get("exp")).longValue();
-			redisTemplate.opsForValue().set(accessToken, "logout", expiration, TimeUnit.MILLISECONDS);
+			redisService.banAccessToken(accessToken, expiration);
 		} catch (RestApiException e) {
-			log.error("액세스 토큰 에러 : {}", e.getMessage());
+			log.error("토큰 에러 : {}", accessToken);
 		}
+
 	}
 
 	public OauthRefreshResponse refreshAccessToken(OauthRefreshRequest request, LocalDateTime now) {
@@ -166,7 +180,7 @@ public class OauthService {
 		jwtProvider.validateToken(refreshToken);
 		log.debug("refreshToken is valid token : {}", refreshToken);
 
-		String email = findEmailByRefreshToken(refreshToken);
+		String email = redisService.findEmailByRefreshTokenValue(refreshToken);
 		log.debug("findEmailByRefreshToken 결과 : email={}", email);
 		Member member = memberRepository.findMemberByEmail(email)
 			.orElseThrow(() -> new RestApiException(MemberErrorCode.NOT_FOUND_MEMBER));
@@ -174,18 +188,7 @@ public class OauthService {
 
 		Jwt jwt = jwtProvider.createJwtWithRefreshTokenBasedOnMember(member, refreshToken, now);
 
-		return OauthRefreshResponse.create(jwt);
+		return OauthRefreshResponse.from(jwt);
 	}
 
-	private String findEmailByRefreshToken(String refreshToken) {
-		Set<String> keys = redisTemplate.keys("RT:*");
-		if (keys == null) {
-			throw new RestApiException(JwtTokenErrorCode.EMPTY_TOKEN);
-		}
-		return keys.stream()
-			.filter(key -> Objects.equals(redisTemplate.opsForValue().get(key), refreshToken))
-			.findAny()
-			.map(email -> email.replace("RT:", ""))
-			.orElse(null);
-	}
 }
