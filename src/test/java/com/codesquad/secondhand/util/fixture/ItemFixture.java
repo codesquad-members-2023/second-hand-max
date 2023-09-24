@@ -52,7 +52,8 @@ public enum ItemFixture {
 	public ItemResponse toItemResponse(String thumbnail, int numChat, int numLikes) {
 		return new ItemResponse(
 			id, title, RegionFixture.findById(regionId).getTitle(), StatusFixture.findById(statusId).getType(),
-			thumbnail, null, null, price, numChat, numLikes, userId
+			thumbnail, null, null, price, numChat, numLikes, userId,
+			CategoryFixture.findById(categoryId).toCategory()
 		);
 	}
 
@@ -62,13 +63,22 @@ public enum ItemFixture {
 			id, title, content, price, numChat,
 			numLikes, views, false, LocalDateTime.now(),
 			StatusFixture.findById(statusId).toStatusItemDetailResponse(),
-			CategoryFixture.findById(categoryId).toCategoryItemDetailResponse(),
+			CategoryFixture.findById(categoryId).toCategoryInfoResponse(),
 			UserFixture.findById(userId).toUserItemDetailResponse(), imageResponses);
 	}
 
 	public MyTransactionResponse toMyTransactionResponse(String thumbnailUrl) {
 		return new MyTransactionResponse(
-			id, title, RegionFixture.findById(regionId).getTitle(), null, price, thumbnailUrl, userId
+			id,
+			title,
+			RegionFixture.findById(regionId).getTitle(),
+			StatusFixture.findById(statusId).getType(),
+			LocalDateTime.now(),
+			price,
+			thumbnailUrl,
+			userId,
+			0,
+			0
 		);
 	}
 

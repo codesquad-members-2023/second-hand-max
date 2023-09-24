@@ -6,7 +6,6 @@ import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Objects;
 
-import com.codesquad.secondhand.category.application.dto.CategoryItemDetailResponse;
 import com.codesquad.secondhand.user.application.dto.UserItemDetailResponse;
 import com.codesquad.secondhand.user.domain.User;
 

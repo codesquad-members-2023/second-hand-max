@@ -5,7 +5,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import com.codesquad.secondhand.category.application.dto.CategoryItemDetailResponse;
+import com.codesquad.secondhand.category.application.dto.CategoryInfoResponse;
+import com.codesquad.secondhand.category.domain.Category;
 
 public enum CategoryFixture {
 
@@ -72,12 +73,16 @@ public enum CategoryFixture {
 			.collect(Collectors.toUnmodifiableList());
 	}
 
-	public static CategoryItemDetailResponse findCategoryItemDetailResponseById(Long id) {
-		return findById(id).toCategoryItemDetailResponse();
+	public static CategoryInfoResponse findCategoryItemDetailResponseById(Long id) {
+		return findById(id).toCategoryInfoResponse();
 	}
 
-	public CategoryItemDetailResponse toCategoryItemDetailResponse() {
-		return new CategoryItemDetailResponse(title);
+	public CategoryInfoResponse toCategoryInfoResponse() {
+		return new CategoryInfoResponse(id, title);
+	}
+
+	public Category toCategory() {
+		return new Category(id, title, imageUrl);
 	}
 
 	public Long getId() {

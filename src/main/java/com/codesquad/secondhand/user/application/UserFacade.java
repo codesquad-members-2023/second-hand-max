@@ -1,16 +1,23 @@
 package com.codesquad.secondhand.user.application;
 
+import static com.codesquad.secondhand.common.util.RedisUtil.MY_REGION;
+
 import java.util.List;
 
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.codesquad.secondhand.category.application.CategoryService;
+import com.codesquad.secondhand.category.application.dto.CategoriesInfoResponse;
+import com.codesquad.secondhand.category.application.dto.CategoryInfoResponse;
 import com.codesquad.secondhand.image.application.ImageService;
 import com.codesquad.secondhand.image.domain.Image;
 import com.codesquad.secondhand.item.application.ItemService;
+import com.codesquad.secondhand.item.application.dto.ItemResponse;
 import com.codesquad.secondhand.item.application.dto.MyTransactionSliceResponse;
 import com.codesquad.secondhand.item.domain.Item;
 import com.codesquad.secondhand.region.application.RegionService;
@@ -37,11 +44,12 @@ public class UserFacade {
 	private final RegionService regionService;
 	private final ImageService imageService;
 	private final ItemService itemService;
+	private final CategoryService categoryService;
 
 	public void signUp(UserCreateRequest request, MultipartFile profileImage) {
 		Provider provider = providerService.findByIdOrElseThrow(request.getProviderId());
 		Image image = imageService.uploadOrElseNull(profileImage);
-		Region region = regionService.findByIdOrThrow(Region.DEFAULT_REGION_YEOKSAM_DONG);
+		Region region = regionService.findByIdOrThrow(Region.DEFAULT_REGION);
 		userService.signUp(request, provider, image, region);
 	}
 
@@ -60,11 +68,12 @@ public class UserFacade {
 		return userService.findUserRegions(id);
 	}
 
-	public void addMyRegion(UserRegionAddRequest request) {
+	public void addMyRegion(UserRegionAddRequest request, Long id) {
 		Region region = regionService.findByIdOrThrow(request.getId());
-		userService.addMyRegion(request, region);
+		userService.addMyRegion(id, region);
 	}
 
+	@CacheEvict(cacheNames = MY_REGION, key = "#userId")
 	public void updateSelectedMyRegion(Long userId, Long regionId) {
 		User user = userService.findByIdOrThrow(userId);
 		Region region = regionService.findByIdOrThrow(regionId);
@@ -93,7 +102,14 @@ public class UserFacade {
 
 	@Transactional(readOnly = true)
 	public MyWishlistSliceResponse findMyWishlistByCategory(Long id, Long categoryId, Pageable pageable) {
-		Slice<Item> itemSlice = itemService.findByUserIdAndCategoryId(id, categoryId, pageable);
+		Slice<ItemResponse> itemSlice = itemService.findByUserIdAndCategoryId(id, categoryId, pageable);
 		return MyWishlistSliceResponse.of(itemSlice.hasNext(), MyWishlistResponse.from(itemSlice.getContent()));
+	}
+
+	@Transactional(readOnly = true)
+	public CategoriesInfoResponse findCategoriesOnMyWishlist(Long id) {
+		List<CategoryInfoResponse> categoryInfoResponses = CategoryInfoResponse.from(
+			categoryService.findCategoriesOnMyWishlistByUserId(id));
+		return new CategoriesInfoResponse(categoryInfoResponses);
 	}
 }

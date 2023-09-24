@@ -1,7 +1,6 @@
 package com.codesquad.secondhand.item.domain;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -15,7 +14,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -25,7 +23,6 @@ import com.codesquad.secondhand.category.domain.Category;
 import com.codesquad.secondhand.image.domain.Image;
 import com.codesquad.secondhand.region.domain.Region;
 import com.codesquad.secondhand.user.domain.User;
-import com.codesquad.secondhand.user.domain.Wishlist;
 
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -76,9 +73,6 @@ public class Item {
 	@Embedded
 	private Images images = new Images();
 
-	@OneToMany(mappedBy = "item")
-	private List<Wishlist> wishlists = new ArrayList<>();
-
 	public Item(String title, Integer price, String content, List<Image> images, Category category, Region region,
 		Status status, User user) {
 		user.validateNotIncludeMyRegion(region);
@@ -99,10 +93,6 @@ public class Item {
 				.collect(Collectors.toUnmodifiableList());
 			this.images.addImage(itemImages);
 		}
-	}
-
-	public void increaseViewCount() {
-		views++;
 	}
 
 	public void updateStatus(User accountUser, Status status) {
@@ -152,32 +142,7 @@ public class Item {
 		this.isDeleted = true;
 	}
 
-	public int getWishlistCount() {
-		return wishlists.size();
-	}
-
-	public boolean isMyWishlisted(User user) {
-		return wishlists.stream()
-			.anyMatch(w -> w.equalsUser(user));
-	}
-
-	public int getChatCount() {
-		return 0;
-	}
-
-	public String getThumbnailUrl() {
-		return images.getThumbnailUrl();
-	}
-
 	public List<Image> getImages() {
 		return images.getImages();
-	}
-
-	public boolean equalsId(Long id) {
-		return Objects.equals(this.id, id);
-	}
-
-	public Long getSellerId() {
-		return user.getId();
 	}
 }

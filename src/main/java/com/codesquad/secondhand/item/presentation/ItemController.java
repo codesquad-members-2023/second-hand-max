@@ -46,17 +46,17 @@ public class ItemController {
 	@PostMapping
 	public ResponseEntity<CommonResponse> create(@AccountPrincipal Account account,
 		@Valid @RequestBody ItemCreateRequest request) {
-		request.injectUserId(account.getId());
-		itemFacade.create(request);
 		return ResponseEntity.status(HttpStatus.CREATED)
-			.body(CommonResponse.createCreated(ResponseMessage.ITEM_CREATE));
+			.body(CommonResponse.createCreated(
+				itemFacade.create(request, account.getId()),
+				ResponseMessage.ITEM_CREATE));
 	}
 
 	@GetMapping("{id}")
 	public ResponseEntity<CommonResponse> showItemDetail(@PathVariable Long id, @AccountPrincipal Account account) {
 		return ResponseEntity.ok()
 			.body(CommonResponse.createOK(
-				itemFacade.findDetailById(id, account),
+				itemFacade.findDetailById(id, account.getId()),
 				ResponseMessage.ITEM_DETAIL_FIND));
 	}
 

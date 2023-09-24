@@ -6,31 +6,25 @@ import java.util.stream.Collectors;
 
 import com.codesquad.secondhand.category.domain.Category;
 
-import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor
 @AllArgsConstructor
 @Getter
-public class CategoryResponse implements Serializable {
+public class CategoryInfoResponse implements Serializable {
 
 	private Long id;
 	private String title;
-	private String imageUrl;
 
-	public static CategoryResponse from(Category category) {
-		return new CategoryResponse(
-			category.getId(),
-			category.getTitle(),
-			category.getImageUrl()
-		);
+	public static CategoryInfoResponse from(Category category) {
+		return new CategoryInfoResponse(category.getId(), category.getTitle());
 	}
 
-	public static List<CategoryResponse> from(List<Category> categories) {
+	public static List<CategoryInfoResponse> from(List<Category> categories) {
 		return categories.stream()
-			.map(CategoryResponse::from)
+			.map(CategoryInfoResponse::from)
 			.collect(Collectors.toUnmodifiableList());
 	}
 }
