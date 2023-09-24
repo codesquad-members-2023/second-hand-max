@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useEffect, useRef, useState } from 'react';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { styled } from 'styled-components';
 import {
   useGetItemDetails,
@@ -9,6 +9,7 @@ import {
 } from '../api/queries/useItemDetailsQuery';
 import { useDeleteItem } from '../api/queries/useItemQuery';
 import { Alert } from '../components/Alert';
+import { Badge } from '../components/Badge';
 import { Error } from '../components/Error';
 import { Header } from '../components/Header';
 import { Loader } from '../components/Loader';
@@ -16,7 +17,7 @@ import { Button } from '../components/button/Button';
 import { Dropdown } from '../components/dropdown/Dropdown';
 import { MenuItem } from '../components/dropdown/MenuItem';
 import { Icon } from '../components/icon/Icon';
-import { ImageSlider } from '../components/itemDetails/ImageSlider';
+import { Slider } from '../components/itemDetails/Slider';
 import { useProductEditorStore } from '../stores/useProductEditorStore';
 import { useToastStore } from '../stores/useToastStore';
 import { getElapsedSince } from '../utils/getElapsedSince';
@@ -43,36 +44,68 @@ export type ItemDetailsData = {
 
 export function ItemDetails() {
   const [isAlertOpen, setIsAlertOpen] = useState(false);
+  const [activeSlidePage, setActiveSlidePage] = useState(1);
+  const [isScrollTop, setIsScrollTop] = useState(true);
+  const mainRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const isMobile = /Mobile|Android/i.test(navigator.userAgent);
+    const eventName = isMobile ? 'touchmove' : 'wheel';
+
+    window.addEventListener(eventName, onScroll);
+
+    return () => {
+      window.removeEventListener(eventName, onScroll);
+    };
+  }, []);
+
   const { itemId } = useParams();
+  const navigate = useNavigate();
+  const location = useLocation();
+  const from = location?.state?.redirectedFrom.pathname || '/';
+  const openEditorPanel = useProductEditorStore(state => state.openPanel);
+  const showToast = useToastStore(state => state.showToast);
+
   const {
     data: itemDetailsEditData,
     isError: isErrorEdit,
     isLoading: isLoadingEdit,
     refetch: refetchEdit,
   } = useGetItemDetailsEdit(Number(itemId));
-  const openEditorPanel = useProductEditorStore(state => state.openPanel);
-  const showToast = useToastStore(state => state.showToast);
 
   const {
     data: itemDetailsData,
     isLoading,
     isError,
   } = useGetItemDetails(Number(itemId));
+
   const favoriteMutation = usePatchFavorite();
   const statusMutation = usePatchStatus();
-  const deleteMutation = useDeleteItem();
-  const navigate = useNavigate();
+  const deleteMutation = useDeleteItem('home');
+
+  const onScroll = () => {
+    const scrollTop = mainRef.current?.scrollTop === 0;
+    setIsScrollTop(scrollTop);
+  };
+
+  const plusPageNum = () => {
+    setActiveSlidePage(prev => prev + 1);
+  };
+
+  const minusPageNum = () => {
+    setActiveSlidePage(prev => prev - 1);
+  };
 
   const openEditPanel = () => {
     if (!itemDetailsEditData || isLoadingEdit) {
       showToast({
-        type: 'warning',
+        mode: 'warning',
         message: '문제가 생겼습니다. 다시 시도해 주세요!',
       });
       return;
     } else if (isErrorEdit || !itemId) {
       showToast({
-        type: 'error',
+        mode: 'error',
         message: '에러 발생!',
       });
       return;
@@ -101,7 +134,6 @@ export function ItemDetails() {
     }
   };
 
-  // TODO: 페이지 로딩 시 스켈레톤 UI 추가 예정
   if (isLoading) {
     return (
       <Wrapper>
@@ -142,12 +174,13 @@ export function ItemDetails() {
 
   const deleteItem = () => {
     deleteMutation.mutate(Number(itemId));
-    navigate('/');
+    navigate(from);
   };
 
   return (
     <Container>
-      <StyledHeader
+      <Header
+        type={isScrollTop ? 'transparent' : 'default'}
         leftButton={
           <Button styledType="text" onClick={() => navigate('/')}>
             <Icon name="chevronLeft" color="neutralText" />
@@ -168,8 +201,22 @@ export function ItemDetails() {
         }
       />
 
-      <Main>
-        <ImageSlider imageList={itemDetailsData.images} />
+      <Main ref={mainRef}>
+        <SliderWrapper>
+          <Slider
+            imageList={itemDetailsData.images}
+            pagination={{ plusPageNum, minusPageNum }}
+          />
+          <PageNav>
+            <Badge
+              fontColor="neutralTextWeak"
+              badgeColor="neutralBackgroundBlur"
+              text={`${activeSlidePage} / ${itemDetailsData.images.length}`}
+              size="M"
+              type="container"
+            />
+          </PageNav>
+        </SliderWrapper>
         <Body>
           <SellerInfo>
             <Button color="neutralBackgroundWeak" align="space-between">
@@ -264,17 +311,8 @@ const Container = styled.div`
   background-color: ${({ theme }) => theme.color.neutralBackground};
 `;
 
-const StyledHeader = styled(Header)`
-  background-color: transparent;
-  border-bottom: none;
-
-  &::before {
-    backdrop-filter: none;
-  }
-`;
-
 const Main = styled.div`
-  height: 786px;
+  height: calc(100% - 64px);
   overflow-y: auto;
 
   &::-webkit-scrollbar {
@@ -282,6 +320,18 @@ const Main = styled.div`
   }
   -ms-overflow-style: none;
   scrollbar-width: none;
+`;
+
+const SliderWrapper = styled.div`
+  width: 100%;
+  height: 62%;
+  position: relative;
+`;
+
+const PageNav = styled.div`
+  position: absolute;
+  bottom: 16px;
+  right: 16px;
 `;
 
 const Body = styled.div`
