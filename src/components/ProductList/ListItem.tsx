@@ -4,7 +4,7 @@ import Icons from '@design/Icons';
 import noThumbnailImage from '../../assets/no-thumbnail-image.png';
 import PATH from '@constants/PATH';
 import { Link } from 'react-router-dom';
-import { ProductListItem } from 'types';
+import { ProductListItem } from 'types/product';
 
 const ListItem: React.FC<ProductListItem> = ({
   itemId,
@@ -46,13 +46,17 @@ const ListItem: React.FC<ProductListItem> = ({
             </div>
 
             <div className="state-and-price">
-              <div className="state-badge">
-                <div className="blind">상태</div>
-                <div className="text">{status}</div>
-              </div>
+              {status !== '판매중' && (
+                <div className="state-badge">
+                  <div className="blind">상태</div>
+                  <div className="text">{status}</div>
+                </div>
+              )}
 
               <div className="blind">가격</div>
-              <div className="price">{price.toLocaleString('ko')}원</div>
+              <div className="price">
+                {price === 0 ? '나눔' : `${price.toLocaleString('ko')}원`}
+              </div>
             </div>
           </Information>
 

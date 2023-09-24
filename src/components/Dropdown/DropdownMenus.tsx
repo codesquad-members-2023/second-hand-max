@@ -1,15 +1,21 @@
 import { css, styled } from 'styled-components';
+import { useDropdownContext } from './useDropdownContext';
 
 type Props = {
   children: React.ReactNode;
-  onClose: () => void;
 };
 
-export const DropdownMenus: React.FC<Props> = ({ children, onClose }) => {
+export const DropdownMenus: React.FC<Props> = ({ children }) => {
+  const { isDropdownOpen, closeDropdown } = useDropdownContext();
+
+  if (!isDropdownOpen) {
+    return null;
+  }
+
   return (
     <StyledDropdownMenus>
       <Box>{children}</Box>
-      <Overlay onClick={onClose} />
+      <Overlay onClick={closeDropdown} />
     </StyledDropdownMenus>
   );
 };

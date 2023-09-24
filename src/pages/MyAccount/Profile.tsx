@@ -2,20 +2,25 @@ import { css, styled } from 'styled-components';
 import Button from '@components/Button';
 import ProfileImageUploader from '@components/ProfileImageUploader';
 import { signOutUser } from 'apis/auth';
-import { useImageFileHandler } from '@hooks/useImageFileHandler';
-import { useEffect } from 'react';
+// import { useImageFileHandler } from '@hooks/useImageFileHandler';
 import { useUserStore } from 'stores/useUserStore';
+import { updateUserProfileImage } from 'apis/user';
 
 const Profile: React.FC = () => {
   const userReset = useUserStore(({ reset }) => reset);
   const user = useUserStore(({ user }) => user);
-  const initialImageSrc = user?.profileUrl;
-  const { imageSrc, file, onImageChange } =
-    useImageFileHandler(initialImageSrc);
+  const setUserProfileUrl = useUserStore(
+    ({ setUserProfileUrl }) => setUserProfileUrl,
+  );
 
-  useEffect(() => {
-    // TODO: 프로필 이미지 변경 요청
-  }, [file]);
+  const onProfileImageChange = async (file: File) => {
+    const {
+      message,
+      data: { profileImageUrl },
+    } = await updateUserProfileImage(file);
+    setUserProfileUrl(profileImageUrl);
+    alert(message);
+  };
 
   const onLogout = () => {
     signOutUser();
@@ -28,7 +33,12 @@ const Profile: React.FC = () => {
       <h2 className="blind">프로필</h2>
 
       <UserProfile>
-        <ProfileImageUploader {...{ imageSrc, onImageChange }} />
+        <ProfileImageUploader
+          {...{
+            imageSrc: user?.profileUrl,
+            onImageChange: onProfileImageChange,
+          }}
+        />
         <UserName>{user?.loginId || '사용자 이름'}</UserName>
       </UserProfile>
 

@@ -5,7 +5,13 @@ import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import AppRoutes from 'routes';
 import { ThemeProvider } from 'styled-components';
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      refetchOnWindowFocus: false,
+    },
+  },
+});
 
 const App: React.FC = () => {
   return (
@@ -14,7 +20,7 @@ const App: React.FC = () => {
         <GlobalStyle />
         <AppRoutes />
       </ThemeProvider>
-      <ReactQueryDevtools initialIsOpen={true} />
+      <ReactQueryDevtools />
     </QueryClientProvider>
   );
 };

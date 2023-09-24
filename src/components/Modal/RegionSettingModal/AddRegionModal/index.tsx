@@ -1,13 +1,12 @@
 import { Modal } from '@components/Modal/ModalSheet';
 import { AddRegionModalHeader } from './AddRegionModalHeader';
 import { SearchBar } from './SearchBar';
-import { RegionList } from './RegionList';
 import { Address } from 'types/region';
-import { useQuery } from '@tanstack/react-query';
-import { QUERY_KEY } from '@constants/QUERY_KEY';
-import { getRegions } from 'apis/region';
 import { useState } from 'react';
+import { useRegionInfiniteQuery } from '@hooks/queries/useRegionInfiniteQuery';
 import { Loader } from '@components/Loader';
+import { RegionList } from './RegionList';
+import { useDebounce } from '@hooks/useDebounce';
 
 type Props = {
   onModalClose: () => void;
@@ -19,19 +18,35 @@ export const AddRegionModal: React.FC<Props> = ({
   addRegion,
 }) => {
   const [searchWord, setSearchWord] = useState('');
-  const { isLoading, data } = useQuery(QUERY_KEY.REGION, () =>
-    getRegions(searchWord),
-  );
-  const regions = data?.data.contents;
+  const debouncedSearchWord = useDebounce(searchWord, 300);
+  const regionQuery = useRegionInfiniteQuery(debouncedSearchWord);
 
   const onSearchWordChange = (word: string) => setSearchWord(word);
 
   return (
-    <Modal onModalClose={onModalClose}>
+    <Modal
+      onModalClose={onModalClose}
+      modalSheetStyle={{
+        display: 'flex',
+        flexDirection: 'column',
+      }}
+    >
       <AddRegionModalHeader onModalClose={onModalClose} />
       <SearchBar onChange={onSearchWordChange} />
-      <RegionList regions={regions} onClick={addRegion} />
-      {isLoading && <Loader />}
+
+      {regionQuery.isLoading ? (
+        <Loader />
+      ) : (
+        <RegionList
+          {...{
+            regions: regionQuery.data,
+            hasNextPage: regionQuery.hasNextPage,
+            isFetchingNextPage: regionQuery.isFetchingNextPage,
+            fetchNextPage: regionQuery.fetchNextPage,
+            onClick: addRegion,
+          }}
+        />
+      )}
     </Modal>
   );
 };

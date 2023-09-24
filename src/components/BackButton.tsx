@@ -1,16 +1,7 @@
-import Icons from '@design/Icons';
 import { css, styled } from 'styled-components';
+import Button from './Button';
 
-const BackButton: React.FC = () => {
-  return (
-    <Container>
-      <Icons.ChevronLeft />
-      <span>뒤로</span>
-    </Container>
-  );
-};
-
-const Container = styled.button`
+export const BackButton = styled(Button)`
   ${({ theme: { fonts, colors } }) => css`
     position: absolute;
     left: 0;
@@ -18,10 +9,8 @@ const Container = styled.button`
     align-items: center;
     gap: 4px;
     padding: 8px;
-    ${fonts.available.strong16}
+    ${fonts.available.strong16};
     color: ${colors.neutral.text};
     stroke: ${colors.neutral.text};
   `}
 `;
-
-export default BackButton;

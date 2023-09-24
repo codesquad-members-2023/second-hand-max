@@ -3,12 +3,17 @@ import { css, styled } from 'styled-components';
 type Props = {
   children: React.ReactNode;
   onModalClose?: () => void;
+  modalSheetStyle?: React.CSSProperties;
 };
 
-export const Modal: React.FC<Props> = ({ children, onModalClose }) => {
+export const Modal: React.FC<Props> = ({
+  children,
+  onModalClose,
+  modalSheetStyle,
+}) => {
   return (
     <StyledModal>
-      <ModalSheet>{children}</ModalSheet>
+      <ModalSheet style={modalSheetStyle}>{children}</ModalSheet>
       <Overlay onClick={onModalClose} />
     </StyledModal>
   );

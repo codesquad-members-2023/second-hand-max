@@ -1,36 +1,44 @@
-import { BASE_URL } from '@constants/BASE_URL';
-import { updateAccessToken } from './auth';
+import { BASE_URL } from '@constants/ENV_VARIABLES';
 import { useUserStore } from 'stores/useUserStore';
 
 export const fetchData = async (path: string, options?: RequestInit) => {
   const response = await fetch(BASE_URL + path, options);
 
-  if (response.status === 401) {
-    handleAccessTokenUpdate();
-  }
-
   return response;
 };
 
-const handleAccessTokenUpdate = async () => {
-  try {
-    const { tokens, setTokens } = useUserStore.getState();
+export const fetchDataWithToken = async (
+  path: string,
+  options?: RequestInit,
+  retryCount: number = 3,
+): Promise<Response> => {
+  const { accessToken } = useUserStore.getState().getTokens();
+  const response = await fetch(BASE_URL + path, {
+    ...options,
+    headers: {
+      ...options?.headers,
+      Authorization: 'Bearer ' + accessToken,
+    },
+  });
 
-    if (!tokens) {
-      throw new Error('로컬스토리지에 토큰이 없습니다.');
-    }
+  if (response.status === 401 && retryCount > 0) {
+    await useUserStore.getState().handleTokenExpiry();
+    const { accessToken } = useUserStore.getState().getTokens();
 
-    const tokenResponse = await updateAccessToken(tokens.refreshToken);
-    const isSuccess = tokenResponse.statusCode === 200;
+    const response = await fetchDataWithToken(
+      path,
+      {
+        ...options,
+        headers: {
+          ...options?.headers,
+          Authorization: 'Bearer ' + accessToken,
+        },
+      },
+      retryCount - 1,
+    );
 
-    if (isSuccess) {
-      const { accessToken } = tokenResponse.data.jwt;
-
-      setTokens({ ...tokens, accessToken });
-    } else {
-      throw new Error('토큰 재발급에 실패했습니다.');
-    }
-  } catch (error) {
-    console.error(error);
+    return response;
   }
+
+  return response;
 };

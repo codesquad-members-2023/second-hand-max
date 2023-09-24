@@ -1,10 +1,10 @@
-import { fetchData } from 'apis/fetchData';
+import { fetchData, fetchDataWithToken } from 'apis/fetchData';
 import {
   SignInUserResponse,
   SignUpUserResponse,
   UpdateAccessTokenResponse,
 } from './types';
-import { BASE_URL } from '@constants/BASE_URL';
+import { BASE_URL, OAUTH_PROVIDER } from '@constants/ENV_VARIABLES';
 import { useUserStore } from 'stores/useUserStore';
 
 export const signUpUser = async ({
@@ -27,10 +27,13 @@ export const signUpUser = async ({
   const data = JSON.stringify({ loginId: id, addressIds });
   formData.append('signupData', new Blob([data], { type: 'application/json' }));
 
-  const response = await fetchData(`/auth/naver/signup?code=${code}`, {
-    method: 'POST',
-    body: formData,
-  });
+  const response = await fetchData(
+    `/auth/${OAUTH_PROVIDER}/signup?code=${code}`,
+    {
+      method: 'POST',
+      body: formData,
+    },
+  );
 
   return response.json();
 };
@@ -42,33 +45,31 @@ export const signInUser = async ({
   code: string;
   id: string;
 }): Promise<SignInUserResponse> => {
-  const response = await fetchData(`/auth/naver/login?code=${code}`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
+  const response = await fetchData(
+    `/auth/${OAUTH_PROVIDER}/login?code=${code}`,
+    {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        loginId: id,
+      }),
     },
-    body: JSON.stringify({
-      loginId: id,
-    }),
-  });
+  );
 
   return response.json();
 };
 
 export const signOutUser = () => {
-  const { tokens } = useUserStore.getState();
+  const { refreshToken } = useUserStore.getState().getTokens();
 
-  if (!tokens) {
-    throw new Error('로컬스토리지에 token이 없습니다.');
-  }
-
-  const { accessToken } = tokens;
-
-  return fetchData('/auth/logout', {
+  return fetchDataWithToken('/auth/logout', {
     method: 'POST',
     headers: {
-      Authorization: 'Bearer ' + accessToken,
+      'Content-Type': 'application/json',
     },
+    body: JSON.stringify({ refreshToken }),
   });
 };
 
