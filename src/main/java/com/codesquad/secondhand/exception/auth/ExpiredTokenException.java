@@ -1,11 +1,12 @@
 package com.codesquad.secondhand.exception.auth;
 
-public class ExpiredTokenException extends RuntimeException {
+import com.codesquad.secondhand.exception.CustomException;
+import com.codesquad.secondhand.exception.ErrorResponse;
 
-	private static final String MESSAGE = "Access Token이 만료되었습니다";
+public class ExpiredTokenException extends CustomException {
 
 	public ExpiredTokenException() {
-		super(MESSAGE);
+		super(ErrorResponse.EXPIRED_TOKEN_EXCEPTION);
 	}
 
 }

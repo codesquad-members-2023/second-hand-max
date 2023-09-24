@@ -1,11 +1,12 @@
 package com.codesquad.secondhand.exception.auth;
 
-public class InvalidTokenException extends RuntimeException {
+import com.codesquad.secondhand.exception.CustomException;
+import com.codesquad.secondhand.exception.ErrorResponse;
 
-	private static final String MESSAGE = "유효하지 않은 토큰입니다";
+public class InvalidTokenException extends CustomException {
 
 	public InvalidTokenException() {
-		super(MESSAGE);
+		super(ErrorResponse.INVALID_TOKEN_EXCEPTION);
 	}
 
 }

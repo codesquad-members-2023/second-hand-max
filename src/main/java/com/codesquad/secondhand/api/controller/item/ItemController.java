@@ -24,6 +24,7 @@ import com.codesquad.secondhand.api.controller.item.request.ItemPostRequest;
 import com.codesquad.secondhand.api.controller.item.request.ItemStatusUpdateRequest;
 import com.codesquad.secondhand.api.controller.item.request.ItemUpdateRequest;
 import com.codesquad.secondhand.api.controller.item.response.ItemDetailResponse;
+import com.codesquad.secondhand.api.controller.item.response.ItemPostResponse;
 import com.codesquad.secondhand.api.service.image.ImageService;
 import com.codesquad.secondhand.api.service.item.ItemService;
 import com.codesquad.secondhand.api.service.item.response.ItemSliceResponse;
@@ -50,10 +51,11 @@ public class ItemController {
 
 	@ResponseStatus(HttpStatus.CREATED)
 	@PostMapping
-	public ApiResponse<Void> postItem(@RequestBody @Valid ItemPostRequest request, @SignIn SignInUser signInUser) {
-		itemService.postItem(request.toService(imageService.findImagesByIds(request.getImageIds())),
-			signInUser.getId());
-		return ApiResponse.noData(HttpStatus.CREATED, ResponseMessage.ITEM_POST_SUCCESS.getMessage());
+	public ApiResponse<ItemPostResponse> postItem(@RequestBody @Valid ItemPostRequest request,
+		@SignIn SignInUser signInUser) {
+		return ApiResponse.of(HttpStatus.CREATED, ResponseMessage.ITEM_POST_SUCCESS.getMessage(),
+			itemService.postItem(request.toService(imageService.findImagesByIds(request.getImageIds())),
+				signInUser.getId()));
 	}
 
 	@ResponseStatus(HttpStatus.OK)
@@ -72,7 +74,8 @@ public class ItemController {
 
 	@ResponseStatus(HttpStatus.OK)
 	@PutMapping("/{id}")
-	public ApiResponse<ItemUpdateResponse> updateItem(@PathVariable Long id, @RequestBody ItemUpdateRequest request,
+	public ApiResponse<ItemUpdateResponse> updateItem(@PathVariable Long id,
+		@RequestBody @Valid ItemUpdateRequest request,
 		@SignIn SignInUser signInUser) {
 		ItemUpdateResponse response = itemService.updateItem(
 			request.toService(id, imageService.findImagesByIds(request.getImageIds())), signInUser.getId());

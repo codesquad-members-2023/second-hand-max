@@ -9,11 +9,10 @@ import com.codesquad.secondhand.domain.item.Item;
 import com.codesquad.secondhand.domain.region.Region;
 import com.codesquad.secondhand.domain.status.Status;
 import com.codesquad.secondhand.domain.user.User;
+import com.codesquad.secondhand.exception.category.InvalidCategoryException;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 
-@AllArgsConstructor
 @Getter
 public class ItemPostServiceRequest {
 
@@ -23,6 +22,17 @@ public class ItemPostServiceRequest {
 	private List<Image> images;
 	private Long categoryId;
 	private Long regionId;
+
+	public ItemPostServiceRequest(String title, Integer price, String content, List<Image> images, Long categoryId,
+		Long regionId) {
+		validateCategory(categoryId);
+		this.title = title;
+		this.price = price;
+		this.content = content;
+		this.images = images;
+		this.categoryId = categoryId;
+		this.regionId = regionId;
+	}
 
 	public Item toEntity(User user, Category category, Region region, Status status) {
 		return new Item(
@@ -35,6 +45,12 @@ public class ItemPostServiceRequest {
 			this.content,
 			this.price
 		);
+	}
+
+	private void validateCategory(Long categoryId) {
+		if (categoryId.equals(Category.ofAll().getId())) {
+			throw new InvalidCategoryException();
+		}
 	}
 
 }

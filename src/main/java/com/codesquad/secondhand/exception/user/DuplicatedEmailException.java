@@ -1,10 +1,12 @@
 package com.codesquad.secondhand.exception.user;
 
-public class DuplicatedEmailException extends RuntimeException {
-	private static final String MESSAGE = "이미 존재하는 이메일입니다";
+import com.codesquad.secondhand.exception.CustomException;
+import com.codesquad.secondhand.exception.ErrorResponse;
+
+public class DuplicatedEmailException extends CustomException {
 
 	public DuplicatedEmailException() {
-		super(MESSAGE);
+		super(ErrorResponse.DUPLICATED_EMAIL_EXCEPTION);
 	}
 
 }

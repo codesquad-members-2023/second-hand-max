@@ -14,6 +14,7 @@ import org.springframework.http.MediaType;
 
 import com.codesquad.secondhand.ControllerTestSupport;
 import com.codesquad.secondhand.api.controller.item.request.ItemPostRequest;
+import com.codesquad.secondhand.api.controller.item.response.ItemCategoryResponse;
 import com.codesquad.secondhand.api.controller.item.response.ItemDetailResponse;
 import com.codesquad.secondhand.api.controller.item.response.ItemSellerResponse;
 import com.codesquad.secondhand.domain.image.Image;
@@ -29,7 +30,7 @@ public class ItemControllerTest extends ControllerTestSupport {
 	void postItem() throws Exception {
 		// given
 		mockingJwtService();
-		ItemPostRequest request = new ItemPostRequest("title", null, "content", List.of(1L, 2L), 1L, 1L);
+		ItemPostRequest request = new ItemPostRequest("title", null, "content", List.of(1L, 2L), 2L, 1L);
 
 		// when
 		ObjectMapper objectMapper = new ObjectMapper();
@@ -46,6 +47,50 @@ public class ItemControllerTest extends ControllerTestSupport {
 			.andExpect(jsonPath("$.message").value("상품 등록을 성공하였습니다"));
 	}
 
+	@DisplayName("음수인 가격으로 새로운 상품 등록을 요청한 경우 예외가 발생한다.")
+	@Test
+	void postItemWithNegativePrice() throws Exception {
+		// given
+		mockingJwtService();
+		ItemPostRequest request = new ItemPostRequest("title", -1, "content", List.of(1L, 2L), 2L, 1L);
+
+		// when
+		ObjectMapper objectMapper = new ObjectMapper();
+		when(imageService.findImagesByIds(request.getImageIds())).thenReturn(
+			List.of(new Image(1L, "1.jpg"), new Image(2L, "2.jpg")));
+
+		// then
+		mockMvc.perform(post("/api/items")
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(objectMapper.writeValueAsString(request))
+				.header(HEADER_NAME, HEADER_VALUE))
+			.andDo(print())
+			.andExpect(status().isBadRequest())
+			.andExpect(jsonPath("$.message").value("음수는 등록할 수 없습니다"));
+	}
+
+	@DisplayName("초과된 가격으로 새로운 상품 등록을 요청한 경우 예외가 발생한다.")
+	@Test
+	void postItemWithOverPrice() throws Exception {
+		// given
+		mockingJwtService();
+		ItemPostRequest request = new ItemPostRequest("title", 1_000_000_000, "content", List.of(1L, 2L), 2L, 1L);
+
+		// when
+		ObjectMapper objectMapper = new ObjectMapper();
+		when(imageService.findImagesByIds(request.getImageIds())).thenReturn(
+			List.of(new Image(1L, "1.jpg"), new Image(2L, "2.jpg")));
+
+		// then
+		mockMvc.perform(post("/api/items")
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(objectMapper.writeValueAsString(request))
+				.header(HEADER_NAME, HEADER_VALUE))
+			.andDo(print())
+			.andExpect(status().isBadRequest())
+			.andExpect(jsonPath("$.message").value("등록 가능한 금액 한도를 초과했습니다"));
+	}
+
 	@DisplayName("상품을 상세 조회하고 200을 응답한다.")
 	@Test
 	void getItemDetail() throws Exception {
@@ -53,8 +98,9 @@ public class ItemControllerTest extends ControllerTestSupport {
 		mockingJwtService();
 		Long itemId = 1L;
 		ItemSellerResponse sellerResponse = new ItemSellerResponse(1L, "nickname");
+		ItemCategoryResponse categoryResponse = new ItemCategoryResponse(2L, "가전");
 		ItemDetailResponse itemResponse = new ItemDetailResponse(1L, "title", "판매중", "content", LocalDateTime.now(),
-			null, "가전", sellerResponse, 0, 0, 0L, false, null);
+			null, categoryResponse, sellerResponse, 0, 0, 1L, false, null);
 
 		when(itemService.getItemDetail(anyLong(), anyLong())).thenReturn(itemResponse);
 
@@ -68,12 +114,13 @@ public class ItemControllerTest extends ControllerTestSupport {
 			.andExpect(jsonPath("$.data.title").value("title"))
 			.andExpect(jsonPath("$.data.content").value("content"))
 			.andExpect(jsonPath("$.data.price").doesNotExist())
-			.andExpect(jsonPath("$.data.category").value("가전"))
+			.andExpect(jsonPath("$.data.category.id").value(2L))
+			.andExpect(jsonPath("$.data.category.title").value("가전"))
 			.andExpect(jsonPath("$.data.seller.id").value(1L))
-			.andExpect(jsonPath("$.data.seller.nickName").value("nickname"))
+			.andExpect(jsonPath("$.data.seller.nickname").value("nickname"))
 			.andExpect(jsonPath("$.data.numChat").value(0))
 			.andExpect(jsonPath("$.data.numLikes").value(0))
-			.andExpect(jsonPath("$.data.numViews").value(0L))
+			.andExpect(jsonPath("$.data.numViews").value(1L))
 			.andExpect(jsonPath("$.data.isLiked").value(false))
 			.andExpect(jsonPath("$.data.images").doesNotExist());
 	}

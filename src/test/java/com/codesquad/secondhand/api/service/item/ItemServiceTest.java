@@ -18,6 +18,7 @@ import org.springframework.data.domain.Pageable;
 
 import com.codesquad.secondhand.FixtureFactory;
 import com.codesquad.secondhand.IntegrationTestSupport;
+import com.codesquad.secondhand.api.controller.item.request.ItemPostRequest;
 import com.codesquad.secondhand.api.controller.item.response.ItemDetailResponse;
 import com.codesquad.secondhand.api.service.item.request.ItemPostServiceRequest;
 import com.codesquad.secondhand.api.service.item.request.ItemStatusUpdateServiceRequest;
@@ -35,7 +36,9 @@ import com.codesquad.secondhand.domain.status.Status;
 import com.codesquad.secondhand.domain.status.StatusRepository;
 import com.codesquad.secondhand.domain.user.User;
 import com.codesquad.secondhand.domain.user.UserRepository;
+import com.codesquad.secondhand.exception.ErrorResponse;
 import com.codesquad.secondhand.exception.auth.PermissionDeniedException;
+import com.codesquad.secondhand.exception.category.InvalidCategoryException;
 import com.codesquad.secondhand.exception.category.NoSuchCategoryException;
 import com.codesquad.secondhand.exception.item.NoSuchItemException;
 import com.codesquad.secondhand.exception.region.NoSuchRegionException;
@@ -152,11 +155,11 @@ public class ItemServiceTest extends IntegrationTestSupport {
 	void postItem() {
 		// given
 		ItemPostServiceRequest request = new ItemPostServiceRequest("title", null, "content", images,
-			1L, 1L);
+			2L, 1L);
 
 		// when
 		itemService.postItem(request, loginUser.getId());
-		Item postedItem = itemRepository.findDetailById(1L).orElseThrow(NoSuchItemException::new);
+		Item postedItem = itemRepository.findItemDetailById(1L).orElseThrow(NoSuchItemException::new);
 
 		// then
 		assertAll(
@@ -165,7 +168,7 @@ public class ItemServiceTest extends IntegrationTestSupport {
 			() -> assertThat(postedItem.getPrice()).isNull(),
 			() -> assertThat(postedItem.getContent()).isEqualTo("content"),
 			() -> assertThat(postedItem.listImage()).hasSize(images.size()),
-			() -> assertThat(postedItem.getCategory().getId()).isEqualTo(1L),
+			() -> assertThat(postedItem.getCategory().getId()).isEqualTo(2L),
 			() -> assertThat(postedItem.getRegion().getId()).isEqualTo(1L)
 		);
 	}
@@ -176,12 +179,12 @@ public class ItemServiceTest extends IntegrationTestSupport {
 		// given
 		Long wrongUserId = 999L;
 		ItemPostServiceRequest request = new ItemPostServiceRequest("title", null, "content", images,
-			1L, 1L);
+			2L, 1L);
 
 		// when & then
 		assertThatThrownBy(() -> itemService.postItem(request, wrongUserId))
 			.isInstanceOf(NoSuchUserException.class)
-			.hasMessage("존재하지 않는 사용자입니다");
+			.hasMessage(ErrorResponse.NO_SUCH_USER_EXCEPTION.getMessage());
 
 	}
 
@@ -196,7 +199,21 @@ public class ItemServiceTest extends IntegrationTestSupport {
 		// when & then
 		assertThatThrownBy(() -> itemService.postItem(request, loginUser.getId()))
 			.isInstanceOf(NoSuchCategoryException.class)
-			.hasMessage("존재하지 않는 카테고리입니다");
+			.hasMessage(ErrorResponse.NO_SUCH_CATEGORY_EXCEPTION.getMessage());
+	}
+
+	@DisplayName("전체 카테고리로 상품 등록을 요청 하면 예외가 발생한다.")
+	@Test
+	void postItemAndThrowCategoryIDException() {
+		// given
+		Long allCategory = 1L;
+		ItemPostRequest request = new ItemPostRequest("title", null, "content", List.of(1L, 2L, 3L),
+			allCategory, 1L);
+
+		// when & then
+		assertThatThrownBy(() -> itemService.postItem(request.toService(images), loginUser.getId()))
+			.isInstanceOf(InvalidCategoryException.class)
+			.hasMessage(ErrorResponse.INVALID_CATEGORY_EXCEPTION.getMessage());
 	}
 
 	@DisplayName("상품 등록 시 존재하지 않는 지역을 설정하면 예외가 발생한다.")
@@ -205,12 +222,12 @@ public class ItemServiceTest extends IntegrationTestSupport {
 		// given
 		Long wrongRegionId = 999L;
 		ItemPostServiceRequest request = new ItemPostServiceRequest("title", null, "content", images,
-			1L, wrongRegionId);
+			2L, wrongRegionId);
 
 		// when & then
 		assertThatThrownBy(() -> itemService.postItem(request, loginUser.getId()))
 			.isInstanceOf(NoSuchRegionException.class)
-			.hasMessage("존재하지 않는 동네입니다");
+			.hasMessage(ErrorResponse.NO_SUCH_REGION_EXCEPTION.getMessage());
 	}
 
 	@DisplayName("상품 등록 시 나의 동네가 아닌 지역을 설정하면 예외가 발생한다.")
@@ -219,12 +236,12 @@ public class ItemServiceTest extends IntegrationTestSupport {
 		// given
 		Long notMyRegionId = 3L;
 		ItemPostServiceRequest request = new ItemPostServiceRequest("title", null, "content", images,
-			1L, notMyRegionId);
+			2L, notMyRegionId);
 
 		// when & then
 		assertThatThrownBy(() -> itemService.postItem(request, loginUser.getId()))
 			.isInstanceOf(NoSuchUserRegionException.class)
-			.hasMessage("사용자 동네 목록에 없는 동네입니다");
+			.hasMessage(ErrorResponse.NO_SUCH_USER_REGION_EXCEPTION.getMessage());
 	}
 
 	@DisplayName("상품 상세 조회를 성공한다.")
@@ -233,7 +250,7 @@ public class ItemServiceTest extends IntegrationTestSupport {
 		// given
 		User seller = FixtureFactory.createUserFixture(List.of(regions.get(0)));
 		userRepository.save(seller);
-		Item item = FixtureFactory.createItemFixture(seller, categories.get(0), regions.get(0), statusList.get(0));
+		Item item = FixtureFactory.createItemFixture(seller, categories.get(1), regions.get(0), statusList.get(0));
 		item.addItemImages(images);
 		itemRepository.save(item);
 
@@ -248,12 +265,44 @@ public class ItemServiceTest extends IntegrationTestSupport {
 			() -> assertThat(postedItem.getUpdatedAt()).isCloseTo(item.getUpdatedAt(),
 				within(1, ChronoUnit.SECONDS)),
 			() -> assertThat(postedItem.getPrice()).isNull(),
-			() -> assertThat(postedItem.getCategory()).isEqualTo(categories.get(0).getTitle()),
+			() -> assertThat(postedItem.getCategory().getId()).isEqualTo(categories.get(1).getId()),
+			() -> assertThat(postedItem.getCategory().getTitle()).isEqualTo(categories.get(1).getTitle()),
 			() -> assertThat(postedItem.getSeller().getId()).isEqualTo(seller.getId()),
 			() -> assertThat(postedItem.getNumChat()).isEqualTo(0),
 			() -> assertThat(postedItem.getNumLikes()).isEqualTo(0),
-			() -> assertThat(postedItem.getNumViews()).isEqualTo(0),
 			() -> assertThat(postedItem.getImages()).hasSize(images.size())
+		);
+	}
+
+	@DisplayName("상품 조회수 증가 시나리오")
+	@TestFactory
+	Collection<DynamicTest> increaseItemViews() {
+		// given
+		Item myItem = FixtureFactory.createItemFixture(loginUser, categories.get(0), regions.get(0), statusList.get(0));
+		itemRepository.save(myItem);
+
+		return List.of(
+			DynamicTest.dynamicTest("상품을 1번 조회하면 조회수가 1이 된다", () -> {
+				// when
+				ItemDetailResponse postedItem = itemService.getItemDetail(1L, loginUser.getId());
+
+				// then
+				assertThat(postedItem.getNumViews()).isEqualTo(1L);
+			}),
+			DynamicTest.dynamicTest("상품을 2번 조회하면 조회수가 2가 된다", () -> {
+				// when
+				ItemDetailResponse postedItem = itemService.getItemDetail(1L, loginUser.getId());
+
+				// then
+				assertThat(postedItem.getNumViews()).isEqualTo(2L);
+			}),
+			DynamicTest.dynamicTest("상품을 3번 조회하면 조회수가 3이 된다", () -> {
+				// when
+				ItemDetailResponse postedItem = itemService.getItemDetail(1L, loginUser.getId());
+
+				// then
+				assertThat(postedItem.getNumViews()).isEqualTo(3L);
+			})
 		);
 	}
 
@@ -266,7 +315,7 @@ public class ItemServiceTest extends IntegrationTestSupport {
 		// when & then
 		assertThatThrownBy(() -> itemService.getItemDetail(wrongItemId, loginUser.getId()))
 			.isInstanceOf(NoSuchItemException.class)
-			.hasMessage("존재하지 않는 상품입니다");
+			.hasMessage(ErrorResponse.NO_SUCH_ITEM_EXCEPTION.getMessage());
 	}
 
 	@DisplayName("상품 삭제를 성공한다.")
@@ -301,8 +350,7 @@ public class ItemServiceTest extends IntegrationTestSupport {
 	@TestFactory
 	Collection<DynamicTest> updateItem() {
 		// given
-		Item myItem = FixtureFactory.createItemFixture(loginUser, categories.get(0), regions.get(0),
-			statusList.get(0));
+		Item myItem = FixtureFactory.createItemFixture(loginUser, categories.get(0), regions.get(0), statusList.get(0));
 		itemRepository.save(myItem);
 		myItem.addItemImages(images);
 
@@ -310,19 +358,19 @@ public class ItemServiceTest extends IntegrationTestSupport {
 			DynamicTest.dynamicTest("새로운 내용 및 모든 이미지 삭제가 반영되도록 상품 수정을 성공한다.", () -> {
 				// given
 				ItemUpdateServiceRequest request = new ItemUpdateServiceRequest(1L, "new title", 100, "new content",
-					null, 1L, 1L);
+					null, 2L, 1L);
 
 				// when
 				itemService.updateItem(request, loginUser.getId());
 
 				// then
-				Item updatedItem = itemRepository.findDetailById(1L).get();
+				Item updatedItem = itemRepository.findItemDetailById(1L).get();
 				assertAll(
 					() -> assertThat(updatedItem.getTitle()).isEqualTo("new title"),
 					() -> assertThat(updatedItem.getPrice()).isEqualTo(100),
 					() -> assertThat(updatedItem.getContent()).isEqualTo("new content"),
-					() -> assertThat(updatedItem.listImage()).isEmpty(),
-					() -> assertThat(updatedItem.getCategory().getId()).isEqualTo(1L),
+					() -> assertThat(updatedItem.listImage()).isNull(),
+					() -> assertThat(updatedItem.getCategory().getId()).isEqualTo(2L),
 					() -> assertThat(updatedItem.getRegion().getId()).isEqualTo(1L)
 				);
 			}),
@@ -335,7 +383,7 @@ public class ItemServiceTest extends IntegrationTestSupport {
 				itemService.updateItem(request, loginUser.getId());
 
 				// then
-				Item updatedItem = itemRepository.findDetailById(1L).get();
+				Item updatedItem = itemRepository.findItemDetailById(1L).get();
 				assertAll(
 					() -> assertThat(updatedItem.getTitle()).isEqualTo("new title2"),
 					() -> assertThat(updatedItem.getPrice()).isEqualTo(200),
@@ -361,7 +409,7 @@ public class ItemServiceTest extends IntegrationTestSupport {
 		itemService.updateItemStatus(request, loginUser.getId());
 
 		// then
-		Item updatedItem = itemRepository.findDetailById(1L).get();
+		Item updatedItem = itemRepository.findItemDetailById(1L).get();
 		assertAll(
 			() -> assertThat(updatedItem.getStatus().getId()).isEqualTo(3L),
 			() -> assertThat(updatedItem.getStatus().getType()).isEqualTo("예약중")
@@ -382,7 +430,7 @@ public class ItemServiceTest extends IntegrationTestSupport {
 		// when & then
 		assertThatThrownBy(() -> itemService.updateItemStatus(request, loginUser.getId()))
 			.isInstanceOf(PermissionDeniedException.class)
-			.hasMessage("허가되지 않은 접근입니다");
+			.hasMessage(ErrorResponse.PERMISSION_DENIED_EXCEPTION.getMessage());
 	}
 
 }

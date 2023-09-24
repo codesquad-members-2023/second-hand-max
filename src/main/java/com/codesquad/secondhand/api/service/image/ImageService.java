@@ -19,7 +19,7 @@ import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.codesquad.secondhand.domain.image.Image;
 import com.codesquad.secondhand.domain.image.ImageRepository;
 import com.codesquad.secondhand.exception.image.EmptyFileException;
-import com.codesquad.secondhand.exception.image.FailedUploadException;
+import com.codesquad.secondhand.exception.image.ExceedMaxSizeException;
 
 import lombok.RequiredArgsConstructor;
 
@@ -63,7 +63,7 @@ public class ImageService {
 				new PutObjectRequest(bucket, fileName, multipartFile.getInputStream(), objectMetadata)
 					.withCannedAcl(CannedAccessControlList.PublicRead));
 		} catch (IOException e) {
-			throw new FailedUploadException();
+			throw new ExceedMaxSizeException();
 		}
 
 		return amazonS3Client.getUrl(bucket, fileName).toString();

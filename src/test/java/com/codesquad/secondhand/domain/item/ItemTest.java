@@ -25,6 +25,7 @@ import com.codesquad.secondhand.domain.status.Status;
 import com.codesquad.secondhand.domain.status.StatusRepository;
 import com.codesquad.secondhand.domain.user.User;
 import com.codesquad.secondhand.domain.user.UserRepository;
+import com.codesquad.secondhand.exception.ErrorResponse;
 import com.codesquad.secondhand.exception.auth.PermissionDeniedException;
 import com.codesquad.secondhand.exception.item_image.NoSuchItemImageException;
 
@@ -93,7 +94,7 @@ public class ItemTest extends IntegrationTestSupport {
 				// when & then
 				assertThatThrownBy(() -> newItem.removeItemImage(itemImages.get(0)))
 					.isInstanceOf(NoSuchItemImageException.class)
-					.hasMessage("존재하지 않는 상품 이미지입니다");
+					.hasMessage(ErrorResponse.NO_SUCH_ITEM_IMAGE_EXCEPTION.getMessage());
 			}),
 			DynamicTest.dynamicTest("현재 상품의 이미지가 아닌 다른 이미지를 삭제하는 경우 예외가 발생한다.", () -> {
 				// given
@@ -102,7 +103,7 @@ public class ItemTest extends IntegrationTestSupport {
 				// when & then
 				assertThatThrownBy(() -> newItem.removeItemImage(otherImage.get(0)))
 					.isInstanceOf(NoSuchItemImageException.class)
-					.hasMessage("존재하지 않는 상품 이미지입니다");
+					.hasMessage(ErrorResponse.NO_SUCH_ITEM_IMAGE_EXCEPTION.getMessage());
 			}),
 			DynamicTest.dynamicTest("상품 이미지를 삭제할 수 있다.", () -> {
 				// when
@@ -139,7 +140,7 @@ public class ItemTest extends IntegrationTestSupport {
 				// when & then
 				assertThatThrownBy(() -> otherItem.delete(loginUser.getId()))
 					.isInstanceOf(PermissionDeniedException.class)
-					.hasMessage("허가되지 않은 접근입니다");
+					.hasMessage(ErrorResponse.PERMISSION_DENIED_EXCEPTION.getMessage());
 			})
 		);
 	}
@@ -171,7 +172,7 @@ public class ItemTest extends IntegrationTestSupport {
 					() -> assertThat(myItem.getTitle()).isEqualTo("new Title"),
 					() -> assertThat(myItem.getContent()).isEqualTo("new Content"),
 					() -> assertThat(myItem.getPrice()).isEqualTo(100),
-					() -> assertThat(myItem.listImage()).isEmpty()
+					() -> assertThat(myItem.listImage()).isNull()
 				);
 			}),
 			DynamicTest.dynamicTest("새로운 내용 및 새로운 이미지가 반영되도록 수정한다.", () -> {
@@ -225,7 +226,7 @@ public class ItemTest extends IntegrationTestSupport {
 				// when & then
 				assertThatThrownBy(() -> myItem.updateStatus(otherUser.getId(), status))
 					.isInstanceOf(PermissionDeniedException.class)
-					.hasMessage("허가되지 않은 접근입니다");
+					.hasMessage(ErrorResponse.PERMISSION_DENIED_EXCEPTION.getMessage());
 			})
 		);
 	}

@@ -26,7 +26,8 @@ import com.codesquad.secondhand.domain.region.Region;
 import com.codesquad.secondhand.domain.region.RegionRepository;
 import com.codesquad.secondhand.domain.status.Status;
 import com.codesquad.secondhand.domain.status.StatusRepository;
-import com.codesquad.secondhand.domain.wishlist.WishlistRepository;
+import com.codesquad.secondhand.domain.wishlist.QueryWishlistRepository;
+import com.codesquad.secondhand.exception.ErrorResponse;
 import com.codesquad.secondhand.exception.user_region.NoSuchUserRegionException;
 import com.codesquad.secondhand.exception.wishlist.DuplicatedWishlistException;
 import com.codesquad.secondhand.exception.wishlist.NoSuchWishlistException;
@@ -52,7 +53,7 @@ public class UserTest extends IntegrationTestSupport {
 	private ItemRepository itemRepository;
 
 	@Autowired
-	private WishlistRepository wishlistRepository;
+	private QueryWishlistRepository wishlistRepository;
 
 	@DisplayName("사용자를 등록한다.")
 	@Test
@@ -109,7 +110,7 @@ public class UserTest extends IntegrationTestSupport {
 
 		assertThatThrownBy(() -> seller.validateHasRegion(region))
 			.isInstanceOf(NoSuchUserRegionException.class)
-			.hasMessage("사용자 동네 목록에 없는 동네입니다");
+			.hasMessage(ErrorResponse.NO_SUCH_USER_REGION_EXCEPTION.getMessage());
 	}
 
 	@DisplayName("사용자 관심 목록 시나리오")
@@ -120,7 +121,7 @@ public class UserTest extends IntegrationTestSupport {
 		regionRepository.saveAll(regions);
 
 		User user = FixtureFactory.createUserFixture(List.of(regions.get(0)));
-		User savedUser = userRepository.save(user);
+		userRepository.save(user);
 
 		List<Category> categories = FixtureFactory.createCategoryFixtures(3);
 		categoryRepository.saveAll(categories);
@@ -145,7 +146,7 @@ public class UserTest extends IntegrationTestSupport {
 				// when & then
 				assertThatThrownBy(() -> user.addWishlist(items.get(0)))
 					.isInstanceOf(DuplicatedWishlistException.class)
-					.hasMessage("이미 관심 목록에 담은 상품입니다");
+					.hasMessage(ErrorResponse.DUPLICATED_WISHLIST_EXCEPTION.getMessage());
 			}),
 			DynamicTest.dynamicTest("중복되지 않은 상품을 관심 목록에 등록하는데 성공한다.", () -> {
 				// when
@@ -165,7 +166,7 @@ public class UserTest extends IntegrationTestSupport {
 				// when & then
 				assertThatThrownBy(() -> user.removeWishlist(items.get(1)))
 					.isInstanceOf(NoSuchWishlistException.class)
-					.hasMessage("관심 목록에 없는 상품입니다");
+					.hasMessage(ErrorResponse.NO_SUCH_WISHLIST_EXCEPTION.getMessage());
 			}),
 			DynamicTest.dynamicTest("아이템을 삭제하면 관심 목록에서도 삭제된다.", () -> {
 				// given
@@ -175,7 +176,8 @@ public class UserTest extends IntegrationTestSupport {
 				items.get(0).delete(user.getId());
 
 				//then
-				assertThat(wishlistRepository.findSliceByUserId(pageable, user.getId())).isEmpty();
+				assertThat(wishlistRepository.filteredByUserIdAndCategoryId(user.getId(), Category.ofAll().getId(),
+					pageable)).isEmpty();
 			})
 		);
 	}
