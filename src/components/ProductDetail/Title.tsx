@@ -1,19 +1,23 @@
+import { BackButton as BackButtonStyle } from '@components/BackButton';
 import Icons from '@design/Icons';
+import { useNavigate } from 'react-router-dom';
 import { css, styled } from 'styled-components';
 
 const Title: React.FC = () => {
+  const navigate = useNavigate();
+
   return (
     <Container>
-      <button>
+      <BackButton onClick={() => navigate(-1)}>
         <Icons.ChevronLeft />
         <span>닫기</span>
-      </button>
+      </BackButton>
     </Container>
   );
 };
 
 const Container = styled.h1`
-  ${({ theme: { dimensions, fonts } }) => css`
+  ${({ theme: { dimensions } }) => css`
     display: flex;
     align-items: center;
     box-sizing: border-box;
@@ -21,22 +25,15 @@ const Container = styled.h1`
     width: 100%;
     position: absolute;
     top: 0;
-    background: black;
-    mix-blend-mode: difference;
-    & > button {
-      display: flex;
-      align-items: center;
-      padding: 8px;
-      & > svg {
-        stroke: white;
-      }
-      & > span {
-        color: white;
-        ${fonts.available.strong16}
-        padding: 0 8px;
-      }
-    }
-  `}
+    z-index: 1;
+  `};
+`;
+
+const BackButton = styled(BackButtonStyle)`
+  ${({ theme: { colors } }) => css`
+    stroke: ${colors.accent.text};
+    color: ${colors.accent.text};
+  `};
 `;
 
 export default Title;
