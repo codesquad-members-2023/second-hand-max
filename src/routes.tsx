@@ -8,6 +8,7 @@ import MyAccount from '@pages/MyAccount';
 import OAuthLoadingPage from '@pages/MyAccount/OAuthLoadingPage';
 import { Home } from '@pages/Home/index';
 import ProductDetail from '@components/ProductDetail';
+import { NotFound } from '@pages/NotFound';
 
 const AppRoutes: React.FC = () => {
   return (
@@ -19,8 +20,11 @@ const AppRoutes: React.FC = () => {
               path={`${PATH.CATEGORY_ID}/:categoryId`}
               element={<Home />}
             />
-            <Route path={`${PATH.ITEM_DETAIL}/*`} element={<ProductDetail />} />
           </Route>
+          <Route
+            path={`/${PATH.ITEM_DETAIL}/:id`}
+            element={<ProductDetail />}
+          />
           <Route path={PATH.SALES_HISTORY} element={<SalesHistory />} />
           <Route path={PATH.WISHLIST} element={<Wishlist />} />
           <Route path={PATH.CHATTING} element={<Chatting />} />

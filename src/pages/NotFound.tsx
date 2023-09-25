@@ -7,7 +7,7 @@ export const NotFound: React.FC = () => {
   return (
     <Container>
       <div>요청한 페이지가 찾을 수 없습니다.</div>
-      <Button className="login-button" $flexible="Flexible" $type="Contained">
+      <Button $flexible="Flexible" $type="Contained">
         <Link to={PATH.BASE}>홈 화면으로 돌아가기</Link>
       </Button>
     </Container>

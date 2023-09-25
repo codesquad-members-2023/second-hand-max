@@ -1,23 +1,8 @@
-import { styled } from 'styled-components';
+import { DraggableImageSlider } from '@components/DraggableImageSlider';
+import { ProductDetail } from 'types/product';
 
-const Visual: React.FC<{ url: string }> = ({ url }) => {
-  return (
-    <Container>
-      <img src={url} alt="" />
-      <figcaption className="blind">더미</figcaption>
-    </Container>
-  );
+const Visual: React.FC<Pick<ProductDetail, 'imageUrls'>> = ({ imageUrls }) => {
+  return <DraggableImageSlider imageUrls={imageUrls} />;
 };
-
-const Container = styled.figure`
-  width: 100%;
-  flex-shrink: 0;
-  overflow: hidden;
-  max-height: 300px;
-  margin-bottom: 16px;
-  img {
-    width: 100%;
-  }
-`;
 
 export default Visual;

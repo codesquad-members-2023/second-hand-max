@@ -79,7 +79,7 @@ export const postProduct = async ({
 export const getProductDetail = async (
   itemId: string,
 ): Promise<getProductDetailResponse> => {
-  const response = await fetchData(`/items/${itemId}`);
+  const response = await fetchDataWithToken(`/items/${itemId}`);
 
   return response.json();
 };

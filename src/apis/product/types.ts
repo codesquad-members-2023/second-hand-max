@@ -1,4 +1,4 @@
-import { ProductListItem } from 'types/product';
+import { ProductDetail, ProductListItem } from 'types/product';
 
 export type getProductsResponse = {
   statusCode: number;
@@ -25,18 +25,5 @@ export type PostProductRequestData = {
 
 export type getProductDetailResponse = {
   statusCode: number;
-  data: {
-    isSeller: boolean;
-    imageUrls: string[];
-    seller: string;
-    status?: string;
-    title: string;
-    categoryName: string;
-    createdAt: string;
-    content: string;
-    chatCount: number;
-    wishCount: number;
-    viewCount: number;
-    price: number;
-  };
+  data: ProductDetail;
 };

@@ -113,8 +113,8 @@ const ListItemContainer = styled.li`
 const ThumbnailFigure = styled.figure`
   ${({ theme: { colors, radius } }) => css`
     height: 120px;
-    min-width: 120px;
-    margin: 0;
+    width: 120px;
+    flex-shrink: 0;
 
     .thumbnail-image {
       width: 100%;
