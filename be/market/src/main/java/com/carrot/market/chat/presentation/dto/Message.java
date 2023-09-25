@@ -1,6 +1,7 @@
 package com.carrot.market.chat.presentation.dto;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -15,6 +16,16 @@ public class Message implements Serializable {
 	private Long chatroomId;
 	private String content;
 	private Long senderId;
+	private boolean isRead;
+	private LocalDateTime chatTime;
+
+	public void readMessage() {
+		this.isRead = true;
+	}
+
+	public void setChatTime() {
+		this.chatTime = LocalDateTime.now();
+	}
 
 	@Override
 	public String toString() {

@@ -83,16 +83,16 @@ class QueryChatroomRepositoryTest extends IntegrationTestSupport {
 		Chatroom chatroom2 = makeChatRoom(product2, sully);
 		chatroomRepository.saveAll(List.of(chatroom, chatroom2));
 		// when
-		List<ChatroomResponse> chattingList = chatroomRepository.getChattingByMemberId(
+		List<ChatroomResponse> chattingList = chatroomRepository.findChatRoomsByMemberId(
 			june.getId());
 
 		assertThat(
 			chattingList
 		).hasSize(2)
-			.extracting("nickname", "imageUrl", "locationName", "productMainImage", "chatroomId")
+			.extracting("nickname", "imageUrl", "productMainImage", "chatroomId")
 			.containsExactly(
-				tuple("bean", "www.codesquad.kr", "susongdong", "www.google.com", chatroom.getId()),
-				tuple("sully", "www.codesquad.kr", "susongdong", "www.google.com", chatroom2.getId())
+				tuple("bean", "www.codesquad.kr", "www.google.com", chatroom.getId()),
+				tuple("sully", "www.codesquad.kr", "www.google.com", chatroom2.getId())
 
 			);
 	}

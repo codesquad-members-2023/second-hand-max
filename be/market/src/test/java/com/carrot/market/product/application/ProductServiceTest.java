@@ -30,6 +30,7 @@ import com.carrot.market.product.application.dto.request.ProductCreateServiceReq
 import com.carrot.market.product.application.dto.request.ProductUpdateServiceRequest;
 import com.carrot.market.product.application.dto.response.CategoryDto;
 import com.carrot.market.product.application.dto.response.DetailPageServiceDto;
+import com.carrot.market.product.application.dto.response.ImageResponse;
 import com.carrot.market.product.application.dto.response.ProductDetailDto;
 import com.carrot.market.product.application.dto.response.ProductDetailResponseDto;
 import com.carrot.market.product.application.dto.response.SellerDetailDto;
@@ -303,7 +304,7 @@ class ProductServiceTest extends IntegrationTestSupport {
 	}
 
 	@Test
-	void getPrductDetail() {
+	void getProductDetail() {
 		// given
 		Member june = makeMember("june", "www.codesquad.kr");
 		Member bean = makeMember("bean", "www.codesquad.kr");
@@ -324,13 +325,14 @@ class ProductServiceTest extends IntegrationTestSupport {
 		// then
 		SellerDetailDto seller = productDetailResponseDto.seller();
 		ProductDetailDto productDetailDto = productDetailResponseDto.product();
+		ImageResponse imageResponse = productDetailResponseDto.images().get(0);
 		assertAll(
-			() -> assertThat(productDetailResponseDto.imageUrls().get(0)).isEqualTo(image.getImageUrl()),
+			() -> assertThat(imageResponse.imageId()).isEqualTo(image.getId()),
+			() -> assertThat(imageResponse.imageUrl()).isEqualTo(image.getImageUrl()),
 			() -> assertThat(seller.id()).isEqualTo(june.getId()),
 			() -> assertThat(seller.nickname()).isEqualTo(june.getNickname()),
-			() -> assertThat(productDetailDto.location()).isEqualTo(location.getName()),
 			() -> assertThat(productDetailDto.status()).isEqualTo(SellingStatus.SELLING.getText()),
-			() -> assertThat(productDetailDto.title()).isEqualTo(product.getProductDetails().getName()),
+			() -> assertThat(productDetailDto.title()).isEqualTo(product.getProductDetails().getTitle()),
 			() -> assertThat(productDetailDto.category()).isEqualTo(category.getName()),
 			() -> assertThat(productDetailDto.createdAt()).isEqualTo(product.getCreatedAt()),
 			() -> assertThat(productDetailDto.content()).isEqualTo(product.getProductDetails().getContent()),
@@ -572,7 +574,7 @@ class ProductServiceTest extends IntegrationTestSupport {
 
 		return ProductUpdateServiceRequest.builder()
 			.imageIds(imageIds)
-			.productDetails(makeProductDetails(productDetails.getName(), productDetails.getContent()))
+			.productDetails(makeProductDetails(productDetails.getTitle(), productDetails.getContent()))
 			.locationId(location.getId())
 			.categoryId(category.getId())
 			.build();
@@ -606,9 +608,9 @@ class ProductServiceTest extends IntegrationTestSupport {
 			.build();
 	}
 
-	private static ProductDetails makeProductDetails(String name, String content) {
+	private static ProductDetails makeProductDetails(String title, String content) {
 		return ProductDetails.builder()
-			.name(name)
+			.title(title)
 			.content(content)
 			.build();
 	}

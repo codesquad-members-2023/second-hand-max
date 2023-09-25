@@ -14,6 +14,7 @@ import com.carrot.market.global.exception.ApiException;
 import com.carrot.market.global.exception.domain.LocationException;
 import com.carrot.market.global.exception.domain.ProductException;
 import com.carrot.market.image.application.ImageService;
+import com.carrot.market.image.domain.Image;
 import com.carrot.market.location.domain.Location;
 import com.carrot.market.location.infrastructure.LocationRepository;
 import com.carrot.market.member.application.MemberService;
@@ -28,7 +29,7 @@ import com.carrot.market.product.application.dto.response.DetailPageServiceDto;
 import com.carrot.market.product.application.dto.response.ProductChangeStatusResponse;
 import com.carrot.market.product.application.dto.response.ProductCreateServiceResponse;
 import com.carrot.market.product.application.dto.response.ProductDetailResponseDto;
-import com.carrot.market.product.application.dto.response.ProductSellerDetaillDto;
+import com.carrot.market.product.application.dto.response.ProductSellerDetailDto;
 import com.carrot.market.product.application.dto.response.ProductUpdateWishList;
 import com.carrot.market.product.application.dto.response.WishListDetailDto;
 import com.carrot.market.product.domain.Category;
@@ -112,15 +113,17 @@ public class ProductService {
 	public ProductDetailResponseDto getProduct(Long memberId, Long productId) {
 		productCacheService.addViewCntToRedis(productId);
 
-		ProductSellerDetaillDto productDetailDto = productRepository.findProductDetailbyId(productId);
-		List<String> imageUrls = productImageRepository.findImageUrlsbyPrdcutId(productId);
+		final ProductSellerDetailDto productSellerDetailDto = new ProductSellerDetailDto();
+
+		ProductSellerDetailDto productDetailDto = productRepository.findProductDetailById(productId);
+		List<Image> images = productImageRepository.findImagesByProductId(productId);
 
 		if (memberId == null) {
-			return ProductDetailResponseDto.from(imageUrls, productDetailDto, false);
+			return ProductDetailResponseDto.from(images, productDetailDto, false);
 		}
 
 		Boolean isLiked = wishListRepository.existsWishListByMemberIdAndProductId(memberId, productId);
-		return ProductDetailResponseDto.from(imageUrls, productDetailDto, isLiked);
+		return ProductDetailResponseDto.from(images, productDetailDto, isLiked);
 	}
 
 	public DetailPageServiceDto getSellingProducts(String status, Long memberId, Long next, int size) {
@@ -235,6 +238,6 @@ public class ProductService {
 
 	private Product findProductById(Long productId) {
 		return productRepository.findById(productId)
-			.orElseThrow(() -> new ApiException(ProductException.NOT_FOUND_ID));
+			.orElseThrow(() -> new ApiException(ProductException.NOT_FOUND_PRODUCT));
 	}
 }
