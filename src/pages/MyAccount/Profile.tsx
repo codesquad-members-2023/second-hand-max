@@ -2,7 +2,6 @@ import { css, styled } from 'styled-components';
 import Button from '@components/Button';
 import ProfileImageUploader from '@components/ProfileImageUploader';
 import { signOutUser } from 'apis/auth';
-// import { useImageFileHandler } from '@hooks/useImageFileHandler';
 import { useUserStore } from 'stores/useUserStore';
 import { updateUserProfileImage } from 'apis/user';
 
@@ -36,7 +35,7 @@ const Profile: React.FC = () => {
         <ProfileImageUploader
           {...{
             imageSrc: user?.profileUrl,
-            onImageChange: onProfileImageChange,
+            onImageAdd: onProfileImageChange,
           }}
         />
         <UserName>{user?.loginId || '사용자 이름'}</UserName>
