@@ -35,7 +35,10 @@ export const RegionModalContent: React.FC = () => {
             }}
           />
         ))}
-        <AddRegion onClick={onAddRegionModalOpen}>
+        <AddRegion
+          onClick={onAddRegionModalOpen}
+          disabled={addresses.length >= 2}
+        >
           <Icons.Plus />
           <span>추가</span>
         </AddRegion>
@@ -45,8 +48,14 @@ export const RegionModalContent: React.FC = () => {
           {...{
             onModalClose: onAddRegionModalClose,
             addRegion: (address) => {
-              addUserAddress(address);
-              onAddRegionModalClose();
+              try {
+                addUserAddress(address);
+                onAddRegionModalClose();
+              } catch (error) {
+                if (error instanceof Error) {
+                  alert(error.message);
+                }
+              }
             },
           }}
         />

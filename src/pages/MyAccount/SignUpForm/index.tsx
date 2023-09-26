@@ -9,6 +9,7 @@ import { AddRegionButton } from './AddRegionButton';
 import { AddRegionModal } from '@components/Modal/RegionSettingModal/AddRegionModal';
 import { Address } from 'types/region';
 import { AddedRegionItem } from '@components/Modal/AddedRegionItem';
+import { ERROR_MESSAGE } from '@constants/ERROR_MESSAGE';
 
 const SignUpForm: React.FC<{ initOAuth: InitOAuthType }> = ({ initOAuth }) => {
   const [imageSrc, setImageSrc] = useState<string>();
@@ -24,7 +25,7 @@ const SignUpForm: React.FC<{ initOAuth: InitOAuthType }> = ({ initOAuth }) => {
     setFile(file);
   };
 
-  const { onImageChange } = useImageFileReader(onImageLoadSuccess);
+  const { onImageAdd } = useImageFileReader(onImageLoadSuccess);
 
   const onIdChange = (id: string) => {
     setId(id);
@@ -33,8 +34,13 @@ const SignUpForm: React.FC<{ initOAuth: InitOAuthType }> = ({ initOAuth }) => {
   const onAddRegionModalOpen = () => setIsAddRegionModalOpen(true);
   const onAddRegionModalClose = () => setIsAddRegionModalOpen(false);
 
-  const addAddress = ({ addressId, addressName }: Address) =>
+  const addAddress = ({ addressId, addressName }: Address) => {
+    if (addresses.some((address) => address.addressId === addressId)) {
+      throw new Error(ERROR_MESSAGE.DUPLICATE_REGION);
+    }
+
     setAddresses((addresses) => [...addresses, { addressId, addressName }]);
+  };
 
   const deleteAddress = (targetId: number) =>
     setAddresses((addresses) =>
@@ -56,7 +62,7 @@ const SignUpForm: React.FC<{ initOAuth: InitOAuthType }> = ({ initOAuth }) => {
   return (
     <StyledSignUpPage>
       <SignUpFormTitle {...{ canSubmit, onSubmit }} />
-      <ProfileImageUploader {...{ imageSrc, onImageChange }} />
+      <ProfileImageUploader {...{ imageSrc, onImageAdd }} />
       <SignUpField {...{ id, onIdChange }} />
       <AddedAddresses>
         {addresses?.map((address) => (
@@ -78,8 +84,14 @@ const SignUpForm: React.FC<{ initOAuth: InitOAuthType }> = ({ initOAuth }) => {
           {...{
             onModalClose: onAddRegionModalClose,
             addRegion: (address) => {
-              addAddress(address);
-              onAddRegionModalClose();
+              try {
+                addAddress(address);
+                onAddRegionModalClose();
+              } catch (error) {
+                if (error instanceof Error) {
+                  alert(error.message);
+                }
+              }
             },
           }}
         />

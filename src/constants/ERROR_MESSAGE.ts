@@ -6,4 +6,6 @@ export const ERROR_MESSAGE = {
   USER_NOT_FOUND: '스토어에 유저 정보가 없습니다.',
   TOKEN_NOT_FOUND: '스토어에 토큰이 없습니다.',
   TOKEN_REFRESH_FAILED: '토큰 재발급에 실패했습니다.',
+  DUPLICATE_REGION: '이미 등록된 동네입니다.',
+  MINIMUM_REGION: '동네는 최소 1개는 설정해야 합니다.',
 } as const;
