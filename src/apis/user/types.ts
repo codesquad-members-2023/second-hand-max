@@ -1,6 +1,6 @@
-export type updateUserProfileImageResponse = {
-  statusCode: number;
-  message: string;
+import { BaseResponse } from 'apis/types';
+
+export type updateUserProfileImageResponse = BaseResponse & {
   data: {
     profileImageUrl: string;
   };
