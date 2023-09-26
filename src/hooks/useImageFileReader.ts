@@ -5,7 +5,7 @@ export const useImageFileReader = (
 ) => {
   const reader = useMemo(() => new FileReader(), []);
 
-  const onImageChange = (file: File) => {
+  const onImageAdd = (file: File) => {
     reader.onload = ({ target }) => {
       if (target?.result) {
         onImageLoadSuccess(target.result as string, file);
@@ -15,5 +15,5 @@ export const useImageFileReader = (
     reader.readAsDataURL(file);
   };
 
-  return { onImageChange };
+  return { onImageAdd };
 };

@@ -3,22 +3,25 @@ import Icons from '@design/Icons';
 import styled, { css } from 'styled-components';
 import { PictureItem } from './PictureItem';
 import { useDraggable } from '@hooks/useDraggable';
+import { usePostProductModalStore } from '../usePostProductModalStore';
+import { useImageFileReader } from '@hooks/useImageFileReader';
 
-type Props = {
-  imageSrcList?: string[];
-  thumbnailIndex: number;
-  selectThumbnail: (index: number) => void;
-  onImageChange: (file: File) => void;
-  onDeleteButtonClick: (index: number) => void;
-};
+export const PictureList: React.FC = () => {
+  const addImage = usePostProductModalStore(({ addImage }) => addImage);
+  const deleteImage = usePostProductModalStore(
+    ({ deleteImage }) => deleteImage,
+  );
+  const images = usePostProductModalStore(({ images }) => images);
+  const { onImageAdd } = useImageFileReader((result, file) =>
+    addImage({ imageSrc: result, imageFile: file }),
+  );
+  const thumbnailId = usePostProductModalStore(
+    ({ thumbnailId }) => thumbnailId,
+  );
+  const setThumbnailId = usePostProductModalStore(
+    ({ setThumbnailId }) => setThumbnailId,
+  );
 
-export const PictureList: React.FC<Props> = ({
-  imageSrcList,
-  thumbnailIndex,
-  selectThumbnail,
-  onImageChange,
-  onDeleteButtonClick,
-}) => {
   const { scrollContainerRef, onDragStart, onDragMove, onDragEnd } =
     useDraggable();
 
@@ -42,23 +45,23 @@ export const PictureList: React.FC<Props> = ({
             const file = target.files?.[0];
 
             if (file) {
-              onImageChange(file);
+              onImageAdd(file);
             }
+
+            target.value = '';
           }}
         />
         <Icons.Camera />
-        <ImageCounter>{imageSrcList?.length ?? 0}/10</ImageCounter>
+        <ImageCounter>{images?.length ?? 0}/10</ImageCounter>
       </AddButton>
-      {imageSrcList &&
-        imageSrcList.map((imageSrc, index) => (
+      {images &&
+        images.map(({ id, imageSrc }) => (
           <PictureItem
-            key={imageSrc}
-            {...{
-              imageSrc,
-              isThumbnail: thumbnailIndex === index,
-              onClick: () => selectThumbnail(index),
-              onDeleteButtonClick: () => onDeleteButtonClick(index),
-            }}
+            key={id}
+            imageSrc={imageSrc}
+            isThumbnail={thumbnailId === id}
+            onClick={() => setThumbnailId(id)}
+            onDeleteButtonClick={() => deleteImage(id)}
           />
         ))}
     </FlexContainer>

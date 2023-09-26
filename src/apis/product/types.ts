@@ -15,7 +15,7 @@ export type PostProductRequestData = {
   thumbnailImage: File;
   images?: File[];
   title: string;
-  price?: number;
+  price?: string;
   content?: string;
   region: string;
   status: '판매중' | '판매완료' | '예약중';
