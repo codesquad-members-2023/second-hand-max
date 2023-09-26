@@ -6,30 +6,20 @@ import {
   getProductsResponse,
 } from './types';
 
-export const getProducts = async ({
-  region,
-  categoryId,
-  nextPageParam,
-}: {
+export const getProducts = async (params: {
   region: string;
   categoryId?: string;
   nextPageParam: number;
 }): Promise<getProductsResponse> => {
-  const params = new URLSearchParams();
+  const urlParams = new URLSearchParams();
 
-  if (region) {
-    params.append('region', region);
-  }
+  Object.entries(params).forEach(([key, value]) => {
+    if (key && value) {
+      urlParams.append(key, String(value));
+    }
+  });
 
-  if (categoryId) {
-    params.append('categoryId', categoryId);
-  }
-
-  if (nextPageParam) {
-    params.append('categoryId', String(nextPageParam));
-  }
-
-  const response = await fetchData(`/items?${params}`);
+  const response = await fetchData(`/items?${urlParams}`);
 
   return response.json();
 };
