@@ -139,9 +139,8 @@ export const useUserStore = create<UserStore>()(
           }
         } catch (error) {
           get().reset();
-          alert('로그인 정보가 만료됐습니다. 다시 로그인하여 주시기 바랍니다.');
-          location.href = PATH.MY_ACCOUNT;
-          console.error(error);
+          location.href = `/${PATH.MY_ACCOUNT}`;
+          alert(ERROR_MESSAGE.REQUEST_SIGN_IN);
         }
       },
 
