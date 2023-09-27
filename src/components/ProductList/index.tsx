@@ -4,13 +4,13 @@ import { ProductListItem } from 'types/product';
 import { InfiniteData } from '@tanstack/react-query';
 
 type Props = {
-  productListItems?: InfiniteData<ProductListItem[]>;
+  productListItems: InfiniteData<ProductListItem[]>;
 };
 
 export const ProductList: React.FC<Props> = ({ productListItems }) => {
   return (
     <ProductListItems>
-      {productListItems?.pages.map((page) =>
+      {productListItems.pages.map((page) =>
         page.map((product) => <ListItem key={product.itemId} {...product} />),
       )}
     </ProductListItems>

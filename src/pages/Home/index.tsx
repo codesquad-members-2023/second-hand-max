@@ -24,9 +24,8 @@ export const Home: React.FC = () => {
     <>
       <TopBar />
       <Content>
-        {isLoading ? (
-          <Loader />
-        ) : (
+        {isLoading && <Loader />}
+        {productListItems && (
           <ProductList productListItems={productListItems} />
         )}
         <Fab onClick={openPostProductModal} />
