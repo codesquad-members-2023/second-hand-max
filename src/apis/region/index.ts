@@ -1,4 +1,4 @@
-import { fetchData } from 'apis/fetchData';
+import { fetchData, fetchDataWithToken } from 'apis/fetchData';
 import { GetRegionsResponse } from './types';
 
 export const getRegions = async (
@@ -16,6 +16,20 @@ export const getRegions = async (
   }
 
   const response = await fetchData(`/regions?${params}`);
+
+  return response.json();
+};
+
+export const addRegion = async (addressId: number) => {
+  const response = await fetchDataWithToken(`/regions`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      addressId,
+    }),
+  });
 
   return response.json();
 };

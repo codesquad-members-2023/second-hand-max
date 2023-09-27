@@ -5,6 +5,7 @@ import { AddedRegionItem } from '../AddedRegionItem';
 import { useUserStore } from 'stores/useUserStore';
 import { useState } from 'react';
 import { AddRegionModal } from './AddRegionModal';
+import { addRegion } from 'apis/region';
 
 export const RegionModalContent: React.FC = () => {
   const { addresses } = useUserStore(({ getUser }) => getUser());
@@ -50,6 +51,7 @@ export const RegionModalContent: React.FC = () => {
             addRegion: (address) => {
               try {
                 addUserAddress(address);
+                addRegion(address.addressId);
                 onAddRegionModalClose();
               } catch (error) {
                 if (error instanceof Error) {
