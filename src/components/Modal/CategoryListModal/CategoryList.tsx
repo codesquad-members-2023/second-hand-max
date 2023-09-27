@@ -1,18 +1,30 @@
 import Button from '@components/Button';
 import styled, { css } from 'styled-components';
 import { Category } from 'types/category';
+import { usePostProductModalStore } from '../PostProductModal/usePostProductModalStore';
 
 type Props = {
   categories: Category[];
-  onClick: (category: Category) => void;
 };
 
-export const CategoryList: React.FC<Props> = ({ categories, onClick }) => {
+export const CategoryList: React.FC<Props> = ({ categories }) => {
+  const setSelectCategory = usePostProductModalStore(
+    ({ setSelectCategory }) => setSelectCategory,
+  );
+  const closeCategoryListModal = usePostProductModalStore(
+    ({ closeCategoryListModal }) => closeCategoryListModal,
+  );
+
   return (
     <Categories>
       {categories.map((category) => (
         <CategoryItem key={category.id}>
-          <CategoryButton onClick={() => onClick(category)}>
+          <CategoryButton
+            onClick={() => {
+              setSelectCategory(category);
+              closeCategoryListModal();
+            }}
+          >
             {category.name}
           </CategoryButton>
         </CategoryItem>

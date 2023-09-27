@@ -1,11 +1,9 @@
-import { useState } from 'react';
 import styled, { css } from 'styled-components';
 import { usePostProductModalStore } from '../usePostProductModalStore';
 import { useCategoryQuery } from '@hooks/queries/useCategoryQuery';
 import { Tag } from '@components/Tag';
 import Icons from '@design/Icons';
 import { CategoryListModal } from '@components/Modal/CategoryListModal';
-import { Category } from 'types/category';
 
 const EXAMPLE_CATEGORY_MAX_COUNT = 3;
 
@@ -17,10 +15,12 @@ export const CategorySelector: React.FC = () => {
   const setSelectCategory = usePostProductModalStore(
     ({ setSelectCategory }) => setSelectCategory,
   );
-
-  const [isCategoryListModalOpen, setIsCategoryListModalOpen] = useState(false);
-  const openCategoryListModalOpen = () => setIsCategoryListModalOpen(true);
-  const closeCategoryListModalOpen = () => setIsCategoryListModalOpen(false);
+  const isCategoryListModalOpen = usePostProductModalStore(
+    ({ isCategoryListModalOpen }) => isCategoryListModalOpen,
+  );
+  const openCategoryListModal = usePostProductModalStore(
+    ({ openCategoryListModal }) => openCategoryListModal,
+  );
 
   const { withoutPopularCategories: categories } = useCategoryQuery();
 
@@ -35,26 +35,17 @@ export const CategorySelector: React.FC = () => {
       {title && (
         <CategoryContainer>
           <Tags>
-            {exampleCategories &&
-              exampleCategories.map((category) => (
-                <Tag
-                  key={category.id}
-                  title={category.name}
-                  isSelected={selectCategory?.id === category.id}
-                  onClick={() => setSelectCategory(category)}
-                />
-              ))}
+            {exampleCategories?.map((category) => (
+              <Tag
+                key={category.id}
+                title={category.name}
+                isSelected={selectCategory?.id === category.id}
+                onClick={() => setSelectCategory(category)}
+              />
+            ))}
           </Tags>
-          <Icons.ChevronRight onClick={openCategoryListModalOpen} />
-          {isCategoryListModalOpen && (
-            <CategoryListModal
-              closeCategoryListModalOpen={closeCategoryListModalOpen}
-              categoryListSelect={(category: Category) => {
-                setSelectCategory(category);
-                closeCategoryListModalOpen();
-              }}
-            />
-          )}
+          <Icons.ChevronRight onClick={openCategoryListModal} />
+          {isCategoryListModalOpen && <CategoryListModal />}
         </CategoryContainer>
       )}
     </>

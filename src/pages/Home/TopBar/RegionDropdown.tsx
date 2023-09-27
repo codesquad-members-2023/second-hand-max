@@ -25,20 +25,18 @@ export const RegionDropdown: React.FC = () => {
       </Dropdown.Indicator>
 
       <Dropdown.Menus>
-        {user?.addresses ? (
-          user.addresses.map((address) => (
-            <Dropdown.MenuItem
-              key={address.addressId}
-              $isSelected={address.addressId === currentRegion.addressId}
-              onClick={() => {
-                setCurrentRegion(address);
-                closeDropdown();
-              }}
-            >
-              {address.addressName}
-            </Dropdown.MenuItem>
-          ))
-        ) : (
+        {user?.addresses.map((address) => (
+          <Dropdown.MenuItem
+            key={address.addressId}
+            $isSelected={address.addressId === currentRegion.addressId}
+            onClick={() => {
+              setCurrentRegion(address);
+              closeDropdown();
+            }}
+          >
+            {address.addressName}
+          </Dropdown.MenuItem>
+        )) ?? (
           <Dropdown.MenuItem onClick={closeDropdown} $isSelected={true}>
             역삼1동
           </Dropdown.MenuItem>

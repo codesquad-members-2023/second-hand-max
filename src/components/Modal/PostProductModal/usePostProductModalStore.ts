@@ -15,6 +15,7 @@ type PostProductModalStore = {
   price: string;
   content: string;
   selectCategory: Category | null;
+  isCategoryListModalOpen: boolean;
   getImageIdAndIncrement: () => number;
   incrementImageId: () => void;
   addImage: (image: Omit<ImageBundle, 'id'>) => void;
@@ -24,6 +25,8 @@ type PostProductModalStore = {
   setPrice: (price: string) => void;
   setContent: (content: string) => void;
   setSelectCategory: (category: Category) => void;
+  openCategoryListModal: () => void;
+  closeCategoryListModal: () => void;
   reset: () => void;
 };
 
@@ -35,6 +38,7 @@ const initialState = {
   price: '',
   content: '',
   selectCategory: null,
+  isCategoryListModalOpen: false,
 };
 
 export const usePostProductModalStore = create<PostProductModalStore>()(
@@ -71,6 +75,9 @@ export const usePostProductModalStore = create<PostProductModalStore>()(
     setPrice: (price) => set(() => ({ price })),
     setContent: (content) => set(() => ({ content })),
     setSelectCategory: (category) => set(() => ({ selectCategory: category })),
+    openCategoryListModal: () => set(() => ({ isCategoryListModalOpen: true })),
+    closeCategoryListModal: () =>
+      set(() => ({ isCategoryListModalOpen: false })),
     reset: () => set({ ...initialState }),
   }),
 );
