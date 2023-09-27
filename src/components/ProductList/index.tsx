@@ -9,15 +9,14 @@ type Props = {
 
 export const ProductList: React.FC<Props> = ({ productListItems }) => {
   return (
-    <ProductListContainer>
-      {productListItems &&
-        productListItems.pages.map((page) =>
-          page.map((product) => <ListItem key={product.itemId} {...product} />),
-        )}
-    </ProductListContainer>
+    <ProductListItems>
+      {productListItems?.pages.map((page) =>
+        page.map((product) => <ListItem key={product.itemId} {...product} />),
+      )}
+    </ProductListItems>
   );
 };
 
-const ProductListContainer = styled.ul`
+const ProductListItems = styled.ul`
   padding: 0 16px;
 `;
