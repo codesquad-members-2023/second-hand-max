@@ -23,11 +23,16 @@ export const InfiniteScrollTrigger: React.FC<Props> = ({
   const loadMoreRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
+    if (!hasNextPage || isFetchingNextPage) {
+      return;
+    }
+
     const observer = new IntersectionObserver(([first]) => {
-      if (first?.isIntersecting && hasNextPage && !isFetchingNextPage) {
+      if (first?.isIntersecting) {
         fetchNextPage();
       }
     });
+
     const ref = loadMoreRef.current;
 
     if (ref) {
@@ -43,7 +48,7 @@ export const InfiniteScrollTrigger: React.FC<Props> = ({
 
   return (
     <TriggerDiv ref={loadMoreRef}>
-      {isFetchingNextPage ? <Loader /> : null}
+      {isFetchingNextPage && <Loader />}
     </TriggerDiv>
   );
 };
