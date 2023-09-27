@@ -11,8 +11,8 @@ export const useProductInfiniteQuery = (
       getProducts({ region, categoryId, nextPageParam: pageParam }),
     getNextPageParam: (lastPage) => lastPage.data.paging.nextCursor,
     select: (data) => ({
-      pages: [...data.pages.map((page) => page.data.contents)],
-      pageParams: [...data.pageParams],
+      pages: data.pages.map((page) => page.data.contents),
+      pageParams: data.pageParams,
     }),
   });
 };
