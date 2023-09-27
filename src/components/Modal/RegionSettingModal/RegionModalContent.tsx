@@ -5,7 +5,7 @@ import { AddedRegionItem } from '../AddedRegionItem';
 import { useUserStore } from 'stores/useUserStore';
 import { useState } from 'react';
 import { AddRegionModal } from './AddRegionModal';
-import { addRegion } from 'apis/region';
+import { addRegion, deleteRegion } from 'apis/region';
 
 export const RegionModalContent: React.FC = () => {
   const { addresses } = useUserStore(({ getUser }) => getUser());
@@ -32,7 +32,10 @@ export const RegionModalContent: React.FC = () => {
             key={address.addressId}
             {...{
               addressName: address.addressName,
-              onDeleteButtonClick: () => deleteUserAddress(address.addressId),
+              onDeleteButtonClick: () => {
+                deleteUserAddress(address.addressId);
+                deleteRegion(address.addressId);
+              },
             }}
           />
         ))}

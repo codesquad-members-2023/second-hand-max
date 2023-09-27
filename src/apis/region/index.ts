@@ -33,3 +33,17 @@ export const addRegion = async (addressId: number) => {
 
   return response.json();
 };
+
+export const deleteRegion = async (addressId: number) => {
+  const response = await fetchDataWithToken(`/regions`, {
+    method: 'DELETE',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      addressId,
+    }),
+  });
+
+  return response.json();
+};
