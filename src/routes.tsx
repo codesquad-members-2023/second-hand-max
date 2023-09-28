@@ -1,7 +1,7 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import SecondHand from '@components/SecondHand';
 import PATH from '@constants/PATH';
-import SalesHistory from '@pages/SalesHistory';
+import { SalesHistory } from '@pages/SalesHistory/index';
 import Wishlist from '@pages/Wishlist';
 import Chatting from '@pages/Chatting';
 import MyAccount from '@pages/MyAccount';

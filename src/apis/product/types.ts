@@ -1,6 +1,6 @@
 import { ProductDetail, ProductListItem } from 'types/product';
 
-export type getProductsResponse = {
+export type GetProductsResponse = {
   statusCode: number;
   data: {
     contents: ProductListItem[];
@@ -23,7 +23,7 @@ export type PostProductRequestData = {
   categoryName: string;
 };
 
-export type getProductDetailResponse = {
+export type GetProductDetailResponse = {
   statusCode: number;
   data: ProductDetail;
 };

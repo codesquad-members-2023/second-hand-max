@@ -2,15 +2,15 @@ import { fetchData } from 'apis/fetchData';
 import { fetchDataWithToken } from 'apis/fetchData';
 import {
   PostProductRequestData,
-  getProductDetailResponse,
-  getProductsResponse,
+  GetProductDetailResponse,
+  GetProductsResponse,
 } from './types';
 
 export const getProducts = async (params: {
   region: string;
   categoryId?: string;
-  nextPageParam: number;
-}): Promise<getProductsResponse> => {
+  cursor: number;
+}): Promise<GetProductsResponse> => {
   const urlParams = new URLSearchParams();
 
   Object.entries(params).forEach(([key, value]) => {
@@ -68,7 +68,7 @@ export const postProduct = async ({
 
 export const getProductDetail = async (
   itemId: string,
-): Promise<getProductDetailResponse> => {
+): Promise<GetProductDetailResponse> => {
   const response = await fetchDataWithToken(`/items/${itemId}`);
 
   return response.json();

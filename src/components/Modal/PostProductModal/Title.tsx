@@ -21,6 +21,9 @@ export const Title: React.FC = () => {
   const selectCategory = usePostProductModalStore(
     ({ selectCategory }) => selectCategory,
   );
+  const postProductModalStoreReset = usePostProductModalStore(
+    ({ reset }) => reset,
+  );
 
   const currentRegion = useUserStore(({ currentRegion }) => currentRegion);
 
@@ -54,7 +57,14 @@ export const Title: React.FC = () => {
 
   return (
     <TopBar>
-      <BackButton onClick={closePostProductModal}>닫기</BackButton>
+      <BackButton
+        onClick={() => {
+          closePostProductModal();
+          postProductModalStoreReset();
+        }}
+      >
+        닫기
+      </BackButton>
       <div>내 물건 팔기</div>
       <SubmitButton onClick={onSubmitProduct} disabled={!canSubmit}>
         완료

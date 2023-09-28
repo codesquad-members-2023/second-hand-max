@@ -96,7 +96,6 @@ const Like: React.FC<{ count: number }> = ({ count }) => {
 
 const ListItemContainer = styled.li`
   ${({ theme: { colors } }) => css`
-    border-bottom: 1px solid ${colors.neutral.border};
     padding: 16px 0;
 
     a {
@@ -104,8 +103,8 @@ const ListItemContainer = styled.li`
       gap: 16px;
     }
 
-    &:last-child {
-      border: 0;
+    &:not(:last-child) {
+      border-bottom: 1px solid ${colors.neutral.border};
     }
   `}
 `;

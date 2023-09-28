@@ -2,7 +2,6 @@ import {
   FetchNextPageOptions,
   InfiniteQueryObserverResult,
 } from '@tanstack/react-query';
-import { GetRegionsResponse } from 'apis/region/types';
 import { useEffect, useRef } from 'react';
 import styled from 'styled-components';
 import { Loader } from './Loader';
@@ -12,7 +11,7 @@ type Props = {
   isFetchingNextPage: boolean;
   fetchNextPage: (
     options?: FetchNextPageOptions,
-  ) => Promise<InfiniteQueryObserverResult<GetRegionsResponse, unknown>>;
+  ) => Promise<InfiniteQueryObserverResult>;
 };
 
 export const InfiniteScrollTrigger: React.FC<Props> = ({

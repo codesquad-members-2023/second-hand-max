@@ -15,7 +15,7 @@ export const Home: React.FC = () => {
   );
   const { categoryId } = useParams();
 
-  const { isLoading, data: productListItems } = useProductInfiniteQuery(
+  const productQuery = useProductInfiniteQuery(
     currentRegion.addressName,
     categoryId,
   );
@@ -24,11 +24,12 @@ export const Home: React.FC = () => {
     <>
       <TopBar />
       <Content>
-        {isLoading && <Loader />}
-        {productListItems && (
-          <ProductList productListItems={productListItems} />
-        )}
+        {productQuery.isLoading && <Loader />}
+        <ProductList productQuery={productQuery} />
         <Fab onClick={openPostProductModal} />
+        {!productQuery.isFetchingNextPage && !productQuery.hasNextPage && (
+          <EndOfListMessage>더 이상 상품이 없습니다!</EndOfListMessage>
+        )}
       </Content>
     </>
   );
@@ -46,4 +47,11 @@ const Content = styled.div`
     padding: 0;
     height: 0;
   }
+`;
+
+const EndOfListMessage = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding-bottom: 56px;
 `;
