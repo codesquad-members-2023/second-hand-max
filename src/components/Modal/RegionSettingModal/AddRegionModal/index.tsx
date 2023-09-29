@@ -6,7 +6,6 @@ import { useState } from 'react';
 import { useRegionInfiniteQuery } from '@hooks/queries/useRegionInfiniteQuery';
 import { Loader } from '@components/Loader';
 import { RegionList } from './RegionList';
-import { useDebounce } from '@hooks/useDebounce';
 
 type Props = {
   onModalClose: () => void;
@@ -18,10 +17,9 @@ export const AddRegionModal: React.FC<Props> = ({
   addRegion,
 }) => {
   const [searchWord, setSearchWord] = useState('');
-  const debouncedSearchWord = useDebounce(searchWord, 300);
-  const regionQuery = useRegionInfiniteQuery(debouncedSearchWord);
+  const regionQueryResult = useRegionInfiniteQuery(searchWord);
 
-  const onSearchWordChange = (word: string) => setSearchWord(word);
+  const updateSearchWord = (word: string) => setSearchWord(word);
 
   return (
     <Modal
@@ -32,17 +30,15 @@ export const AddRegionModal: React.FC<Props> = ({
       }}
     >
       <AddRegionModalHeader onModalClose={onModalClose} />
-      <SearchBar onChange={onSearchWordChange} />
+      <SearchBar updateSearchWord={updateSearchWord} />
 
-      {regionQuery.isLoading ? (
+      {regionQueryResult.isLoading ? (
         <Loader />
       ) : (
         <RegionList
           {...{
-            regions: regionQuery.data,
-            hasNextPage: regionQuery.hasNextPage,
-            isFetchingNextPage: regionQuery.isFetchingNextPage,
-            fetchNextPage: regionQuery.fetchNextPage,
+            ...regionQueryResult,
+            regions: regionQueryResult.data,
             onClick: addRegion,
           }}
         />
