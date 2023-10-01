@@ -114,6 +114,8 @@ export const useUserStore = create<UserStore>()(
         const tokens = get().tokens;
 
         if (!tokens) {
+          alert('로그인 정보가 없습니다. 로그인 하여주시기 바랍니다.');
+          location.href = `/${PATH.MY_ACCOUNT}`;
           throw new Error(ERROR_MESSAGE.TOKEN_NOT_FOUND);
         }
 

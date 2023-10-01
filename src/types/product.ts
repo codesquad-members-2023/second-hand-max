@@ -1,3 +1,5 @@
+export type ProductStatus = '판매중' | '판매완료' | '예약중';
+
 export type ProductListItem = {
   itemId: number;
   thumbnailUrl: string;

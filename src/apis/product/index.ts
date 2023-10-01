@@ -5,24 +5,7 @@ import {
   GetProductDetailResponse,
   GetProductsResponse,
 } from './types';
-
-export const getProducts = async (params: {
-  region: string;
-  categoryId?: string;
-  cursor: number;
-}): Promise<GetProductsResponse> => {
-  const urlParams = new URLSearchParams();
-
-  Object.entries(params).forEach(([key, value]) => {
-    if (key && value) {
-      urlParams.append(key, String(value));
-    }
-  });
-
-  const response = await fetchData(`/items?${urlParams}`);
-
-  return response.json();
-};
+import { ProductStatus } from 'types/product';
 
 export const postProduct = async ({
   thumbnailImage,
@@ -66,10 +49,56 @@ export const postProduct = async ({
   return response.json();
 };
 
+export const changeProductStatus = async ({
+  itemId,
+  status,
+}: {
+  itemId: string | number;
+  status: ProductStatus;
+}) => {
+  const response = await fetchDataWithToken(`/items/${itemId}/status`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      status,
+    }),
+  });
+
+  return response.json();
+};
+
+export const getProducts = async (params: {
+  region: string;
+  categoryId?: string;
+  cursor: number;
+}): Promise<GetProductsResponse> => {
+  const urlParams = new URLSearchParams();
+
+  Object.entries(params).forEach(([key, value]) => {
+    if (key && value) {
+      urlParams.append(key, String(value));
+    }
+  });
+
+  const response = await fetchData(`/items?${urlParams}`);
+
+  return response.json();
+};
+
 export const getProductDetail = async (
   itemId: string,
 ): Promise<GetProductDetailResponse> => {
   const response = await fetchDataWithToken(`/items/${itemId}`);
+
+  return response.json();
+};
+
+export const deleteProduct = async (itemId: string | number) => {
+  const response = await fetchDataWithToken(`/items/${itemId}`, {
+    method: 'DELETE',
+  });
 
   return response.json();
 };

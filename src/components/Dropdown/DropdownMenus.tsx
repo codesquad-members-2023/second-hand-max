@@ -1,29 +1,31 @@
 import { css, styled } from 'styled-components';
 import { useDropdownContext } from './useDropdownContext';
 
+type AlignDirection = 'left' | 'right';
+
 type Props = {
   children: React.ReactNode;
+  alignDirection?: AlignDirection;
 };
 
-export const DropdownMenus: React.FC<Props> = ({ children }) => {
-  const { isDropdownOpen, closeDropdown } = useDropdownContext();
-
-  if (!isDropdownOpen) {
-    return null;
-  }
+export const DropdownMenus: React.FC<Props> = ({
+  children,
+  alignDirection = 'left',
+}) => {
+  const { closeDropdown } = useDropdownContext();
 
   return (
-    <StyledDropdownMenus>
+    <StyledDropdownMenus $alignDirection={alignDirection}>
       <Box>{children}</Box>
       <Overlay onClick={closeDropdown} />
     </StyledDropdownMenus>
   );
 };
 
-const StyledDropdownMenus = styled.div`
+const StyledDropdownMenus = styled.div<{ $alignDirection: AlignDirection }>`
   position: absolute;
   top: 100%;
-  left: 0;
+  ${({ $alignDirection }) => $alignDirection}: 0;
   user-select: none;
 `;
 

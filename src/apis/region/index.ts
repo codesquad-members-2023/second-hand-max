@@ -20,6 +20,20 @@ export const getRegions = async (
   return response.json();
 };
 
+export const deleteRegion = async (addressId: number) => {
+  const response = await fetchDataWithToken(`/regions`, {
+    method: 'DELETE',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      addressId,
+    }),
+  });
+
+  return response.json();
+};
+
 export const addRegion = async (addressId: number) => {
   const response = await fetchDataWithToken(`/regions`, {
     method: 'POST',
@@ -34,14 +48,14 @@ export const addRegion = async (addressId: number) => {
   return response.json();
 };
 
-export const deleteRegion = async (addressId: number) => {
+export const selectRegion = async (selectedAddressId: number) => {
   const response = await fetchDataWithToken(`/regions`, {
-    method: 'DELETE',
+    method: 'PUT',
     headers: {
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
-      addressId,
+      selectedAddressId,
     }),
   });
 

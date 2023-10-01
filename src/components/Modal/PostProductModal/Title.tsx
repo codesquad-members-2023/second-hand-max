@@ -1,6 +1,6 @@
 import { BackButton as BackButtonStyle } from '@components/BackButton';
 import TopBarStyle from '@components/TopBar';
-import { usePostProductMutation } from '@hooks/queries/usePostProductMutation';
+import { useProductPostMutation } from '@hooks/queries/useProductPostMutation';
 import { useModalStore } from 'stores/useModalStore';
 import styled, { css } from 'styled-components';
 import { usePostProductModalStore } from './usePostProductModalStore';
@@ -27,7 +27,7 @@ export const Title: React.FC = () => {
 
   const currentRegion = useUserStore(({ currentRegion }) => currentRegion);
 
-  const { mutate: postProductMutate } = usePostProductMutation();
+  const { mutate: postProduct } = useProductPostMutation();
 
   const onSubmitProduct = () => {
     const thumbnailImage = images!.find(({ id }) => id === thumbnailId)!
@@ -36,7 +36,7 @@ export const Title: React.FC = () => {
       .filter(({ id }) => id !== thumbnailId)
       .map(({ imageFile }) => imageFile);
 
-    postProductMutate({
+    postProduct({
       thumbnailImage,
       images: imagesWithoutThumbnail,
       title,

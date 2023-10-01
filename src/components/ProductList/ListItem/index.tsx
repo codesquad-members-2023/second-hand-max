@@ -1,10 +1,12 @@
 import { css, styled } from 'styled-components';
 import { getFormattedTimeDifference } from '@utils/time';
 import Icons from '@design/Icons';
-import noThumbnailImage from '../../assets/no-thumbnail-image.png';
+import noThumbnailImage from '@assets/no-thumbnail-image.png';
 import PATH from '@constants/PATH';
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { ProductListItem } from 'types/product';
+import { Dropdown } from '@components/Dropdown';
+import { DropdownMenu } from './DropdownMenu';
 
 const ListItem: React.FC<ProductListItem> = ({
   itemId,
@@ -17,55 +19,63 @@ const ListItem: React.FC<ProductListItem> = ({
   chatCount,
   wishCount,
 }) => {
+  const navigate = useNavigate();
+
   return (
-    <ListItemContainer>
-      <Link to={`${PATH.ITEM_DETAIL}/${itemId}`}>
-        <ThumbnailFigure>
-          <img
-            className="thumbnail-image"
-            src={thumbnailUrl || noThumbnailImage}
-            alt={title}
-          />
-          <figcaption className="blind">{title}</figcaption>
-        </ThumbnailFigure>
-        <InfoContainer>
-          <Information>
-            <div className="title-and-more">
-              <h3 className="title">{title}</h3>
-              {/* more-button icon/dots */}
-            </div>
-
-            <div className="location-and-timestamp">
-              <div className="blind">동네 이름</div>
-              <div className="location">{tradingRegion}</div>
-
-              <div className="blind">생성시간</div>
-              <div className="timestamp">
-                {getFormattedTimeDifference(createdAt)}
-              </div>
-            </div>
-
-            <div className="state-and-price">
-              {status !== '판매중' && (
-                <div className="state-badge">
-                  <div className="blind">상태</div>
-                  <div className="text">{status}</div>
-                </div>
-              )}
-
-              <div className="blind">가격</div>
-              <div className="price">
-                {price === 0 ? '나눔' : `${price.toLocaleString('ko')}원`}
-              </div>
-            </div>
-          </Information>
-
-          <div className="chat-and-like-history">
-            {chatCount > 0 && <Chat count={chatCount} />}
-            {wishCount > 0 && <Like count={wishCount} />}
+    <ListItemContainer
+      onClick={() => navigate(`/${PATH.ITEM_DETAIL}/${itemId}`)}
+    >
+      <ThumbnailFigure>
+        <img
+          className="thumbnail-image"
+          src={thumbnailUrl || noThumbnailImage}
+          alt={title}
+        />
+        <figcaption className="blind">{title}</figcaption>
+      </ThumbnailFigure>
+      <InfoContainer>
+        <Information>
+          <div className="title-and-more">
+            <div className="title">{title}</div>
+            <StyledMenuButton onClick={(event) => event.stopPropagation()}>
+              <Dropdown>
+                <DropdownMenu itemId={itemId} />
+              </Dropdown>
+            </StyledMenuButton>
           </div>
-        </InfoContainer>
-      </Link>
+
+          <div className="location-and-timestamp">
+            <div className="blind">동네 이름</div>
+            <div className="location">{tradingRegion}</div>
+
+            <div className="blind">생성시간</div>
+            <div className="timestamp">
+              {getFormattedTimeDifference(createdAt)}
+            </div>
+          </div>
+
+          <div className="state-and-price">
+            {status !== '판매중' && (
+              <div className="state-badge">
+                <div className="blind">상태</div>
+                <div className="text">{status}</div>
+              </div>
+            )}
+
+            <div className="blind">가격</div>
+            <div className="price">
+              {price === 0 || price === null
+                ? '나눔'
+                : `${price.toLocaleString('ko')}원`}
+            </div>
+          </div>
+        </Information>
+
+        <div className="chat-and-like-history">
+          {chatCount > 0 && <Chat count={chatCount} />}
+          {wishCount > 0 && <Like count={wishCount} />}
+        </div>
+      </InfoContainer>
     </ListItemContainer>
   );
 };
@@ -97,11 +107,9 @@ const Like: React.FC<{ count: number }> = ({ count }) => {
 const ListItemContainer = styled.li`
   ${({ theme: { colors } }) => css`
     padding: 16px 0;
-
-    a {
-      display: flex;
-      gap: 16px;
-    }
+    display: flex;
+    gap: 16px;
+    cursor: pointer;
 
     &:not(:last-child) {
       border-bottom: 1px solid ${colors.neutral.border};
@@ -147,11 +155,13 @@ const Information = styled.div`
 
     .title-and-more {
       display: flex;
-      flex-direction: column;
-      gap: 4px;
+      justify-content: space-between;
 
       .title {
-        width: 100%;
+        width: 160px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
         ${fonts.display.default16};
       }
     }
@@ -194,6 +204,14 @@ const Information = styled.div`
       gap: 4px;
     }
   `}
+`;
+
+const StyledMenuButton = styled.button`
+  ${({ theme: { colors } }) => css`
+    padding: 0;
+    stroke: ${colors.neutral.textStrong};
+    fill: ${colors.neutral.textStrong};
+  `};
 `;
 
 const History = styled.div`

@@ -16,15 +16,15 @@ const ProductDetail: React.FC = () => {
     return <Loader />;
   }
 
-  if (isError) {
+  if (isError || !id) {
     return <ErrorPage onClick={refetch} />;
   }
 
   return (
     <Container>
-      <TopBar />
+      <TopBar itemId={id} isSeller={data.isSeller} />
       <Visual imageUrls={data.imageUrls} />
-      <Content data={data} />
+      <Content data={data} itemId={id} />
       <BottomBar price={data.price} />
     </Container>
   );

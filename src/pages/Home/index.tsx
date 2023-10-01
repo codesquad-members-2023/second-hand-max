@@ -24,12 +24,17 @@ export const Home: React.FC = () => {
     <>
       <TopBar />
       <Content>
-        {productQuery.isLoading && <Loader />}
-        <ProductList productQuery={productQuery} />
-        <Fab onClick={openPostProductModal} />
-        {!productQuery.isFetchingNextPage && !productQuery.hasNextPage && (
-          <EndOfListMessage>더 이상 상품이 없습니다!</EndOfListMessage>
+        {productQuery.isLoading ? (
+          <Loader />
+        ) : (
+          <>
+            <ProductList queryResult={productQuery} />
+            {!productQuery.isFetchingNextPage && !productQuery.hasNextPage && (
+              <EndOfListMessage>더 이상 상품이 없습니다!</EndOfListMessage>
+            )}
+          </>
         )}
+        <Fab onClick={openPostProductModal} />
       </Content>
     </>
   );

@@ -2,13 +2,13 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import SecondHand from '@components/SecondHand';
 import PATH from '@constants/PATH';
 import { SalesHistory } from '@pages/SalesHistory/index';
-import Wishlist from '@pages/Wishlist';
-import Chatting from '@pages/Chatting';
+import { Wishlist } from '@pages/Wishlist/index';
 import MyAccount from '@pages/MyAccount';
 import OAuthLoadingPage from '@pages/MyAccount/OAuthLoadingPage';
 import { Home } from '@pages/Home/index';
 import ProductDetail from '@components/ProductDetail';
 import { NotFound } from '@pages/NotFound';
+import Chatting from '@pages/Chatting/index';
 
 const AppRoutes: React.FC = () => {
   return (

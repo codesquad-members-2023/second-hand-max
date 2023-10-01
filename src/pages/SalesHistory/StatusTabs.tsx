@@ -12,27 +12,27 @@ export const StatusTabs: React.FC<Props> = ({
   onStatusFilterSelect,
 }) => {
   return (
-    <Tabs>
+    <Tags>
       <Tag
-        title={'전체'}
+        title="전체"
         isSelected={statusFilter === 'all'}
         onClick={() => onStatusFilterSelect('all')}
       />
       <Tag
-        title={'판매중'}
+        title="판매중"
         isSelected={statusFilter === 'on_sale'}
         onClick={() => onStatusFilterSelect('on_sale')}
       />
       <Tag
-        title={'판매완료'}
+        title="판매완료"
         isSelected={statusFilter === 'sold_out'}
         onClick={() => onStatusFilterSelect('sold_out')}
       />
-    </Tabs>
+    </Tags>
   );
 };
 
-const Tabs = styled.div`
+const Tags = styled.div`
   width: 100%;
   padding: 0 16px;
   margin-bottom: 8px;

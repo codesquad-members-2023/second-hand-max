@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { styled } from 'styled-components';
 import ProfileImageUploader from '@components/ProfileImageUploader';
-import { InitOAuthType } from '@hooks/useOAuth';
 import { useImageFileReader } from '@hooks/useImageFileReader';
 import { SignUpFormTitle } from './SignUpFormTitle';
 import { SignUpField } from './SignUpField';
@@ -10,8 +9,10 @@ import { AddRegionModal } from '@components/Modal/RegionSettingModal/AddRegionMo
 import { Address } from 'types/region';
 import { AddedRegionItem } from '@components/Modal/AddedRegionItem';
 import { ERROR_MESSAGE } from '@constants/ERROR_MESSAGE';
+import useOAuth from '@hooks/useOAuth';
 
-const SignUpForm: React.FC<{ initOAuth: InitOAuthType }> = ({ initOAuth }) => {
+const SignUpForm: React.FC = () => {
+  const { initOAuth } = useOAuth();
   const [imageSrc, setImageSrc] = useState<string>();
   const [file, setFile] = useState<File>();
   const [id, setId] = useState('');

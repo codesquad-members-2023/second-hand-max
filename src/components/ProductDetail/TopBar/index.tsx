@@ -1,18 +1,18 @@
-import { BackButton as BackButtonStyle } from '@components/BackButton';
-import Icons from '@design/Icons';
-import { useNavigate } from 'react-router-dom';
 import { css, styled } from 'styled-components';
+import { BackButton } from './BackButton';
+import { MenuButton } from './MenuButton';
 
-export const TopBar: React.FC = () => {
-  const navigate = useNavigate();
+type Props = {
+  itemId: string;
+  isSeller: boolean;
+};
 
+export const TopBar: React.FC<Props> = ({ itemId, isSeller }) => {
   return (
     <Sticky>
       <TopBarContainer>
-        <BackButton onClick={() => navigate(-1)}>
-          <Icons.ChevronLeft />
-          <span>닫기</span>
-        </BackButton>
+        <BackButton />
+        {isSeller && <MenuButton itemId={itemId} />}
       </TopBarContainer>
     </Sticky>
   );
@@ -29,6 +29,7 @@ const TopBarContainer = styled.h1`
     position: absolute;
     display: flex;
     align-items: center;
+    justify-content: space-between;
     width: 100%;
     height: ${dimensions.topBarHeight};
 
@@ -38,14 +39,5 @@ const TopBarContainer = styled.h1`
       rgba(0, 0, 0, 0.2) 30%,
       rgba(0, 0, 0, 0) 100%
     );
-  `};
-`;
-
-const BackButton = styled(BackButtonStyle)`
-  ${({ theme: { colors } }) => css`
-    background: none;
-    top: 8px;
-    stroke: ${colors.accent.text};
-    color: ${colors.accent.text};
   `};
 `;

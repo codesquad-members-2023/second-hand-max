@@ -5,3 +5,14 @@ export type updateUserProfileImageResponse = BaseResponse & {
     profileImageUrl: string;
   };
 };
+
+export type getUserAddressesResponse = BaseResponse & {
+  data: {
+    addresses: {
+      addressId: number;
+      fullAddressName: string;
+      addressName: string;
+      isSelected: boolean;
+    }[];
+  };
+};

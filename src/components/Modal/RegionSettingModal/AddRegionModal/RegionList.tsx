@@ -28,16 +28,15 @@ export const RegionList: React.FC<Props> = ({
 }) => {
   return (
     <Regions>
-      {regions &&
-        regions.pages.map((page) =>
-          page.data.contents.map((region) => (
-            <Region key={region.addressId}>
-              <RegionButton onClick={() => onClick(region)}>
-                {region.fullAddressName}
-              </RegionButton>
-            </Region>
-          )),
-        )}
+      {regions?.pages.map((page) =>
+        page.data.contents.map((region) => (
+          <Region key={region.addressId}>
+            <RegionButton onClick={() => onClick(region)}>
+              {region.fullAddressName}
+            </RegionButton>
+          </Region>
+        )),
+      )}
       <InfiniteScrollTrigger
         {...{ hasNextPage, isFetchingNextPage, fetchNextPage }}
       />

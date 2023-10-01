@@ -1,4 +1,4 @@
-import { ProductDetail, ProductListItem } from 'types/product';
+import { ProductDetail, ProductListItem, ProductStatus } from 'types/product';
 
 export type GetProductsResponse = {
   statusCode: number;
@@ -18,7 +18,7 @@ export type PostProductRequestData = {
   price?: string;
   content?: string;
   region: string;
-  status: '판매중' | '판매완료' | '예약중';
+  status: ProductStatus;
   categoryId: number;
   categoryName: string;
 };

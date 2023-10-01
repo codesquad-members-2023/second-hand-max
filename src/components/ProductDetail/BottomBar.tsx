@@ -1,7 +1,7 @@
 import BottomBarStyle from '@components/BottomBar';
 import ButtonStyle from '@components/Button';
 import Icons from '@design/Icons';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import { ProductDetail } from 'types/product';
 
 export const BottomBar: React.FC<Pick<ProductDetail, 'price'>> = ({
@@ -10,9 +10,11 @@ export const BottomBar: React.FC<Pick<ProductDetail, 'price'>> = ({
   return (
     <Container>
       <LikeAndPrice>
-        <Icons.Heart />
+        <LikeButton>
+          <Icons.Heart />
+        </LikeButton>
         <Price>
-          <div>{price.toLocaleString('ko')}</div>
+          <div>{price?.toLocaleString('ko') ?? 0}</div>
           <div>원</div>
         </Price>
       </LikeAndPrice>
@@ -36,8 +38,12 @@ const LikeAndPrice = styled.div`
   display: flex;
   gap: 8px;
   align-items: center;
+`;
 
-  stroke: ${({ theme: { colors } }) => colors.neutral.textStrong};
+const LikeButton = styled(ButtonStyle)`
+  ${({ theme: { colors } }) => css`
+    stroke: ${colors.neutral.textStrong};
+  `}
 `;
 
 const Price = styled.div`

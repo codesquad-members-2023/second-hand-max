@@ -1,10 +1,13 @@
 import Icons from '@design/Icons';
+import { useProductStatusMutation } from '@hooks/queries/useProductStatusMutation';
 import { getFormattedTimeDifference } from '@utils/time';
+import { ChangeEvent } from 'react';
 import { css, styled } from 'styled-components';
-import { ProductDetail } from 'types/product';
+import { ProductDetail, ProductStatus } from 'types/product';
 
 const Content: React.FC<{
   data: Omit<ProductDetail, 'imageUrls' | 'price'>;
+  itemId: string;
 }> = ({
   data: {
     isSeller,
@@ -18,7 +21,10 @@ const Content: React.FC<{
     wishCount,
     viewCount,
   },
+  itemId,
 }) => {
+  const { mutate: changeProductStatus } = useProductStatusMutation();
+
   return (
     <Container>
       <SellerInfo>
@@ -29,7 +35,17 @@ const Content: React.FC<{
         <Status>
           <dt className="blind">상태</dt>
           <dd>
-            <select name="status" id="status" value={status}>
+            <select
+              name="status"
+              id="status"
+              defaultValue={status}
+              onChange={({ target }: ChangeEvent<HTMLSelectElement>) => {
+                changeProductStatus({
+                  itemId,
+                  status: target.value as ProductStatus,
+                });
+              }}
+            >
               <option value="판매중">판매중</option>
               <option value="예약중">예약중</option>
               <option value="판매완료">판매완료</option>
@@ -140,8 +156,8 @@ const Status = styled.div`
         display: inline-flex;
 
         & > svg {
+          pointer-events: none;
           position: absolute;
-          z-index: -1;
           top: 0;
           right: 16px;
           stroke: ${colors.neutral.text};

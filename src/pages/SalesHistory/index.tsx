@@ -8,7 +8,7 @@ import { ProductList } from '@components/ProductList';
 
 export const SalesHistory: React.FC = () => {
   const [statusFilter, setStatusFilter] = useState<ProductStatus>('all');
-  const salesHistoryQuery = useSalesHistoryInfiniteQuery(statusFilter);
+  const salesHistoryQueryResult = useSalesHistoryInfiniteQuery(statusFilter);
 
   const onStatusFilterSelect = (status: ProductStatus) => {
     setStatusFilter(status);
@@ -17,11 +17,13 @@ export const SalesHistory: React.FC = () => {
   return (
     <>
       <Title aria-label="판매내역">판매내역</Title>
+
       <StatusTabs
         statusFilter={statusFilter}
         onStatusFilterSelect={onStatusFilterSelect}
       />
-      <ProductList productQuery={salesHistoryQuery} />
+
+      <ProductList queryResult={salesHistoryQueryResult} />
     </>
   );
 };

@@ -1,6 +1,9 @@
 import { fetchDataWithToken } from 'apis/fetchData';
 import { useUserStore } from 'stores/useUserStore';
-import { updateUserProfileImageResponse } from './types';
+import {
+  getUserAddressesResponse,
+  updateUserProfileImageResponse,
+} from './types';
 
 export const updateUserProfileImage = async (
   file: File,
@@ -16,6 +19,12 @@ export const updateUserProfileImage = async (
     method: 'PUT',
     body: formData,
   });
+
+  return response.json();
+};
+
+export const getUserAddresses = async (): Promise<getUserAddressesResponse> => {
+  const response = await fetchDataWithToken(`/members/regions`);
 
   return response.json();
 };
