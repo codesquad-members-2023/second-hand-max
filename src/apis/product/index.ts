@@ -6,6 +6,7 @@ import {
   GetProductsResponse,
 } from './types';
 import { ProductStatus } from 'types/product';
+import { getQueryString } from '@utils/getQueryString';
 
 export const postProduct = async ({
   thumbnailImage,
@@ -74,15 +75,8 @@ export const getProducts = async (params: {
   categoryId?: string;
   cursor: number;
 }): Promise<GetProductsResponse> => {
-  const urlParams = new URLSearchParams();
-
-  Object.entries(params).forEach(([key, value]) => {
-    if (key && value) {
-      urlParams.append(key, String(value));
-    }
-  });
-
-  const response = await fetchData(`/items?${urlParams}`);
+  const queryString = getQueryString(params);
+  const response = await fetchData(`/items?${queryString}`);
 
   return response.json();
 };

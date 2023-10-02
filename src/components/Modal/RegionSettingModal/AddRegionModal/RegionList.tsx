@@ -1,42 +1,32 @@
 import Button from '@components/Button';
 import { InfiniteScrollTrigger } from '@components/InfiniteScrollTrigger';
-import {
-  FetchNextPageOptions,
-  InfiniteData,
-  InfiniteQueryObserverResult,
-} from '@tanstack/react-query';
-import { GetRegionsResponse } from 'apis/region/types';
+import { useFlattenPages } from '@hooks/useFlattenPages';
+import { UseInfiniteQueryResult } from '@tanstack/react-query';
 import { css, styled } from 'styled-components';
 import { Address } from 'types/region';
 
 type Props = {
-  regions?: InfiniteData<GetRegionsResponse>;
-  hasNextPage?: boolean;
-  isFetchingNextPage: boolean;
-  fetchNextPage: (
-    options?: FetchNextPageOptions,
-  ) => Promise<InfiniteQueryObserverResult<GetRegionsResponse, unknown>>;
-  onClick: (address: Address) => void;
+  regionQueryResult: UseInfiniteQueryResult<Address[], unknown>;
+  onRegionSelect: (address: Address) => void;
 };
 
 export const RegionList: React.FC<Props> = ({
-  regions,
-  hasNextPage,
-  isFetchingNextPage,
-  fetchNextPage,
-  onClick,
+  regionQueryResult,
+  onRegionSelect,
 }) => {
+  const { data, hasNextPage, isFetchingNextPage, fetchNextPage } =
+    regionQueryResult;
+  const regions = useFlattenPages(data);
+
   return (
     <Regions>
-      {regions?.pages.map((page) =>
-        page.data.contents.map((region) => (
-          <Region key={region.addressId}>
-            <RegionButton onClick={() => onClick(region)}>
-              {region.fullAddressName}
-            </RegionButton>
-          </Region>
-        )),
-      )}
+      {regions.map((region) => (
+        <Region key={region.addressId}>
+          <RegionButton onClick={() => onRegionSelect(region)}>
+            {region.fullAddressName}
+          </RegionButton>
+        </Region>
+      ))}
       <InfiniteScrollTrigger
         {...{ hasNextPage, isFetchingNextPage, fetchNextPage }}
       />

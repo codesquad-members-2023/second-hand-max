@@ -1,13 +1,11 @@
+import { Paging } from 'apis/types';
 import { ProductDetail, ProductListItem, ProductStatus } from 'types/product';
 
 export type GetProductsResponse = {
   statusCode: number;
   data: {
     contents: ProductListItem[];
-    paging: {
-      nextCursor: number;
-      hasNext: boolean;
-    };
+    paging: Paging;
   };
 };
 

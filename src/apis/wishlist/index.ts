@@ -1,18 +1,13 @@
+import { getQueryString } from '@utils/getQueryString';
 import { fetchDataWithToken } from 'apis/fetchData';
+import { GetWishListResponse } from './types';
 
 export const getWishlist = async (params: {
   categoryId?: number;
   cursor: number;
-}) => {
-  const urlParams = new URLSearchParams();
-
-  Object.entries(params).forEach(([key, value]) => {
-    if (key && value) {
-      urlParams.append(key, String(value));
-    }
-  });
-
-  const response = await fetchDataWithToken(`/wishes${urlParams}`);
+}): Promise<GetWishListResponse> => {
+  const queryString = getQueryString(params);
+  const response = await fetchDataWithToken(`/wishes${queryString}`);
 
   return response.json();
 };

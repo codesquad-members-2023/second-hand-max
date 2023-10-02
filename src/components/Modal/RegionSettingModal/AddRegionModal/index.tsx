@@ -36,11 +36,8 @@ export const AddRegionModal: React.FC<Props> = ({
         <Loader />
       ) : (
         <RegionList
-          {...{
-            ...regionQueryResult,
-            regions: regionQueryResult.data,
-            onClick: addRegion,
-          }}
+          regionQueryResult={regionQueryResult}
+          onRegionSelect={addRegion}
         />
       )}
     </Modal>

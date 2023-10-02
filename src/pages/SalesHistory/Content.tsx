@@ -1,7 +1,7 @@
 import { InfiniteScrollTrigger } from '@components/InfiniteScrollTrigger';
 import { ProductList } from '@components/ProductList';
+import { useFlattenPages } from '@hooks/useFlattenPages';
 import { UseInfiniteQueryResult } from '@tanstack/react-query';
-import { useMemo } from 'react';
 import styled from 'styled-components';
 import { SalesHistoryProductListItem } from 'types/product';
 
@@ -12,18 +12,10 @@ type Props = {
   >;
 };
 
-export const Content: React.FC<Props> = ({
-  salesHistoryQueryResult: {
-    data,
-    hasNextPage,
-    isFetchingNextPage,
-    fetchNextPage,
-  },
-}) => {
-  const productListItems = useMemo(
-    () => (data ? data.pages.flatMap((data) => data) : []),
-    [data],
-  );
+export const Content: React.FC<Props> = ({ salesHistoryQueryResult }) => {
+  const { data, hasNextPage, isFetchingNextPage, fetchNextPage } =
+    salesHistoryQueryResult;
+  const productListItems = useFlattenPages(data);
 
   return (
     <StyledContent>

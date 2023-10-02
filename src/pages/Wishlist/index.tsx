@@ -6,6 +6,7 @@ import { ProductList } from '@components/ProductList';
 import { CategoryTabs } from './CategoryTabs';
 import { useWishlistCategoryQuery } from '@hooks/queries/useWishlistCategoryQuery';
 import { InfiniteScrollTrigger } from '@components/InfiniteScrollTrigger';
+import { useFlattenPages } from '@hooks/useFlattenPages';
 
 export const ALL_CATEGORY_ID = 0;
 
@@ -13,12 +14,9 @@ export const Wishlist: React.FC = () => {
   const [selectedCategoryId, setSelectedCategoryId] =
     useState<number>(ALL_CATEGORY_ID);
   const { data: categories } = useWishlistCategoryQuery();
-  const {
-    data: productListItems,
-    hasNextPage,
-    isFetchingNextPage,
-    fetchNextPage,
-  } = useWishlistInfiniteQuery(selectedCategoryId);
+  const { data, hasNextPage, isFetchingNextPage, fetchNextPage } =
+    useWishlistInfiniteQuery(selectedCategoryId);
+  const productListItems = useFlattenPages(data);
 
   const onCategorySelect = (categoryId: number) => {
     setSelectedCategoryId(categoryId);
@@ -37,7 +35,7 @@ export const Wishlist: React.FC = () => {
       {productListItems && (
         <>
           <ProductList
-            productListItems={productListItems.pages}
+            productListItems={productListItems}
             isMenuButtonAlwaysVisible
           />
           <InfiniteScrollTrigger

@@ -1,21 +1,13 @@
 import { fetchData, fetchDataWithToken } from 'apis/fetchData';
 import { GetRegionsResponse } from './types';
+import { getQueryString } from '@utils/getQueryString';
 
-export const getRegions = async (
-  query: string = '역삼동',
-  nextPageParam: number,
-): Promise<GetRegionsResponse> => {
-  const params = new URLSearchParams();
-
-  if (query) {
-    params.append('region', query);
-  }
-
-  if (nextPageParam) {
-    params.append('cursor', String(nextPageParam));
-  }
-
-  const response = await fetchData(`/regions?${params}`);
+export const getRegions = async (params: {
+  region: string;
+  cursor: number;
+}): Promise<GetRegionsResponse> => {
+  const queryString = getQueryString(params);
+  const response = await fetchData(`/regions?${queryString}`);
 
   return response.json();
 };

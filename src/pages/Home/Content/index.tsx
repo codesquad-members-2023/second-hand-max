@@ -3,7 +3,7 @@ import { InfiniteScrollTrigger } from '@components/InfiniteScrollTrigger';
 import { Loader } from '@components/Loader';
 import { ProductList } from '@components/ProductList';
 import { useProductInfiniteQuery } from '@hooks/queries/useProductInfiniteQuery';
-import { useMemo } from 'react';
+import { useFlattenPages } from '@hooks/useFlattenPages';
 import { useParams } from 'react-router-dom';
 import { useModalStore } from 'stores/useModalStore';
 import { useUserStore } from 'stores/useUserStore';
@@ -15,14 +15,9 @@ export const Content: React.FC = () => {
     ({ openPostProductModal }) => openPostProductModal,
   );
   const { categoryId } = useParams();
-
   const { data, isLoading, hasNextPage, isFetchingNextPage, fetchNextPage } =
     useProductInfiniteQuery(currentRegion.addressName, categoryId);
-
-  const productListItems = useMemo(
-    () => (data ? data.pages.flatMap((data) => data) : []),
-    [data],
-  );
+  const productListItems = useFlattenPages(data);
 
   return (
     <StyledContent>
