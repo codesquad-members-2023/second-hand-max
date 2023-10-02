@@ -1,47 +1,61 @@
 import Icons from '@design/Icons';
+import { useProductStatusMutation } from '@hooks/queries/useProductStatusMutation';
 import { getFormattedTimeDifference } from '@utils/time';
+import { ChangeEvent } from 'react';
 import { css, styled } from 'styled-components';
+import { ProductDetail, ProductStatus } from 'types/product';
 
-const Content: React.FC = () => {
-  const {
-    // itemId,
-    // thumbnailUrl,
+const Content: React.FC<{
+  data: Omit<ProductDetail, 'imageUrls' | 'price'>;
+  itemId: string;
+}> = ({
+  data: {
+    isSeller,
+    seller,
+    status,
     title,
-    tradingRegion,
+    categoryName,
     createdAt,
-    // price,
-    // status,
+    content,
     chatCount,
     wishCount,
-  } = {
-    // itemId: 0,
-    // thumbnailUrl: 'http:~~',
-    title: '잎사귀 포스터',
-    tradingRegion: '역삼 1동',
-    createdAt: '2023-08-22T14:14:32',
-    // price: 59000,
-    // status: '판매중',
-    chatCount: 0,
-    wishCount: 1,
-  };
+    viewCount,
+  },
+  itemId,
+}) => {
+  const { mutate: changeProductStatus } = useProductStatusMutation();
 
   return (
     <Container>
       <SellerInfo>
         <dt>판매자 정보</dt>
-        <dd>판매자 닉네임</dd>
+        <dd>{seller}</dd>
       </SellerInfo>
-      <Status>
-        <dt className="blind">상태</dt>
-        <dd>
-          <select name="status" id="status">
-            <option value="판매중">판매중</option>
-          </select>
-          <label htmlFor="status" className="maker">
-            <Icons.ChevronDown />
-          </label>
-        </dd>
-      </Status>
+      {isSeller && (
+        <Status>
+          <dt className="blind">상태</dt>
+          <dd>
+            <select
+              name="status"
+              id="status"
+              defaultValue={status}
+              onChange={({ target }: ChangeEvent<HTMLSelectElement>) => {
+                changeProductStatus({
+                  itemId,
+                  status: target.value as ProductStatus,
+                });
+              }}
+            >
+              <option value="판매중">판매중</option>
+              <option value="예약중">예약중</option>
+              <option value="판매완료">판매완료</option>
+            </select>
+            <label htmlFor="status" className="maker">
+              <Icons.ChevronDown />
+            </label>
+          </dd>
+        </Status>
+      )}
       <div>
         <dt className="blind">상품</dt>
         <dd>
@@ -49,8 +63,8 @@ const Content: React.FC = () => {
             <dt className="blind">제목</dt>
             <Title>{title}</Title>
             <LocationAndTimestamp>
-              <dt className="blind">동네이름</dt>
-              <Location>{tradingRegion}</Location>
+              <dt className="blind">카테고리</dt>
+              <Location>{categoryName}</Location>
 
               <dt className="blind">생성시간</dt>
               <dd className="timestamp">
@@ -59,8 +73,8 @@ const Content: React.FC = () => {
             </LocationAndTimestamp>
 
             <dt className="blind">설명</dt>
-            <Description>...</Description>
-            {/* chat-like-view-history */}
+            <Description>{content}</Description>
+
             <ChatLikeViewHistory>
               <div>
                 <dt>
@@ -78,7 +92,7 @@ const Content: React.FC = () => {
                 <dt>
                   조회 <span className="blind">수</span>
                 </dt>
-                <dd>0</dd>
+                <dd>{viewCount}</dd>
               </div>
             </ChatLikeViewHistory>
           </Info>
@@ -88,6 +102,14 @@ const Content: React.FC = () => {
   );
 };
 
+const Container = styled.dl`
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  flex-grow: 1;
+`;
+
 const SellerInfo = styled.div`
   ${({ theme: { colors, radius, fonts } }) => css`
     padding: 16px;
@@ -95,9 +117,11 @@ const SellerInfo = styled.div`
     justify-content: space-between;
     background: ${colors.neutral.backgroundWeak};
     border-radius: ${radius.medium};
+
     & > dt {
       ${fonts.available.default16}
     }
+
     & > dd {
       ${fonts.available.strong16}
     }
@@ -111,6 +135,7 @@ const Status = styled.div`
       align-items: center;
       border: 1px solid ${colors.neutral.border};
       border-radius: ${radius.medium};
+
       & > select {
         ${fonts.available.default12}
         border-radius: ${radius.medium};
@@ -119,17 +144,20 @@ const Status = styled.div`
         appearance: none;
         border: 0;
         background-color: transparent;
+
         option {
           ${fonts.available.default12}
         }
       }
+
       & > .maker {
         position: relative;
         height: 24px;
         display: inline-flex;
+
         & > svg {
+          pointer-events: none;
           position: absolute;
-          z-index: -1;
           top: 0;
           right: 16px;
           stroke: ${colors.neutral.text};
@@ -140,13 +168,12 @@ const Status = styled.div`
 `;
 
 const Info = styled.dl`
-  min-height: 300px;
   position: relative;
-  margin-bottom: 80px;
 `;
 
 const Title = styled.dd`
-  ${({ theme }) => theme.fonts.display.strong20}
+  ${({ theme }) => theme.fonts.display.strong20};
+  margin-bottom: 8px;
 `;
 
 const LocationAndTimestamp = styled.div`
@@ -154,6 +181,7 @@ const LocationAndTimestamp = styled.div`
     display: flex;
     ${fonts.display.default12};
     color: ${colors.neutral.textWeak};
+    margin-bottom: 16px;
   `}
 `;
 
@@ -165,27 +193,18 @@ const Location = styled.dd`
 `;
 
 const Description = styled.dd`
-  min-height: 200px;
+  margin-bottom: 16px;
 `;
 
 const ChatLikeViewHistory = styled.div`
-  position: absolute;
-  right: 0;
-  bottom: 0;
-  ${({ theme }) => theme.fonts.display.default12}
+  ${({ theme }) => theme.fonts.display.default12};
   display: flex;
   gap: 8px;
+
   & > div {
     display: flex;
     gap: 4px;
   }
-`;
-
-const Container = styled.dl`
-  padding: 0 16px;
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
 `;
 
 export default Content;

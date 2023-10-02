@@ -5,6 +5,7 @@ import { AddedRegionItem } from '../AddedRegionItem';
 import { useUserStore } from 'stores/useUserStore';
 import { useState } from 'react';
 import { AddRegionModal } from './AddRegionModal';
+import { addRegion, deleteRegion } from 'apis/region';
 
 export const RegionModalContent: React.FC = () => {
   const { addresses } = useUserStore(({ getUser }) => getUser());
@@ -31,11 +32,17 @@ export const RegionModalContent: React.FC = () => {
             key={address.addressId}
             {...{
               addressName: address.addressName,
-              onDeleteButtonClick: () => deleteUserAddress(address.addressId),
+              onDeleteButtonClick: () => {
+                deleteUserAddress(address.addressId);
+                deleteRegion(address.addressId);
+              },
             }}
           />
         ))}
-        <AddRegion onClick={onAddRegionModalOpen}>
+        <AddRegion
+          onClick={onAddRegionModalOpen}
+          disabled={addresses.length >= 2}
+        >
           <Icons.Plus />
           <span>추가</span>
         </AddRegion>
@@ -45,8 +52,15 @@ export const RegionModalContent: React.FC = () => {
           {...{
             onModalClose: onAddRegionModalClose,
             addRegion: (address) => {
-              addUserAddress(address);
-              onAddRegionModalClose();
+              try {
+                addUserAddress(address);
+                addRegion(address.addressId);
+                onAddRegionModalClose();
+              } catch (error) {
+                if (error instanceof Error) {
+                  alert(error.message);
+                }
+              }
             },
           }}
         />

@@ -2,7 +2,6 @@ import {
   FetchNextPageOptions,
   InfiniteQueryObserverResult,
 } from '@tanstack/react-query';
-import { GetRegionsResponse } from 'apis/region/types';
 import { useEffect, useRef } from 'react';
 import styled from 'styled-components';
 import { Loader } from './Loader';
@@ -12,7 +11,7 @@ type Props = {
   isFetchingNextPage: boolean;
   fetchNextPage: (
     options?: FetchNextPageOptions,
-  ) => Promise<InfiniteQueryObserverResult<GetRegionsResponse, unknown>>;
+  ) => Promise<InfiniteQueryObserverResult>;
 };
 
 export const InfiniteScrollTrigger: React.FC<Props> = ({
@@ -23,11 +22,16 @@ export const InfiniteScrollTrigger: React.FC<Props> = ({
   const loadMoreRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
+    if (!hasNextPage || isFetchingNextPage) {
+      return;
+    }
+
     const observer = new IntersectionObserver(([first]) => {
-      if (first?.isIntersecting && hasNextPage && !isFetchingNextPage) {
+      if (first?.isIntersecting) {
         fetchNextPage();
       }
     });
+
     const ref = loadMoreRef.current;
 
     if (ref) {
@@ -43,7 +47,7 @@ export const InfiniteScrollTrigger: React.FC<Props> = ({
 
   return (
     <TriggerDiv ref={loadMoreRef}>
-      {isFetchingNextPage ? <Loader /> : null}
+      {isFetchingNextPage && <Loader />}
     </TriggerDiv>
   );
 };

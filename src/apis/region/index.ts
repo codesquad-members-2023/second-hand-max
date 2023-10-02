@@ -1,4 +1,4 @@
-import { fetchData } from 'apis/fetchData';
+import { fetchData, fetchDataWithToken } from 'apis/fetchData';
 import { GetRegionsResponse } from './types';
 
 export const getRegions = async (
@@ -16,6 +16,48 @@ export const getRegions = async (
   }
 
   const response = await fetchData(`/regions?${params}`);
+
+  return response.json();
+};
+
+export const deleteRegion = async (addressId: number) => {
+  const response = await fetchDataWithToken(`/regions`, {
+    method: 'DELETE',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      addressId,
+    }),
+  });
+
+  return response.json();
+};
+
+export const addRegion = async (addressId: number) => {
+  const response = await fetchDataWithToken(`/regions`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      addressId,
+    }),
+  });
+
+  return response.json();
+};
+
+export const selectRegion = async (selectedAddressId: number) => {
+  const response = await fetchDataWithToken(`/regions`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      selectedAddressId,
+    }),
+  });
 
   return response.json();
 };

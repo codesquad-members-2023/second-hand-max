@@ -1,6 +1,6 @@
-import { ProductListItem } from 'types/product';
+import { ProductDetail, ProductListItem, ProductStatus } from 'types/product';
 
-export type getProductsResponse = {
+export type GetProductsResponse = {
   statusCode: number;
   data: {
     contents: ProductListItem[];
@@ -15,10 +15,15 @@ export type PostProductRequestData = {
   thumbnailImage: File;
   images?: File[];
   title: string;
-  price?: number;
+  price?: string;
   content?: string;
   region: string;
-  status: '판매중' | '판매완료' | '예약중';
+  status: ProductStatus;
   categoryId: number;
   categoryName: string;
+};
+
+export type GetProductDetailResponse = {
+  statusCode: number;
+  data: ProductDetail;
 };

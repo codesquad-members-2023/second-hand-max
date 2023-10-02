@@ -4,7 +4,11 @@ import {
   SignUpUserResponse,
   UpdateAccessTokenResponse,
 } from './types';
-import { BASE_URL, OAUTH_PROVIDER } from '@constants/ENV_VARIABLES';
+import {
+  BASE_URL,
+  OAUTH_PROVIDER,
+  OAUTH_REDIRECT_URI,
+} from '@constants/ENV_VARIABLES';
 import { useUserStore } from 'stores/useUserStore';
 
 export const signUpUser = async ({
@@ -28,7 +32,7 @@ export const signUpUser = async ({
   formData.append('signupData', new Blob([data], { type: 'application/json' }));
 
   const response = await fetchData(
-    `/auth/${OAUTH_PROVIDER}/signup?code=${code}`,
+    `/auth/${OAUTH_PROVIDER}/signup?code=${code}&redirectUrl=${OAUTH_REDIRECT_URI}`,
     {
       method: 'POST',
       body: formData,
@@ -46,7 +50,7 @@ export const signInUser = async ({
   id: string;
 }): Promise<SignInUserResponse> => {
   const response = await fetchData(
-    `/auth/${OAUTH_PROVIDER}/login?code=${code}`,
+    `/auth/${OAUTH_PROVIDER}/login?code=${code}&redirectUrl=${OAUTH_REDIRECT_URI}`,
     {
       method: 'POST',
       headers: {

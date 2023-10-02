@@ -3,13 +3,11 @@ import { Routes, Route } from 'react-router-dom';
 import PATH from '@constants/PATH';
 import TopBar from '@components/TopBar';
 import SignInForm from './SignInForm';
-import useOAuth from '@hooks/useOAuth';
 import Profile from './Profile';
 import { useUserStore } from 'stores/useUserStore';
 import SignUpForm from './SignUpForm';
 
 const MyAccount: React.FC = () => {
-  const { initOAuth } = useOAuth();
   const tokens = useUserStore(({ tokens }) => tokens);
   const isLogin = !!tokens;
 
@@ -18,16 +16,8 @@ const MyAccount: React.FC = () => {
       <Title aria-label="내 계정">내 계정</Title>
       <Contents>
         <Routes>
-          <Route
-            index
-            element={
-              isLogin ? <Profile /> : <SignInForm initOAuth={initOAuth} />
-            }
-          />
-          <Route
-            path={PATH.SIGN_UP}
-            element={<SignUpForm initOAuth={initOAuth} />}
-          />
+          <Route index element={isLogin ? <Profile /> : <SignInForm />} />
+          <Route path={PATH.SIGN_UP} element={<SignUpForm />} />
         </Routes>
       </Contents>
     </>

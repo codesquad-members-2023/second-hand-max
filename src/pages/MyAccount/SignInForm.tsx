@@ -4,9 +4,10 @@ import { Link } from 'react-router-dom';
 import Button from '@components/Button';
 import Field from '@components/Field';
 import PATH from '@constants/PATH';
-import { InitOAuthType } from '@hooks/useOAuth';
+import useOAuth from '@hooks/useOAuth';
 
-const SignInForm: React.FC<{ initOAuth: InitOAuthType }> = ({ initOAuth }) => {
+const SignInForm: React.FC = () => {
+  const { initOAuth } = useOAuth();
   const [id, setId] = useState('');
 
   const onChangeId = (id: string) => {

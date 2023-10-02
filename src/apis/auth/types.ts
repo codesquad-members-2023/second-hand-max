@@ -1,8 +1,8 @@
+import { BaseResponse } from 'apis/types';
 import { AccessToken, Tokens, User } from 'types';
 
-type SignUpUserSuccess = {
+type SignUpUserSuccess = BaseResponse & {
   statusCode: 201;
-  message: string;
   data: null;
 };
 
@@ -28,15 +28,13 @@ type SignUpUserFailure =
 
 export type SignUpUserResponse = SignUpUserSuccess | SignUpUserFailure;
 
-type SignInUserFailure = {
+type SignInUserFailure = BaseResponse & {
   statusCode: 401;
-  message: string;
   data: null;
 };
 
-type SignInUserSuccess = {
+type SignInUserSuccess = BaseResponse & {
   statusCode: 200;
-  message: string;
   data: {
     jwt: Tokens;
     user: User;
@@ -45,15 +43,13 @@ type SignInUserSuccess = {
 
 export type SignInUserResponse = SignInUserFailure | SignInUserSuccess;
 
-type UpdateAccessTokenFailure = {
+type UpdateAccessTokenFailure = BaseResponse & {
   statusCode: 400;
-  message: string;
   data: null;
 };
 
-type UpdateAccessTokenSuccess = {
+type UpdateAccessTokenSuccess = BaseResponse & {
   statusCode: 200;
-  message: string;
   data: {
     jwt: AccessToken;
   };
