@@ -12,7 +12,6 @@ export const ChatList: React.FC = () => {
           </NameAndTimestamp>
           <LatestMessage>
             안녕하세요! 한 가지 궁금한 점이 있어서 챗드렸습니다. 이게 메시지가
-            짤려야 하는데요?
           </LatestMessage>
         </ChatInfo>
         <Badge>1</Badge>
@@ -24,6 +23,7 @@ export const ChatList: React.FC = () => {
 
 const ChatListItems = styled.ul`
   ${({ theme: { colors } }) => css`
+    width: 100%;
     display: flex;
 
     &:not(:last-child) {
@@ -33,6 +33,7 @@ const ChatListItems = styled.ul`
 `;
 
 const ChatListItem = styled.li`
+  width: 100%;
   padding: 16px;
   box-sizing: border-box;
   display: flex;
@@ -52,7 +53,7 @@ const ProfileImage = styled.img`
 `;
 
 const ChatInfo = styled.div`
-  width: 100%;
+  width: 0;
   display: flex;
   flex-direction: column;
   gap: 4px;
@@ -60,7 +61,6 @@ const ChatInfo = styled.div`
 `;
 
 const NameAndTimestamp = styled.div`
-  width: 100%;
   display: flex;
   align-items: center;
   gap: 4px;
@@ -85,9 +85,6 @@ const LatestMessage = styled.div`
     height: 16px;
     ${fonts.display.default12};
     color: ${colors.neutral.text};
-    flex-grow: 1;
-    min-width: 0; /* 이 부분이 중요합니다. */
-    max-width: 100%;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
