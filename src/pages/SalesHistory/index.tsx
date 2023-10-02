@@ -4,7 +4,7 @@ import { StatusTabs } from './StatusTabs';
 import { useSalesHistoryInfiniteQuery } from '@hooks/queries/useSalesHistoryInfiniteQuery';
 import { useState } from 'react';
 import { ProductStatus } from 'apis/salesHistory/types';
-import { ProductList } from '@components/ProductList';
+import { Content } from './Content';
 
 export const SalesHistory: React.FC = () => {
   const [statusFilter, setStatusFilter] = useState<ProductStatus>('all');
@@ -17,13 +17,13 @@ export const SalesHistory: React.FC = () => {
   return (
     <>
       <Title aria-label="판매내역">판매내역</Title>
-
       <StatusTabs
         statusFilter={statusFilter}
         onStatusFilterSelect={onStatusFilterSelect}
       />
-
-      <ProductList queryResult={salesHistoryQueryResult} />
+      {salesHistoryQueryResult && (
+        <Content salesHistoryQueryResult={salesHistoryQueryResult} />
+      )}
     </>
   );
 };

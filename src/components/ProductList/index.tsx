@@ -1,32 +1,31 @@
 import { styled } from 'styled-components';
-import { ProductListItem } from 'types/product';
-import { InfiniteScrollTrigger } from '@components/InfiniteScrollTrigger';
-import { UseInfiniteQueryResult } from '@tanstack/react-query';
 import ListItem from './ListItem';
+import { useUserStore } from 'stores/useUserStore';
+import { ProductListItem } from 'types/product';
 
 type Props = {
-  queryResult: UseInfiniteQueryResult<ProductListItem[], unknown>;
+  productListItems: ProductListItem[];
+  isMenuButtonAlwaysVisible?: boolean;
 };
 
 export const ProductList: React.FC<Props> = ({
-  queryResult: {
-    data: productListItems,
-    hasNextPage,
-    isFetchingNextPage,
-    fetchNextPage,
-  },
+  productListItems,
+  isMenuButtonAlwaysVisible,
 }) => {
+  const loginId = useUserStore(({ user }) => user?.loginId);
+
   return (
-    <>
-      <ProductListItems>
-        {productListItems?.pages.map((page) =>
-          page.map((product) => <ListItem key={product.itemId} {...product} />),
-        )}
-      </ProductListItems>
-      <InfiniteScrollTrigger
-        {...{ hasNextPage, isFetchingNextPage, fetchNextPage }}
-      />
-    </>
+    <ProductListItems>
+      {productListItems.map((product) => (
+        <ListItem
+          key={product.itemId}
+          isMenuButtonVisible={
+            isMenuButtonAlwaysVisible || product.sellerId === loginId
+          }
+          {...product}
+        />
+      ))}
+    </ProductListItems>
   );
 };
 

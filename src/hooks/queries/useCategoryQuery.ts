@@ -6,6 +6,7 @@ export const useCategoryQuery = () => {
     queryKey: ['category'],
     queryFn: getCategories,
     select: (data) => data.data.categories,
+    staleTime: Infinity,
   });
 
   const allCategories = queryResult.data;

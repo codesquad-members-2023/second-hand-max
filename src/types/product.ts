@@ -10,6 +10,7 @@ export type ProductListItem = {
   status: string;
   chatCount: number;
   wishCount: number;
+  sellerId?: string;
 };
 
 export type ProductDetail = {
@@ -25,4 +26,16 @@ export type ProductDetail = {
   wishCount: number;
   viewCount: number;
   price: number;
+};
+
+export type SalesHistoryProductListItem = {
+  itemId: number;
+  thumbnailUrl: string;
+  title: string;
+  tradingRegion: string;
+  createdAt: string;
+  price: number;
+  status: string;
+  chatCount: number;
+  wishCount: number;
 };

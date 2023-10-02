@@ -8,7 +8,11 @@ import { ProductListItem } from 'types/product';
 import { Dropdown } from '@components/Dropdown';
 import { DropdownMenu } from './DropdownMenu';
 
-const ListItem: React.FC<ProductListItem> = ({
+type Props = ProductListItem & {
+  isMenuButtonVisible: boolean;
+};
+
+const ListItem: React.FC<Props> = ({
   itemId,
   thumbnailUrl,
   title,
@@ -18,6 +22,7 @@ const ListItem: React.FC<ProductListItem> = ({
   status,
   chatCount,
   wishCount,
+  isMenuButtonVisible,
 }) => {
   const navigate = useNavigate();
 
@@ -37,11 +42,13 @@ const ListItem: React.FC<ProductListItem> = ({
         <Information>
           <div className="title-and-more">
             <div className="title">{title}</div>
-            <StyledMenuButton onClick={(event) => event.stopPropagation()}>
-              <Dropdown>
-                <DropdownMenu itemId={itemId} />
-              </Dropdown>
-            </StyledMenuButton>
+            {isMenuButtonVisible && (
+              <StyledMenuDropdown onClick={(event) => event.stopPropagation()}>
+                <Dropdown>
+                  <DropdownMenu itemId={itemId} />
+                </Dropdown>
+              </StyledMenuDropdown>
+            )}
           </div>
 
           <div className="location-and-timestamp">
@@ -206,8 +213,9 @@ const Information = styled.div`
   `}
 `;
 
-const StyledMenuButton = styled.button`
+const StyledMenuDropdown = styled.div`
   ${({ theme: { colors } }) => css`
+    z-index: 1;
     padding: 0;
     stroke: ${colors.neutral.textStrong};
     fill: ${colors.neutral.textStrong};

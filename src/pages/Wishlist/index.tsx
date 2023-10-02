@@ -1,10 +1,11 @@
 import TopBar from '@components/TopBar';
 import { styled } from 'styled-components';
 import { useState } from 'react';
-import { useWishlistQuery } from '@hooks/queries/useWishlistQuery';
+import { useWishlistInfiniteQuery } from '@hooks/queries/useWishlistInfiniteQuery';
 import { ProductList } from '@components/ProductList';
 import { CategoryTabs } from './CategoryTabs';
 import { useWishlistCategoryQuery } from '@hooks/queries/useWishlistCategoryQuery';
+import { InfiniteScrollTrigger } from '@components/InfiniteScrollTrigger';
 
 export const ALL_CATEGORY_ID = 0;
 
@@ -12,7 +13,12 @@ export const Wishlist: React.FC = () => {
   const [selectedCategoryId, setSelectedCategoryId] =
     useState<number>(ALL_CATEGORY_ID);
   const { data: categories } = useWishlistCategoryQuery();
-  const wishlistQueryResult = useWishlistQuery(selectedCategoryId);
+  const {
+    data: productListItems,
+    hasNextPage,
+    isFetchingNextPage,
+    fetchNextPage,
+  } = useWishlistInfiniteQuery(selectedCategoryId);
 
   const onCategorySelect = (categoryId: number) => {
     setSelectedCategoryId(categoryId);
@@ -28,7 +34,17 @@ export const Wishlist: React.FC = () => {
         onCategorySelect={onCategorySelect}
       />
 
-      <ProductList queryResult={wishlistQueryResult} />
+      {productListItems && (
+        <>
+          <ProductList
+            productListItems={productListItems.pages}
+            isMenuButtonAlwaysVisible
+          />
+          <InfiniteScrollTrigger
+            {...{ hasNextPage, isFetchingNextPage, fetchNextPage }}
+          />
+        </>
+      )}
     </>
   );
 };

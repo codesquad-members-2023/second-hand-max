@@ -10,11 +10,11 @@ type Props = {
 
 export const MenuButton: React.FC<Props> = (props) => {
   return (
-    <StyledMenuButton>
+    <DropdownWrapper>
       <Dropdown>
         <ProductActionDropdown {...props} />
       </Dropdown>
-    </StyledMenuButton>
+    </DropdownWrapper>
   );
 };
 
@@ -51,9 +51,8 @@ const ProductActionDropdown: React.FC<Props> = ({ itemId }) => {
   );
 };
 
-const StyledMenuButton = styled.button`
+const DropdownWrapper = styled.div`
   ${({ theme: { colors } }) => css`
-    position: relative;
     background: none;
     padding: 8px;
     stroke: ${colors.accent.text};
