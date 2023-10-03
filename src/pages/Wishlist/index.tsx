@@ -34,10 +34,7 @@ export const Wishlist: React.FC = () => {
 
       {productListItems && (
         <>
-          <ProductList
-            productListItems={productListItems}
-            isMenuButtonAlwaysVisible
-          />
+          <ProductList productListItems={productListItems} />
           <InfiniteScrollTrigger
             {...{ hasNextPage, isFetchingNextPage, fetchNextPage }}
           />
