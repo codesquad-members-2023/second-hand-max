@@ -2,14 +2,26 @@ import styled, { css } from 'styled-components';
 import ButtonStyle from '@components/Button';
 import Icons from '@design/Icons';
 import { ProductDetail } from 'types/product';
+import { useToggleWishlistProductMutation } from '@hooks/queries/useToggleWishlistProductMutation';
 
-type Props = Pick<ProductDetail, 'price'>;
+type Props = Pick<ProductDetail, 'price' | 'isInWishList'> & { itemId: string };
 
-export const LikeAndPrice: React.FC<Props> = ({ price }) => {
+export const LikeAndPrice: React.FC<Props> = ({
+  price,
+  isInWishList,
+  itemId,
+}) => {
+  const { mutate: toggleWishlistProduct } = useToggleWishlistProductMutation();
+
   return (
     <StyledLikeAndPrice>
-      <LikeButton>
-        <Icons.Heart />
+      <LikeButton
+        isInWishList={isInWishList}
+        onClick={() =>
+          toggleWishlistProduct({ itemId, wish: isInWishList ? 'no' : 'yes' })
+        }
+      >
+        {isInWishList ? <Icons.HeartFilled /> : <Icons.Heart />}
       </LikeButton>
       <Price>
         <div>{price.toLocaleString('ko')}</div>
@@ -25,9 +37,10 @@ const StyledLikeAndPrice = styled.div`
   align-items: center;
 `;
 
-const LikeButton = styled(ButtonStyle)`
-  ${({ theme: { colors } }) => css`
-    stroke: ${colors.neutral.textStrong};
+const LikeButton = styled(ButtonStyle)<{ isInWishList: boolean }>`
+  ${({ theme: { colors }, isInWishList }) => css`
+    stroke: ${isInWishList ? colors.system.warning : colors.neutral.textStrong};
+    fill: ${colors.system.warning};
   `}
 `;
 

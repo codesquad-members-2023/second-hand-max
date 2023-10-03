@@ -12,6 +12,20 @@ export const getWishlist = async (params: {
   return response.json();
 };
 
+export const toggleWishlistProduct = async ({
+  itemId,
+  wish,
+}: {
+  itemId: string;
+  wish: 'yes' | 'no';
+}) => {
+  const response = await fetchDataWithToken(`/wishes/${itemId}?wish=${wish}`, {
+    method: 'POST',
+  });
+
+  return response.json();
+};
+
 export const getWishlistCategory = async () => {
   const response = await fetchDataWithToken(`/wishes/categories`);
 

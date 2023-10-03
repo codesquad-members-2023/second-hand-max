@@ -25,7 +25,12 @@ const ProductDetail: React.FC = () => {
       <TopBar itemId={id} isSeller={data.isSeller} />
       <Visual imageUrls={data.imageUrls} />
       <Content data={data} itemId={id} />
-      <BottomBar price={data.price} isSeller={data.isSeller} />
+      <BottomBar
+        price={data.price}
+        isSeller={data.isSeller}
+        isInWishList={data.isInWishList}
+        itemId={id}
+      />
     </Container>
   );
 };

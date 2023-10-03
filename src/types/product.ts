@@ -26,6 +26,7 @@ export type ProductDetail = {
   wishCount: number;
   viewCount: number;
   price: number;
+  isInWishList: boolean;
 };
 
 export type SalesHistoryProductListItem = {

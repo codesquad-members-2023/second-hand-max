@@ -4,12 +4,19 @@ import { ProductDetail } from 'types/product';
 import { LikeAndPrice } from './LikeAndPrice';
 import { ChatButton } from './ChatButton';
 
-type Props = Pick<ProductDetail, 'price' | 'isSeller'>;
+type Props = Pick<ProductDetail, 'price' | 'isSeller' | 'isInWishList'> & {
+  itemId: string;
+};
 
-export const BottomBar: React.FC<Props> = ({ price, isSeller }) => {
+export const BottomBar: React.FC<Props> = ({
+  price,
+  isSeller,
+  isInWishList,
+  itemId,
+}) => {
   return (
     <Container>
-      <LikeAndPrice price={price} />
+      <LikeAndPrice price={price} isInWishList={isInWishList} itemId={itemId} />
       <ChatButton isSeller={isSeller} />
     </Container>
   );
