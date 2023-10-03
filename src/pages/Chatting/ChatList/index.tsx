@@ -14,10 +14,10 @@ export const ChatList: React.FC = () => {
 
   return (
     <StyledChatList>
-      {chatList ? (
+      {chatList.length > 0 ? (
         chatList.map((chat) => <ChatListItem chat={chat} />)
       ) : (
-        <div>현재 채팅방이 없습니다.</div>
+        <NoChatRoomMessage>현재 대화중인 채팅방이 없습니다.</NoChatRoomMessage>
       )}
     </StyledChatList>
   );
@@ -32,4 +32,12 @@ const StyledChatList = styled.ul`
       border-bottom: 0.8px solid ${colors.neutral.border};
     }
   `};
+`;
+
+const NoChatRoomMessage = styled.div`
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 56px;
 `;
