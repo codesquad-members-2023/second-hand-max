@@ -4,9 +4,9 @@ import Icons from '@design/Icons';
 import styled, { css } from 'styled-components';
 import { ProductDetail } from 'types/product';
 
-export const BottomBar: React.FC<Pick<ProductDetail, 'price'>> = ({
-  price,
-}) => {
+type Props = Pick<ProductDetail, 'price' | 'isSeller'>;
+
+export const BottomBar: React.FC<Props> = ({ price, isSeller }) => {
   return (
     <Container>
       <LikeAndPrice>
@@ -18,9 +18,15 @@ export const BottomBar: React.FC<Pick<ProductDetail, 'price'>> = ({
           <div>원</div>
         </Price>
       </LikeAndPrice>
-      <Button $flexible="Flexible" $type="Contained">
-        대화 중인 채팅방
-      </Button>
+      {isSeller ? (
+        <Button $flexible="Flexible" $type="Contained">
+          대화 중인 채팅방
+        </Button>
+      ) : (
+        <Button $flexible="Flexible" $type="Contained">
+          채팅하기
+        </Button>
+      )}
     </Container>
   );
 };
