@@ -13,7 +13,6 @@ export const CategoryTabs: React.FC<Props> = ({
   selectedCategoryId,
   onCategorySelect,
 }) => {
-  console.log(categories);
   return (
     <Tags>
       <Tag
