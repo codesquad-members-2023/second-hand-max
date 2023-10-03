@@ -10,9 +10,12 @@ export type GetChatListParams = {
 
 export const getChatList = async (
   params: GetChatListParams,
+  itemId?: string,
 ): Promise<GetChatListResponse> => {
   const queryString = getQueryString(params);
-  const response = await fetchDataWithToken(`/chats?${queryString}`);
+  const response = await fetchDataWithToken(
+    `${itemId && `/items/${itemId}`}/chats?${queryString}`,
+  );
 
   return response.json();
 };

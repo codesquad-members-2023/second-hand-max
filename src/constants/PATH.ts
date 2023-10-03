@@ -12,6 +12,8 @@ const PATH = {
 
   SIGN_UP: 'sign-up',
   OAUTH_LOADING: 'oauth',
+
+  CHATS: 'chats',
 } as const;
 
 export default PATH;

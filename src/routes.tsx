@@ -22,7 +22,7 @@ const AppRoutes: React.FC = () => {
             />
           </Route>
           <Route
-            path={`/${PATH.ITEM_DETAIL}/:id`}
+            path={`/${PATH.ITEM_DETAIL}/:id/*`}
             element={<ProductDetail />}
           />
           <Route path={PATH.SALES_HISTORY} element={<SalesHistory />} />

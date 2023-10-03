@@ -2,11 +2,12 @@ import { css, styled } from 'styled-components';
 import { TopBar } from './TopBar';
 import Visual from './Visual';
 import Content from './Content';
-import { useParams } from 'react-router-dom';
+import { Route, Routes, useParams } from 'react-router-dom';
 import { useProductDetailQuery } from '@hooks/queries/useProductDetailQuery';
 import { Loader } from '@components/Loader';
 import { ErrorPage } from '@pages/ErrorPage';
 import { BottomBar } from './BottomBar';
+import { ProductChatList } from './ProductChatList';
 
 const ProductDetail: React.FC = () => {
   const { id } = useParams();
@@ -31,6 +32,10 @@ const ProductDetail: React.FC = () => {
         isInWishList={data.isInWishList}
         itemId={id}
       />
+
+      <Routes>
+        <Route path={'/chats'} element={<ProductChatList />} />
+      </Routes>
     </Container>
   );
 };

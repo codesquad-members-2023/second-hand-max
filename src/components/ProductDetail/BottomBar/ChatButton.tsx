@@ -1,14 +1,22 @@
 import { ProductDetail } from 'types/product';
 import ButtonStyle from '@components/Button';
 import styled from 'styled-components';
+import { useNavigate } from 'react-router-dom';
+import PATH from '@constants/PATH';
 
 type Props = Pick<ProductDetail, 'isSeller'>;
 
 export const ChatButton: React.FC<Props> = ({ isSeller }) => {
+  const navigate = useNavigate();
+
   return (
     <>
       {isSeller ? (
-        <Button $flexible="Flexible" $type="Contained">
+        <Button
+          $flexible="Flexible"
+          $type="Contained"
+          onClick={() => navigate(PATH.CHATS)}
+        >
           대화 중인 채팅방
         </Button>
       ) : (
