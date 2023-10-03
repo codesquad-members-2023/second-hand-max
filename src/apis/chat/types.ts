@@ -1,18 +1,11 @@
 import { Paging } from 'apis/types';
+import { Chat } from 'types/chat';
 
 export type GetChatListResponse = {
   statusCode: number;
   data: {
     lastmessageId: number;
-    contents: {
-      chatRoomId: number;
-      thumbnailUrl: string;
-      chatPartnerName: string;
-      chatPartnerProfile: string;
-      lastSendTime: string;
-      lastSendMessage: string;
-      newMessageCount: number;
-    }[];
+    contents: Chat[];
     paging: Paging;
   };
 };

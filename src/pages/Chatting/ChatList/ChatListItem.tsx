@@ -1,38 +1,41 @@
+import { getFormattedTimeDifference } from '@utils/time';
+import { useNavigate } from 'react-router-dom';
 import styled, { css } from 'styled-components';
+import { Chat } from 'types/chat';
 
-export const ChatList: React.FC = () => {
+type Props = {
+  chat: Chat;
+};
+
+export const ChatListItem: React.FC<Props> = ({ chat }) => {
+  const {
+    chatRoomId,
+    thumbnailUrl,
+    chatPartnerName,
+    chatPartnerProfile,
+    lastSendTime,
+    lastSendMessage,
+    newMessageCount,
+  } = chat;
+  const navigate = useNavigate();
+
   return (
-    <ChatListItems>
-      <ChatListItem>
-        <ProfileImage />
-        <ChatInfo>
-          <NameAndTimestamp>
-            <Name>삼만보</Name>
-            <Timestamp>4분 전</Timestamp>
-          </NameAndTimestamp>
-          <LatestMessage>
-            안녕하세요! 한 가지 궁금한 점이 있어서 챗드렸습니다. 이게 메시지가
-          </LatestMessage>
-        </ChatInfo>
-        <Badge>1</Badge>
-        <ProductImage />
-      </ChatListItem>
-    </ChatListItems>
+    <StyledChatListItem onClick={() => navigate(`${chatRoomId}`)}>
+      <ProfileImage src={chatPartnerProfile} />
+      <ChatInfo>
+        <NameAndTimestamp>
+          <Name>{chatPartnerName}</Name>
+          <Timestamp>{getFormattedTimeDifference(lastSendTime)}</Timestamp>
+        </NameAndTimestamp>
+        <LatestMessage>{lastSendMessage}</LatestMessage>
+      </ChatInfo>
+      <Badge>{newMessageCount}</Badge>
+      <ProductImage src={thumbnailUrl} />
+    </StyledChatListItem>
   );
 };
 
-const ChatListItems = styled.ul`
-  ${({ theme: { colors } }) => css`
-    width: 100%;
-    display: flex;
-
-    &:not(:last-child) {
-      border-bottom: 0.8px solid ${colors.neutral.border};
-    }
-  `};
-`;
-
-const ChatListItem = styled.li`
+const StyledChatListItem = styled.li`
   width: 100%;
   padding: 16px;
   box-sizing: border-box;
