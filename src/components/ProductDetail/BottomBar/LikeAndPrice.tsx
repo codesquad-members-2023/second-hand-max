@@ -16,7 +16,7 @@ export const LikeAndPrice: React.FC<Props> = ({
   return (
     <StyledLikeAndPrice>
       <LikeButton
-        isInWishList={isInWishList}
+        $isInWishList={isInWishList}
         onClick={() =>
           toggleWishlistProduct({ itemId, wish: isInWishList ? 'no' : 'yes' })
         }
@@ -36,9 +36,11 @@ const StyledLikeAndPrice = styled.div`
   align-items: center;
 `;
 
-const LikeButton = styled(ButtonStyle)<{ isInWishList: boolean }>`
-  ${({ theme: { colors }, isInWishList }) => css`
-    stroke: ${isInWishList ? colors.system.warning : colors.neutral.textStrong};
+const LikeButton = styled(ButtonStyle)<{ $isInWishList: boolean }>`
+  ${({ theme: { colors }, $isInWishList }) => css`
+    stroke: ${$isInWishList
+      ? colors.system.warning
+      : colors.neutral.textStrong};
     fill: ${colors.system.warning};
   `}
 `;
