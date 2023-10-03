@@ -25,7 +25,7 @@ export type ProductDetail = {
   chatCount: number;
   wishCount: number;
   viewCount: number;
-  price: number;
+  price: number | null;
   isInWishList: boolean;
 };
 

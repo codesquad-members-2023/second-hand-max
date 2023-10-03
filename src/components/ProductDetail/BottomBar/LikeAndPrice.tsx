@@ -24,8 +24,7 @@ export const LikeAndPrice: React.FC<Props> = ({
         {isInWishList ? <Icons.HeartFilled /> : <Icons.Heart />}
       </LikeButton>
       <Price>
-        <div>{price.toLocaleString('ko')}</div>
-        <div>원</div>
+        <div>{price ? `${price.toLocaleString('ko')}원` : '나눔'} </div>
       </Price>
     </StyledLikeAndPrice>
   );
