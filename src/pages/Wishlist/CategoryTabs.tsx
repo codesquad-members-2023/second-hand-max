@@ -3,7 +3,7 @@ import { ALL_CATEGORY_ID } from '.';
 import styled from 'styled-components';
 
 type Props = {
-  categories?: { id: number; name: string }[];
+  categories?: { categoryId: number; categoryName: string }[];
   selectedCategoryId: number;
   onCategorySelect: (categoryId: number) => void;
 };
@@ -13,6 +13,7 @@ export const CategoryTabs: React.FC<Props> = ({
   selectedCategoryId,
   onCategorySelect,
 }) => {
+  console.log(categories);
   return (
     <Tags>
       <Tag
@@ -22,10 +23,10 @@ export const CategoryTabs: React.FC<Props> = ({
       />
       {categories?.map((category) => (
         <Tag
-          key={category.id}
-          title={category.name}
-          isSelected={selectedCategoryId === category.id}
-          onClick={() => onCategorySelect(category.id)}
+          key={category.categoryId}
+          title={category.categoryName}
+          isSelected={selectedCategoryId === category.categoryId}
+          onClick={() => onCategorySelect(category.categoryId)}
         />
       ))}
     </Tags>

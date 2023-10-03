@@ -7,7 +7,7 @@ export const getWishlist = async (params: {
   cursor: number;
 }): Promise<GetWishListResponse> => {
   const queryString = getQueryString(params);
-  const response = await fetchDataWithToken(`/wishes${queryString}`);
+  const response = await fetchDataWithToken(`/wishes?${queryString}`);
 
   return response.json();
 };
