@@ -6,7 +6,7 @@ import styled, { css } from 'styled-components';
 export const ChatBar: React.FC = () => {
   return (
     <StyledChatBar>
-      <MessageSendField />
+      <MessageSendField placeholder="내용을 입력하세요" />
       <SendButton>
         <Icons.Send />
       </SendButton>
@@ -25,7 +25,7 @@ const StyledChatBar = styled(BottomBar)`
 `;
 
 const MessageSendField = styled.input`
-  ${({ theme: { colors, radius } }) => css`
+  ${({ theme: { colors, radius, fonts } }) => css`
     height: 100%;
     box-sizing: border-box;
     caret-color: ${colors.accent.secondary};
@@ -33,6 +33,11 @@ const MessageSendField = styled.input`
     border: 1px solid ${colors.neutral.border};
     padding: 4px 12px;
     flex-grow: 1;
+    ${fonts.available.default16};
+
+    &::placeholder {
+      color: ${colors.neutral.textWeak};
+    }
   `};
 `;
 
