@@ -14,7 +14,7 @@ export const getChatList = async (
 ): Promise<GetChatListResponse> => {
   const queryString = getQueryString(params);
   const response = await fetchDataWithToken(
-    `${itemId && `/items/${itemId}`}/chats?${queryString}`,
+    `${itemId ? `/items/${itemId}` : ''}/chats?${queryString}`,
   );
 
   return response.json();
