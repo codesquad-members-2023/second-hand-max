@@ -4,9 +4,11 @@ import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
 import PATH from '@constants/PATH';
 
-type Props = Pick<ProductDetail, 'isSeller'>;
+type Props = Pick<ProductDetail, 'isSeller'> & {
+  itemId: string;
+};
 
-export const ChatButton: React.FC<Props> = ({ isSeller }) => {
+export const ChatButton: React.FC<Props> = ({ isSeller, itemId }) => {
   const navigate = useNavigate();
 
   return (
@@ -20,7 +22,11 @@ export const ChatButton: React.FC<Props> = ({ isSeller }) => {
           대화 중인 채팅방
         </Button>
       ) : (
-        <Button $flexible="Flexible" $type="Contained">
+        <Button
+          $flexible="Flexible"
+          $type="Contained"
+          onClick={() => navigate(`/chatting/${itemId}`)}
+        >
           채팅하기
         </Button>
       )}

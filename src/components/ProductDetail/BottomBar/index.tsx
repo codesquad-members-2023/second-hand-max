@@ -17,7 +17,7 @@ export const BottomBar: React.FC<Props> = ({
   return (
     <Container>
       <LikeAndPrice price={price} isInWishList={isInWishList} itemId={itemId} />
-      <ChatButton isSeller={isSeller} />
+      <ChatButton isSeller={isSeller} itemId={itemId} />
     </Container>
   );
 };
