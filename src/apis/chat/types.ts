@@ -1,4 +1,4 @@
-import { Paging } from 'apis/types';
+import { BaseResponse, Paging } from 'apis/types';
 import { Chat } from 'types/chat';
 
 export type GetChatListParams = {
@@ -13,5 +13,11 @@ export type GetChatListResponse = {
     lastmessageId: number;
     contents: Chat[];
     paging: Paging;
+  };
+};
+
+export type CreateChatRoomResponse = BaseResponse & {
+  data: {
+    chatRoomId: number;
   };
 };
