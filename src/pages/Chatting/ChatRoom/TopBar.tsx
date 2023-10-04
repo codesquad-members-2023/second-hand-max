@@ -1,12 +1,15 @@
 import { BackButton as BackButtonStyle } from '@components/BackButton';
 import TopBarStyle from '@components/TopBar';
 import Icons from '@design/Icons';
+import { useNavigate } from 'react-router-dom';
 import { css, styled } from 'styled-components';
 
 export const TopBar: React.FC = () => {
+  const navigate = useNavigate();
+
   return (
     <Container>
-      <BackButton>
+      <BackButton onClick={() => navigate(-1)}>
         <Icons.ChevronLeft />
         <span>뒤로</span>
       </BackButton>
