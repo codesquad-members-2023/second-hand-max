@@ -1,10 +1,12 @@
 import styled, { css } from 'styled-components';
 import { TopBar } from './TopBar';
+import { ProductInfoBanner } from './ProductInfoBanner';
 
 export const ChatRoom: React.FC = () => {
   return (
     <StyledChatRoom>
       <TopBar />
+      <ProductInfoBanner />
     </StyledChatRoom>
   );
 };
