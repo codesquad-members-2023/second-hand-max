@@ -27,9 +27,14 @@ const ProductDetail: React.FC = () => {
       <Visual imageUrls={data.imageUrls} />
       <Content data={data} itemId={id} />
       <BottomBar
+        title={data.title}
+        thumbnailUrl={data.imageUrls[0]!}
         price={data.price}
+        seller={data.seller}
         isSeller={data.isSeller}
         isInWishList={data.isInWishList}
+        chatRoomCount={data.isSeller ? data.chatCount : undefined}
+        chatRoomId={data.isSeller ? undefined : data.chatRoomId}
         itemId={id}
       />
 

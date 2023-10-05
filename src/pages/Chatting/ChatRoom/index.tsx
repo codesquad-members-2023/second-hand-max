@@ -3,6 +3,8 @@ import { TopBar } from './TopBar';
 import { ProductInfoBanner } from './ProductInfoBanner';
 import { ChatBar } from './ChatBar';
 import { Messages } from './Messages';
+import { useLocation } from 'react-router-dom';
+import { useChatRoomCreateMutation } from '@hooks/queries/useChatRoomCreateMutation';
 
 export const ChatRoom: React.FC = () => {
   return (
@@ -11,6 +13,25 @@ export const ChatRoom: React.FC = () => {
       <ProductInfoBanner />
       <Messages />
       <ChatBar />
+    </StyledChatRoom>
+  );
+};
+
+export const NewChatRoom: React.FC = () => {
+  const location = useLocation();
+  const { title, thumbnailUrl, price, seller, itemId } = location.state;
+  const { mutate: createChatRoom } = useChatRoomCreateMutation();
+
+  return (
+    <StyledChatRoom>
+      <TopBar seller={seller} />
+      <ProductInfoBanner
+        title={title}
+        thumbnailUrl={thumbnailUrl}
+        price={price}
+      />
+      <Messages />
+      <ChatBar onSendMessage={() => createChatRoom(itemId)} />
     </StyledChatRoom>
   );
 };

@@ -1,12 +1,22 @@
 import styled, { css } from 'styled-components';
 
-export const ProductInfoBanner: React.FC = () => {
+type Props = {
+  title?: string;
+  thumbnailUrl?: string;
+  price?: number;
+};
+
+export const ProductInfoBanner: React.FC<Props> = ({
+  title,
+  thumbnailUrl,
+  price,
+}) => {
   return (
     <StyledProductInfoBanner>
-      <ProductImage />
+      <ProductImage src={thumbnailUrl} />
       <ProductInfo>
-        <div>빈티지 롤러 스케이트</div>
-        <ProductPrice>169,000원</ProductPrice>
+        <div>{title}</div>
+        <ProductPrice>{price?.toLocaleString('ko') ?? 0}원</ProductPrice>
       </ProductInfo>
     </StyledProductInfoBanner>
   );

@@ -1,14 +1,15 @@
 import { useInfiniteQuery } from '@tanstack/react-query';
-import { GetChatListParams, getChatList } from 'apis/chat';
+import { getChatList } from 'apis/chat';
+import { GetChatListParams } from 'apis/chat/types';
 
 export const useChatListInfiniteQuery = (
-  { size, messageId }: Omit<GetChatListParams, 'page'>,
+  { size }: Omit<GetChatListParams, 'page'>,
   itemId?: string,
 ) => {
   return useInfiniteQuery({
     queryKey: ['chat'],
     queryFn: ({ pageParam = 0 }) =>
-      getChatList({ page: pageParam, size, messageId }, itemId),
+      getChatList({ page: pageParam, size }, itemId),
     getNextPageParam: (lastPage) => lastPage.data.paging.nextCursor,
     select: (data) => ({
       pages: data.pages.map((page) => page.data.contents),

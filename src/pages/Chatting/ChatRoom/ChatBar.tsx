@@ -3,13 +3,24 @@ import Button from '@components/Button';
 import Icons from '@design/Icons';
 import styled, { css } from 'styled-components';
 
-export const ChatBar: React.FC = () => {
+type Props = {
+  onSendMessage: () => void;
+};
+
+export const ChatBar: React.FC<Props> = ({ onSendMessage }) => {
   return (
     <StyledChatBar>
-      <MessageSendField placeholder="내용을 입력하세요" />
-      <SendButton>
-        <Icons.Send />
-      </SendButton>
+      <MessageForm
+        onSubmit={(event) => {
+          event.preventDefault();
+          onSendMessage();
+        }}
+      >
+        <MessageSendField placeholder="내용을 입력하세요" />
+        <SendButton>
+          <Icons.Send />
+        </SendButton>
+      </MessageForm>
     </StyledChatBar>
   );
 };
@@ -18,10 +29,14 @@ const StyledChatBar = styled(BottomBar)`
   ${({ theme: { colors } }) => css`
     border-top: 0.8px solid ${colors.neutral.border};
     padding: 16px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
   `};
+`;
+
+const MessageForm = styled.form`
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 8px;
 `;
 
 const MessageSendField = styled.input`

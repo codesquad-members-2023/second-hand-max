@@ -15,6 +15,9 @@ export type ProductListItem = {
 
 export type ProductDetail = {
   isSeller: boolean;
+} & CommonProductData;
+
+export type CommonProductData = {
   imageUrls: string[];
   seller: string;
   status?: string;

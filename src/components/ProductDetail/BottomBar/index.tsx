@@ -4,20 +4,40 @@ import { ProductDetail } from 'types/product';
 import { LikeAndPrice } from './LikeAndPrice';
 import { ChatButton } from './ChatButton';
 
-type Props = Pick<ProductDetail, 'price' | 'isSeller' | 'isInWishList'> & {
+type Props = Pick<
+  ProductDetail,
+  'title' | 'price' | 'seller' | 'isSeller' | 'isInWishList'
+> & {
+  thumbnailUrl: string;
   itemId: string;
+  chatRoomCount?: number;
+  chatRoomId?: number | null;
 };
 
 export const BottomBar: React.FC<Props> = ({
+  title,
+  thumbnailUrl,
   price,
+  seller,
   isSeller,
   isInWishList,
   itemId,
+  chatRoomCount,
+  chatRoomId,
 }) => {
   return (
     <Container>
       <LikeAndPrice price={price} isInWishList={isInWishList} itemId={itemId} />
-      <ChatButton isSeller={isSeller} itemId={itemId} />
+      <ChatButton
+        title={title}
+        thumbnailUrl={thumbnailUrl}
+        price={price}
+        seller={seller}
+        isSeller={isSeller}
+        itemId={itemId}
+        chatRoomCount={chatRoomCount}
+        chatRoomId={chatRoomId}
+      />
     </Container>
   );
 };

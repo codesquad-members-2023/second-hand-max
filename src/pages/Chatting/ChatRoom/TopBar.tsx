@@ -4,7 +4,11 @@ import Icons from '@design/Icons';
 import { useNavigate } from 'react-router-dom';
 import { css, styled } from 'styled-components';
 
-export const TopBar: React.FC = () => {
+type Props = {
+  seller: string;
+};
+
+export const TopBar: React.FC<Props> = ({ seller }) => {
   const navigate = useNavigate();
 
   return (
@@ -13,7 +17,7 @@ export const TopBar: React.FC = () => {
         <Icons.ChevronLeft />
         <span>뒤로</span>
       </BackButton>
-      <span>삼만보</span>
+      <span>{seller}</span>
       <MenuButton>
         <Icons.Dots />
       </MenuButton>

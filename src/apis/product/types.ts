@@ -1,5 +1,9 @@
 import { Paging } from 'apis/types';
-import { ProductDetail, ProductListItem, ProductStatus } from 'types/product';
+import {
+  CommonProductData,
+  ProductListItem,
+  ProductStatus,
+} from 'types/product';
 
 export type GetProductsResponse = {
   statusCode: number;
@@ -23,5 +27,12 @@ export type PostProductRequestData = {
 
 export type GetProductDetailResponse = {
   statusCode: number;
-  data: ProductDetail;
+  data:
+    | ({
+        isSeller: true;
+      } & CommonProductData)
+    | ({
+        isSeller: false;
+        chatRoomId: number | null;
+      } & CommonProductData);
 };
