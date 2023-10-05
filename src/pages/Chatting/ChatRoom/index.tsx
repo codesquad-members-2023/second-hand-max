@@ -3,8 +3,9 @@ import { TopBar } from './TopBar';
 import { ProductInfoBanner } from './ProductInfoBanner';
 import { ChatBar } from './ChatBar';
 import { Messages } from './Messages';
-import { useLocation } from 'react-router-dom';
-import { useChatRoomCreateMutation } from '@hooks/queries/useChatRoomCreateMutation';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { useChatMessagePostMutation } from '@hooks/queries/useChatMessagePostMutation';
+import { createChatRoom } from 'apis/chat';
 
 export const ChatRoom: React.FC = () => {
   return (
@@ -20,7 +21,8 @@ export const ChatRoom: React.FC = () => {
 export const NewChatRoom: React.FC = () => {
   const location = useLocation();
   const { title, thumbnailUrl, price, seller, itemId } = location.state;
-  const { mutate: createChatRoom } = useChatRoomCreateMutation();
+  const { mutate: postMessage } = useChatMessagePostMutation();
+  const navigate = useNavigate();
 
   return (
     <StyledChatRoom>
@@ -31,7 +33,24 @@ export const NewChatRoom: React.FC = () => {
         price={price}
       />
       <Messages />
-      <ChatBar onSendMessage={() => createChatRoom(itemId)} />
+      <ChatBar
+        onSendMessage={(message: string) => {
+          if (!message) {
+            return;
+          }
+
+          (async () => {
+            const {
+              data: { chatRoomId },
+            } = await createChatRoom(itemId);
+
+            if (chatRoomId) {
+              postMessage({ chatRoomId, message });
+              navigate(`/chatting/${chatRoomId}`);
+            }
+          })();
+        }}
+      />
     </StyledChatRoom>
   );
 };

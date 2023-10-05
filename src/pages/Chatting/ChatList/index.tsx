@@ -3,13 +3,18 @@ import { ChatListItem } from './ChatListItem';
 import { useChatListInfiniteQuery } from '@hooks/queries/useChatListInfiniteQuery';
 import { useFlattenPages } from '@hooks/useFlattenPages';
 import { ErrorPage } from '@pages/ErrorPage';
+import { Loader } from '@components/Loader';
 
 export const ChatList: React.FC = () => {
-  const { data, isError } = useChatListInfiniteQuery({});
+  const { data, isLoading, isError } = useChatListInfiniteQuery({});
   const chatList = useFlattenPages(data);
 
   if (isError) {
     return <ErrorPage />;
+  }
+
+  if (isLoading) {
+    return <Loader />;
   }
 
   return (
@@ -27,6 +32,7 @@ const StyledChatList = styled.ul`
   ${({ theme: { colors } }) => css`
     width: 100%;
     display: flex;
+    flex-direction: column;
 
     &:not(:last-child) {
       border-bottom: 0.8px solid ${colors.neutral.border};
@@ -39,5 +45,5 @@ const NoChatRoomMessage = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 56px;
+  margin-top: 56px;
 `;

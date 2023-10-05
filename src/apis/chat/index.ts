@@ -10,11 +10,14 @@ export const postMessage = async ({
   chatRoomId,
   message,
 }: {
-  chatRoomId: string;
+  chatRoomId: string | number;
   message: string;
 }) => {
   const response = await fetchDataWithToken(`/chats/${chatRoomId}`, {
     method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
     body: JSON.stringify({ message }),
   });
 

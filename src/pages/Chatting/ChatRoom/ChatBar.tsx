@@ -4,7 +4,7 @@ import Icons from '@design/Icons';
 import styled, { css } from 'styled-components';
 
 type Props = {
-  onSendMessage: () => void;
+  onSendMessage: (message: string) => void;
 };
 
 export const ChatBar: React.FC<Props> = ({ onSendMessage }) => {
@@ -13,10 +13,12 @@ export const ChatBar: React.FC<Props> = ({ onSendMessage }) => {
       <MessageForm
         onSubmit={(event) => {
           event.preventDefault();
-          onSendMessage();
+
+          const message = event.currentTarget.message.value;
+          onSendMessage(message);
         }}
       >
-        <MessageSendField placeholder="내용을 입력하세요" />
+        <MessageSendField name="message" placeholder="내용을 입력하세요" />
         <SendButton>
           <Icons.Send />
         </SendButton>

@@ -29,7 +29,7 @@ export const ChatListItem: React.FC<Props> = ({ chat }) => {
         </NameAndTimestamp>
         <LatestMessage>{lastSendMessage}</LatestMessage>
       </ChatInfo>
-      <Badge>{newMessageCount}</Badge>
+      {newMessageCount > 0 && <Badge>{newMessageCount}</Badge>}
       <ProductImage src={thumbnailUrl} />
     </StyledChatListItem>
   );
