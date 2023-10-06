@@ -13,29 +13,27 @@ import { useEffect } from 'react';
 
 export const ChatRoom: React.FC = () => {
   const { chatRoomId } = useParams();
-  const queryResult = useChatMessagesInfiniteQuery(chatRoomId!);
+  const chatMessagesQuery = useChatMessagesInfiniteQuery(chatRoomId!);
 
   useEffect(() => {
-    if (queryResult.isFetchingNextPage) return;
+    if (chatMessagesQuery.isFetchingNextPage) return;
 
-    (async () => {
-      await queryResult.fetchNextPage();
-    })();
-  }, [queryResult, queryResult.data]);
+    chatMessagesQuery.fetchNextPage();
+  }, [chatMessagesQuery]);
 
   const flattenData =
-    queryResult.data?.pages.flatMap((page) => page.data) ?? [];
+    chatMessagesQuery.data?.pages.flatMap((page) => page.data) ?? [];
   const messages = flattenData.flatMap((message) => message.chat);
 
-  if (queryResult.isError || !chatRoomId) {
+  if (chatMessagesQuery.isError || !chatRoomId) {
     return <ErrorPage />;
   }
 
-  if (queryResult.isLoading) {
+  if (chatMessagesQuery.isLoading) {
     return <Loader />;
   }
 
-  const itemData = queryResult.data.pages[0]!.data;
+  const itemData = chatMessagesQuery.data.pages[0]!.data;
 
   return (
     <StyledChatRoom>
@@ -65,6 +63,23 @@ export const NewChatRoom: React.FC = () => {
   const { mutate: postMessage } = useChatMessagePostMutation();
   const navigate = useNavigate();
 
+  const onSendMessage = (message: string) => {
+    if (!message) {
+      return;
+    }
+
+    (async () => {
+      const {
+        data: { chatRoomId },
+      } = await createChatRoom(itemId);
+
+      if (chatRoomId) {
+        postMessage({ chatRoomId, message });
+        navigate(`/chatting/${chatRoomId}`);
+      }
+    })();
+  };
+
   return (
     <StyledChatRoom>
       <TopBar chatPartnerName={seller} />
@@ -74,24 +89,7 @@ export const NewChatRoom: React.FC = () => {
         price={price}
       />
       <Messages />
-      <ChatBar
-        onSendMessage={(message: string) => {
-          if (!message) {
-            return;
-          }
-
-          (async () => {
-            const {
-              data: { chatRoomId },
-            } = await createChatRoom(itemId);
-
-            if (chatRoomId) {
-              postMessage({ chatRoomId, message });
-              navigate(`/chatting/${chatRoomId}`);
-            }
-          })();
-        }}
-      />
+      <ChatBar onSendMessage={onSendMessage} />
     </StyledChatRoom>
   );
 };
