@@ -43,4 +43,5 @@ const NoChatRoomMessage = styled.div`
   justify-content: center;
   align-items: center;
   padding: 56px;
+  box-sizing: border-box;
 `;
