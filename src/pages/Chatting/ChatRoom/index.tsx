@@ -9,36 +9,33 @@ import { createChatRoom, postMessage } from 'apis/chat';
 import { useChatMessagesInfiniteQuery } from '@hooks/queries/useChatMessagesInfiniteQuery';
 import { Loader } from '@components/Loader';
 import { ErrorPage } from '@pages/ErrorPage';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 
 export const ChatRoom: React.FC = () => {
-  const [longPolling, setLongPolling] = useState(false);
   const { chatRoomId } = useParams();
-  const { data, isLoading, isError, isFetchingNextPage, fetchNextPage } =
-    useChatMessagesInfiniteQuery(chatRoomId!);
+  const queryResult = useChatMessagesInfiniteQuery(chatRoomId!);
 
   useEffect(() => {
-    if (isFetchingNextPage) return;
+    if (queryResult.isFetchingNextPage) return;
 
     (async () => {
-      await fetchNextPage();
-      setLongPolling((value) => !value);
+      await queryResult.fetchNextPage();
     })();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [longPolling]);
+  }, [queryResult, queryResult.data]);
 
-  const flattenData = data?.pages.flatMap((page) => page.data) ?? [];
+  const flattenData =
+    queryResult.data?.pages.flatMap((page) => page.data) ?? [];
   const messages = flattenData.flatMap((message) => message.chat);
 
-  if (isError || !chatRoomId) {
+  if (queryResult.isError || !chatRoomId) {
     return <ErrorPage />;
   }
 
-  if (isLoading) {
+  if (queryResult.isLoading) {
     return <Loader />;
   }
 
-  const itemData = data.pages[0]!.data;
+  const itemData = queryResult.data.pages[0]!.data;
 
   return (
     <StyledChatRoom>
