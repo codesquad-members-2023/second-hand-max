@@ -1,3 +1,4 @@
+import PATH from '@constants/PATH';
 import { getFormattedTimeDifference } from '@utils/time';
 import { useNavigate } from 'react-router-dom';
 import styled, { css } from 'styled-components';
@@ -20,7 +21,9 @@ export const ChatListItem: React.FC<Props> = ({ chat }) => {
   const navigate = useNavigate();
 
   return (
-    <StyledChatListItem onClick={() => navigate(`${chatRoomId}`)}>
+    <StyledChatListItem
+      onClick={() => navigate(`/${PATH.CHATTING}/${chatRoomId}`)}
+    >
       <ProfileImage src={chatPartnerProfile} />
       <ChatInfo>
         <NameAndTimestamp>

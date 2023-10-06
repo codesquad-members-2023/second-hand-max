@@ -14,7 +14,6 @@ const PATH = {
   OAUTH_LOADING: 'oauth',
 
   CHATS: 'chats',
-  CHAT_ROOM: 'chat-room',
 } as const;
 
 export default PATH;
