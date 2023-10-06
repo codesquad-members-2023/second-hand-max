@@ -16,7 +16,11 @@ export const ProductInfoBanner: React.FC<Props> = ({
       <ProductImage src={thumbnailUrl} />
       <ProductInfo>
         <div>{title}</div>
-        <ProductPrice>{price?.toLocaleString('ko') ?? 0}원</ProductPrice>
+        <ProductPrice>
+          {price === 0 || price === null
+            ? '나눔'
+            : `${price.toLocaleString('ko')}원`}
+        </ProductPrice>
       </ProductInfo>
     </StyledProductInfoBanner>
   );
