@@ -40,7 +40,6 @@ export const Content: React.FC = () => {
 
 const StyledContent = styled.div`
   box-sizing: border-box;
-  padding: 16px;
   padding-top: ${({ theme: { dimensions } }) => dimensions.topBarHeight};
   height: 100%;
   overflow: scroll;
