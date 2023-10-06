@@ -121,6 +121,10 @@ const ListItemContainer = styled.li`
     &:not(:last-child) {
       border-bottom: 1px solid ${colors.neutral.border};
     }
+
+    &:hover {
+      background-color: ${colors.neutral.backgroundBold};
+    }
   `}
 `;
 
@@ -215,7 +219,6 @@ const Information = styled.div`
 
 const StyledMenuDropdown = styled.div`
   ${({ theme: { colors } }) => css`
-    z-index: 1;
     padding: 0;
     stroke: ${colors.neutral.textStrong};
     fill: ${colors.neutral.textStrong};

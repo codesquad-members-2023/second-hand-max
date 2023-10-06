@@ -35,7 +35,7 @@ const Box = styled.div`
     box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
     border-radius: ${radius.medium};
     position: relative;
-    z-index: 1;
+    z-index: 3;
     box-sizing: border-box;
     overflow: hidden;
   `}
@@ -43,6 +43,7 @@ const Box = styled.div`
 
 const Overlay = styled.button`
   ${({ theme: { colors } }) => css`
+    z-index: 2;
     width: 100vw;
     height: 100vh;
     background-color: ${colors.neutral.overlay};

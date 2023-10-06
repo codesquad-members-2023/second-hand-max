@@ -8,7 +8,7 @@ export const useChatMessagePostMutation = () => {
     mutationFn: postMessage,
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ['chat'],
+        queryKey: ['chat-messages'],
       });
     },
   });

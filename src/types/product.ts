@@ -30,6 +30,7 @@ export type CommonProductData = {
   viewCount: number;
   price: number | null;
   isInWishList: boolean;
+  chatRoomId: number | null;
 };
 
 export type SalesHistoryProductListItem = {

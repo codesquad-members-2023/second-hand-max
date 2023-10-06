@@ -7,3 +7,9 @@ export type Chat = {
   lastSendMessage: string;
   newMessageCount: number;
 };
+
+export type ChatMessage = {
+  messageId: number;
+  isMe: boolean;
+  message: string;
+};

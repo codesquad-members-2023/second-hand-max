@@ -1,5 +1,19 @@
 import { BaseResponse, Paging } from 'apis/types';
-import { Chat } from 'types/chat';
+import { Chat, ChatMessage } from 'types/chat';
+
+export type GetChatMessagesResponse = {
+  statusCode: number;
+  data: {
+    chatPartnerName: string;
+    item: {
+      title: string;
+      thumbnailUrl: string;
+      price: number;
+    };
+    chat: ChatMessage[];
+    nextMessageId: number;
+  };
+};
 
 export type GetChatListParams = {
   page?: number;

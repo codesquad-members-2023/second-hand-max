@@ -25,5 +25,11 @@ export const StyledDropdownMenuItem = styled(Button)`
     &:not(:last-child) {
       border-bottom: 0.8px solid ${colors.neutral.border};
     }
+
+    &:hover {
+      ${({ theme: { colors } }) => css`
+        background-color: ${colors.neutral.backgroundBold};
+      `};
+    }
   `};
 `;

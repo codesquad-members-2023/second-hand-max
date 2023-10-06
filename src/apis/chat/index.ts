@@ -3,6 +3,7 @@ import {
   CreateChatRoomResponse,
   GetChatListParams,
   GetChatListResponse,
+  GetChatMessagesResponse,
 } from './types';
 import { getQueryString } from '@utils/getQueryString';
 
@@ -24,13 +25,30 @@ export const postMessage = async ({
   return response.json();
 };
 
+export const getChatMessages = async (
+  chatRoomId: string,
+  params: {
+    size?: number;
+    messageId?: number;
+  },
+): Promise<GetChatMessagesResponse> => {
+  const queryString = getQueryString(params);
+  const response = await fetchDataWithToken(
+    `/chats/${chatRoomId}${queryString ? `?${queryString}` : ''}`,
+  );
+
+  return response.json();
+};
+
 export const getChatList = async (
   params: GetChatListParams,
   itemId?: string,
 ): Promise<GetChatListResponse> => {
   const queryString = getQueryString(params);
   const response = await fetchDataWithToken(
-    `${itemId ? `/items/${itemId}` : ''}/chats?${queryString}`,
+    `${itemId ? `/items/${itemId}` : ''}/chats${
+      queryString ? `?${queryString}` : ''
+    }`,
   );
 
   return response.json();

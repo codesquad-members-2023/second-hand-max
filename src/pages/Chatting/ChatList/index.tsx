@@ -20,7 +20,9 @@ export const ChatList: React.FC = () => {
   return (
     <StyledChatList>
       {chatList.length > 0 ? (
-        chatList.map((chat) => <ChatListItem chat={chat} />)
+        chatList.map((chat) => (
+          <ChatListItem key={chat.chatRoomId} chat={chat} />
+        ))
       ) : (
         <NoChatRoomMessage>현재 대화중인 채팅방이 없습니다.</NoChatRoomMessage>
       )}
@@ -29,10 +31,12 @@ export const ChatList: React.FC = () => {
 };
 
 const StyledChatList = styled.ul`
-  ${({ theme: { colors } }) => css`
+  ${({ theme: { colors, dimensions } }) => css`
     width: 100%;
+    height: calc(100% - ${dimensions.bottomBarHeight});
     display: flex;
     flex-direction: column;
+    overflow: scroll;
 
     &:not(:last-child) {
       border-bottom: 0.8px solid ${colors.neutral.border};

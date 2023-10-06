@@ -53,5 +53,5 @@ export const InfiniteScrollTrigger: React.FC<Props> = ({
 };
 
 const TriggerDiv = styled.div`
-  height: 56px;
+  height: 10px;
 `;

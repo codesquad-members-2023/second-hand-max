@@ -1,9 +1,9 @@
 import styled, { css } from 'styled-components';
 
 type Props = {
-  title?: string;
-  thumbnailUrl?: string;
-  price?: number;
+  title: string;
+  thumbnailUrl: string;
+  price: number;
 };
 
 export const ProductInfoBanner: React.FC<Props> = ({

@@ -5,10 +5,10 @@ import { useNavigate } from 'react-router-dom';
 import { css, styled } from 'styled-components';
 
 type Props = {
-  seller: string;
+  chatPartnerName: string;
 };
 
-export const TopBar: React.FC<Props> = ({ seller }) => {
+export const TopBar: React.FC<Props> = ({ chatPartnerName }) => {
   const navigate = useNavigate();
 
   return (
@@ -17,7 +17,7 @@ export const TopBar: React.FC<Props> = ({ seller }) => {
         <Icons.ChevronLeft />
         <span>뒤로</span>
       </BackButton>
-      <span>{seller}</span>
+      <span>{chatPartnerName}</span>
       <MenuButton>
         <Icons.Dots />
       </MenuButton>

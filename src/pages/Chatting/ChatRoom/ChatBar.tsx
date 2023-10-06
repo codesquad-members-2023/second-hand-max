@@ -8,16 +8,19 @@ type Props = {
 };
 
 export const ChatBar: React.FC<Props> = ({ onSendMessage }) => {
+  const onMessageSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+
+    const messageInput = event.currentTarget.message;
+    const message = messageInput.value;
+
+    onSendMessage(message);
+    messageInput.value = '';
+  };
+
   return (
     <StyledChatBar>
-      <MessageForm
-        onSubmit={(event) => {
-          event.preventDefault();
-
-          const message = event.currentTarget.message.value;
-          onSendMessage(message);
-        }}
-      >
+      <MessageForm onSubmit={onMessageSubmit}>
         <MessageSendField name="message" placeholder="내용을 입력하세요" />
         <SendButton>
           <Icons.Send />

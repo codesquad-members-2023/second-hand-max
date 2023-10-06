@@ -36,12 +36,23 @@ export const ChatListItem: React.FC<Props> = ({ chat }) => {
 };
 
 const StyledChatListItem = styled.li`
-  width: 100%;
-  padding: 16px;
-  box-sizing: border-box;
-  display: flex;
-  align-items: center;
-  gap: 8px;
+  ${({ theme: { colors } }) => css`
+    width: 100%;
+    padding: 16px;
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+
+    &:hover {
+      background-color: ${colors.neutral.backgroundWeak};
+    }
+
+    &:not(:last-child) {
+      border-bottom: 0.8px solid ${colors.neutral.border};
+    }
+  `};
 `;
 
 const ProfileImage = styled.img`
