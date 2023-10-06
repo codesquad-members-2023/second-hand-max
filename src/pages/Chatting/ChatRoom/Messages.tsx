@@ -2,7 +2,7 @@ import { useEffect, useRef } from 'react';
 import styled, { css } from 'styled-components';
 import { ChatMessage } from 'types/chat';
 
-export const Messages: React.FC<{ messages?: ChatMessage[] }> = ({
+export const Messages: React.FC<{ messages: ChatMessage[] }> = ({
   messages,
 }) => {
   const messagesRef = useRef<HTMLDivElement>(null);
@@ -15,7 +15,7 @@ export const Messages: React.FC<{ messages?: ChatMessage[] }> = ({
 
   return (
     <StyledMessages ref={messagesRef}>
-      {messages?.map((message) => (
+      {messages.map((message) => (
         <Message key={message.messageId} $isMe={message.isMe}>
           {message.message}
         </Message>

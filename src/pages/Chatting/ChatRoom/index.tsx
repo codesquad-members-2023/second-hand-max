@@ -43,7 +43,7 @@ export const ChatRoom: React.FC = () => {
         thumbnailUrl={itemData.item.thumbnailUrl}
         price={itemData.item.price}
       />
-      <Messages messages={messages} />
+      {messages && <Messages messages={messages} />}
       <ChatBar
         onSendMessage={(message: string) => {
           if (!message) {
@@ -88,7 +88,7 @@ export const NewChatRoom: React.FC = () => {
         thumbnailUrl={thumbnailUrl}
         price={price}
       />
-      <Messages />
+      <MessageSection />
       <ChatBar onSendMessage={onSendMessage} />
     </StyledChatRoom>
   );
@@ -106,4 +106,8 @@ const StyledChatRoom = styled.div`
     display: flex;
     flex-direction: column;
   `};
+`;
+
+const MessageSection = styled.div`
+  flex-grow: 1;
 `;
