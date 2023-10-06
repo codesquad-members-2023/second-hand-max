@@ -29,6 +29,7 @@ const StyledChatList = styled.ul`
   ${({ theme: { colors } }) => css`
     width: 100%;
     display: flex;
+    flex-direction: column;
 
     &:not(:last-child) {
       border-bottom: 0.8px solid ${colors.neutral.border};

@@ -1,4 +1,3 @@
-import { styled } from 'styled-components';
 import ListItem from './ListItem';
 import { useUserStore } from 'stores/useUserStore';
 import { ProductListItem } from 'types/product';
@@ -15,7 +14,7 @@ export const ProductList: React.FC<Props> = ({
   const loginId = useUserStore(({ user }) => user?.loginId);
 
   return (
-    <ProductListItems>
+    <ul>
       {productListItems.map((product) => (
         <ListItem
           key={product.itemId}
@@ -25,10 +24,6 @@ export const ProductList: React.FC<Props> = ({
           {...product}
         />
       ))}
-    </ProductListItems>
+    </ul>
   );
 };
-
-const ProductListItems = styled.ul`
-  padding: 0 16px;
-`;
