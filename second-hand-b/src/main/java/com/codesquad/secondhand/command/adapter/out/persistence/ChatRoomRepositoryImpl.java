@@ -3,6 +3,8 @@ package com.codesquad.secondhand.command.adapter.out.persistence;
 import com.codesquad.secondhand.command.adapter.out.persistence.imports.ChatRoomCrudRepository;
 import com.codesquad.secondhand.command.domain.chat.ChatRoom;
 import com.codesquad.secondhand.command.port.out.ChatRoomRepository;
+import com.codesquad.secondhand.query.service.dto.ChatRoomDto;
+import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
@@ -26,5 +28,10 @@ public class ChatRoomRepositoryImpl implements ChatRoomRepository {
     @Override
     public Optional<ChatRoom> findById(long chatRoomId) {
         return chatRoomCrudRepository.findById(chatRoomId);
+    }
+
+    @Override
+    public List<ChatRoomDto> findAllByMemberId(long memberId) {
+        return chatRoomCrudRepository.findAllByMemberId(memberId);
     }
 }

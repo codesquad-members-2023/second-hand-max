@@ -12,6 +12,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClientProviderBuilder;
 import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
 import org.springframework.security.oauth2.client.web.DefaultOAuth2AuthorizedClientManager;
@@ -70,6 +71,7 @@ public class OAuth2LoginSecurityConfig {
                         new JwtSignInAuthenticationFilter(),
                         JwtSignUpAuthenticationFilter.class)
                 .oauth2Login(configurer -> configurer.successHandler(successHandler))
+                .sessionManagement(sessionManagementConfigurer ->sessionManagementConfigurer.sessionCreationPolicy(SessionCreationPolicy.NEVER))
                 .cors().configurationSource(corsConfigurationSource())
                 .and()
                 .build();
