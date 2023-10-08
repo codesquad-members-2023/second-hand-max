@@ -20,10 +20,13 @@ import org.springframework.test.context.ActiveProfiles;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import codesquard.app.api.errors.exception.RestApiException;
+import codesquard.app.api.errors.exception.BadRequestException;
+import codesquard.app.api.errors.exception.ConflictException;
+import codesquard.app.api.errors.exception.NotFoundResourceException;
 import codesquard.app.api.membertown.request.MemberTownAddRequest;
 import codesquard.app.api.membertown.request.MemberTownRemoveRequest;
 import codesquard.app.api.membertown.response.MemberAddRegionResponse;
+import codesquard.app.api.membertown.response.MemberTownListResponse;
 import codesquard.app.api.membertown.response.MemberTownRemoveResponse;
 import codesquard.app.api.region.request.RegionSelectionRequest;
 import codesquard.app.domain.member.Member;
@@ -61,7 +64,7 @@ class MemberTownServiceTest {
 
 	@DisplayName("선택한 동네를 회원 동네에 추가한다")
 	@Test
-	public void addMemberTown() throws JsonProcessingException {
+	void addMemberTown() throws JsonProcessingException {
 		// given
 		Region region = regionRepository.save(createRegion("서울 송파구 가락동"));
 
@@ -86,7 +89,7 @@ class MemberTownServiceTest {
 
 	@DisplayName("주소에 없는 동네를 회원 동네에 추가할 수 없다")
 	@Test
-	public void addMemberTownWithNotExistFullAddressName() throws JsonProcessingException {
+	void addMemberTownWithNotExistFullAddressName() throws JsonProcessingException {
 		// given
 		Map<String, Object> requestBody = new HashMap<>();
 		requestBody.put("addressId", 9999L);
@@ -102,14 +105,14 @@ class MemberTownServiceTest {
 
 		// then
 		assertThat(throwable)
-			.isInstanceOf(RestApiException.class)
+			.isInstanceOf(NotFoundResourceException.class)
 			.extracting("errorCode.message")
 			.isEqualTo("주소를 찾지 못하였습니다.");
 	}
 
 	@DisplayName("회원의 동네 추가시 동네 등록 최대개수를 초과하여서 회원의 동네를 추가할 수 없다")
 	@Test
-	public void addMemberTownWithOverTheMaximumMemberTownSize() throws JsonProcessingException {
+	void addMemberTownWithOverTheMaximumMemberTownSize() throws JsonProcessingException {
 		// given
 		Member member = createMember("avatarUrlValue", "23Yong@gmail.com", "23Yong");
 		Member saveMember = memberRepository.save(member);
@@ -131,14 +134,14 @@ class MemberTownServiceTest {
 
 		// then
 		assertThat(throwable)
-			.isInstanceOf(RestApiException.class)
+			.isInstanceOf(BadRequestException.class)
 			.extracting("errorCode.message")
 			.isEqualTo("회원이 가질 수 있는 개수(최대2개)를 초과하였습니다.");
 	}
 
 	@DisplayName("회원의 동네 추가시 이미 등록된 동네는 중복으로 추가할 수 없다")
 	@Test
-	public void addMemberTownWithDuplicateAddressName() throws JsonProcessingException {
+	void addMemberTownWithDuplicateAddressName() throws JsonProcessingException {
 		// given
 		Map<String, Object> requestBody = new HashMap<>();
 		Region region = regionRepository.save(createRegion("서울 종로구 신교동"));
@@ -155,14 +158,14 @@ class MemberTownServiceTest {
 
 		// then
 		assertThat(throwable)
-			.isInstanceOf(RestApiException.class)
+			.isInstanceOf(ConflictException.class)
 			.extracting("errorCode.message")
 			.isEqualTo("이미 존재하는 동네입니다.");
 	}
 
 	@DisplayName("주소를 가지고 회원의 등록된 동네를 제거한다")
 	@Test
-	public void removeMemberTown() throws JsonProcessingException {
+	void removeMemberTown() throws JsonProcessingException {
 		// given
 		Member member = createMember("avatarUrlValue", "23Yong@gmail.com", "23Yong");
 		Member saveMember = memberRepository.save(member);
@@ -184,16 +187,21 @@ class MemberTownServiceTest {
 		MemberTownRemoveResponse response = memberTownService.removeMemberTown(Principal.from(saveMember), request);
 
 		// then
-		assertAll(() -> {
-			assertThat(response.getAddress()).isEqualTo("서울 송파구 가락동");
-			assertThat(memberTownRepository.findMemberTownByMemberIdAndName(saveMember.getId(), "가락동")
-				.isEmpty()).isTrue();
-		});
+		assertAll(
+			() -> assertThat(response.getAddress()).isEqualTo("서울 송파구 가락동"),
+			() -> assertThat(memberTownRepository.findMemberTownByMemberIdAndName(saveMember.getId(), "가락동")
+				.isEmpty()).isTrue(),
+			() -> {
+				MemberTown remainMemberTown = memberTownRepository.findMemberTownByMemberIdAndName(saveMember.getId(),
+					"궁정동").orElseThrow();
+				assertThat(remainMemberTown.isSelected()).isTrue();
+			}
+		);
 	}
 
 	@DisplayName("등록되지 않은 주소 이름을 가지고 회원의 동네를 제거할 수 없다")
 	@Test
-	public void removeMemberTownWithNotRegisteredAddressName() throws JsonProcessingException {
+	void removeMemberTownWithNotRegisteredAddressName() throws JsonProcessingException {
 		// given
 		Region region = regionRepository.save(createRegion("서울 종로구 효자동"));
 
@@ -214,14 +222,14 @@ class MemberTownServiceTest {
 
 		// then
 		assertThat(throwable)
-			.isInstanceOf(RestApiException.class)
+			.isInstanceOf(BadRequestException.class)
 			.extracting("errorCode.message")
 			.isEqualTo("등록되지 않은 동네를 삭제할 수 없습니다.");
 	}
 
 	@DisplayName("회원의 동네가 1개인 상태에서 회원의 동네를 제거할 수 없다")
 	@Test
-	public void removeMemberTownWithMinimumMemberTownSize() throws JsonProcessingException {
+	void removeMemberTownWithMinimumMemberTownSize() throws JsonProcessingException {
 		// given
 		Member member = createMember("avatarUrlValue", "23Yong@gmail.com", "23Yong");
 		Member saveMember = memberRepository.save(member);
@@ -241,14 +249,14 @@ class MemberTownServiceTest {
 
 		// then
 		assertThat(throwable)
-			.isInstanceOf(RestApiException.class)
+			.isInstanceOf(BadRequestException.class)
 			.extracting("errorCode.message")
 			.isEqualTo("동네는 최소 1개 이상 선택해야 해요. 새로운 동네를 등록한 후 삭제해주세요.");
 	}
 
 	@DisplayName("회원이 자신이 등록한 동네 지역을 선택한다")
 	@Test
-	public void selectRegion() throws JsonProcessingException {
+	void selectRegion() throws JsonProcessingException {
 		// given
 		Member member = memberRepository.save(createMember("avatarUrlValue", "23Yong@gmail.com", "23Yong"));
 		List<Region> regions = regionRepository.saveAll(
@@ -280,7 +288,7 @@ class MemberTownServiceTest {
 
 	@DisplayName("회원은 존재하지 않는 지역 등록번호로 동네 지역을 선택할 수 없다")
 	@Test
-	public void selectRegionWithNotExistRegionId() throws JsonProcessingException {
+	void selectRegionWithNotExistRegionId() throws JsonProcessingException {
 		// given
 		Member member = memberRepository.save(createMember("avatarUrlValue", "23Yong@gmail.com", "23Yong"));
 		List<Region> regions = regionRepository.saveAll(
@@ -298,14 +306,14 @@ class MemberTownServiceTest {
 
 		// then
 		assertThat(throwable)
-			.isInstanceOf(RestApiException.class)
+			.isInstanceOf(NotFoundResourceException.class)
 			.extracting("errorCode.message")
 			.isEqualTo("주소를 찾지 못하였습니다.");
 	}
 
 	@DisplayName("회원은 회원의 동네로 등록되지 않은 동네지역을 선택할 수 없다")
 	@Test
-	public void selectRegionWithNotRegisteredRegionId() throws JsonProcessingException {
+	void selectRegionWithNotRegisteredRegionId() throws JsonProcessingException {
 		// given
 		Member member = memberRepository.save(createMember("avatarUrlValue", "23Yong@gmail.com", "23Yong"));
 		List<Region> regions = regionRepository.saveAll(
@@ -323,8 +331,23 @@ class MemberTownServiceTest {
 
 		// then
 		assertThat(throwable)
-			.isInstanceOf(RestApiException.class)
+			.isInstanceOf(BadRequestException.class)
 			.extracting("errorCode.message")
 			.isEqualTo("회원이 등록한 동네만 선택할 수 있습니다.");
+	}
+
+	@DisplayName("회원은 자신의 회원 동네를 조회할 수 있다")
+	@Test
+	void readAll() throws JsonProcessingException {
+		// given
+		Member member = memberRepository.save(createMember("avatarUrlValue", "23Yong@gmail.com", "23Yong"));
+		List<Region> regions = regionRepository.saveAll(List.of(createRegion("서울 송파구 가락동")));
+		memberTownRepository.saveAll(List.of(createMemberTown(member, regions.get(0), true)));
+
+		// when
+		MemberTownListResponse response = memberTownService.readAll(Principal.from(member));
+
+		// then
+		assertThat(response.getAddresses().size()).isEqualTo(1);
 	}
 }

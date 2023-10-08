@@ -11,7 +11,7 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import codesquard.app.api.errors.errorcode.OauthErrorCode;
-import codesquard.app.api.errors.exception.RestApiException;
+import codesquard.app.api.errors.exception.BadRequestException;
 import codesquard.app.api.oauth.response.OauthAccessTokenResponse;
 import codesquard.app.api.oauth.response.OauthUserProfileResponse;
 import codesquard.app.domain.oauth.properties.OauthProperties;
@@ -29,8 +29,9 @@ public class NaverOauthClient extends OauthClient {
 	}
 
 	@Override
-	public OauthAccessTokenResponse exchangeAccessTokenByAuthorizationCode(String authorizationCode) {
-		MultiValueMap<String, String> formData = createFormData(authorizationCode);
+	public OauthAccessTokenResponse exchangeAccessTokenByAuthorizationCode(String authorizationCode,
+		String redirectUrl) {
+		MultiValueMap<String, String> formData = createFormData(authorizationCode, redirectUrl);
 
 		OauthAccessTokenResponse response = WebClient.create()
 			.post()
@@ -47,17 +48,20 @@ public class NaverOauthClient extends OauthClient {
 			.block();
 
 		if (Objects.requireNonNull(response).getAccessToken() == null) {
-			throw new RestApiException(OauthErrorCode.WRONG_AUTHORIZATION_CODE);
+			throw new BadRequestException(OauthErrorCode.WRONG_AUTHORIZATION_CODE);
 		}
 
 		return response;
 	}
 
 	@Override
-	public MultiValueMap<String, String> createFormData(String authorizationCode) {
+	public MultiValueMap<String, String> createFormData(String authorizationCode, String redirectUrl) {
 		MultiValueMap<String, String> formData = new LinkedMultiValueMap<>();
+		if (redirectUrl == null) {
+			redirectUrl = getRedirectUri();
+		}
 		formData.add("code", authorizationCode);
-		formData.add("redirect_uri", getRedirectUri());
+		formData.add("redirect_uri", redirectUrl);
 		formData.add("grant_type", "authorization_code");
 		return formData;
 	}

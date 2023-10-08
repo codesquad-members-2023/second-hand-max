@@ -30,9 +30,8 @@ class CategoryQueryServiceTest {
 
 	@DisplayName("모든 카테고리 목록을 조회한다")
 	@Test
-	public void findAll() {
+	void findAll() {
 		// given
-		categoryRepository.deleteAllInBatch();
 		categoryRepository.saveAll(getCategories());
 
 		// when

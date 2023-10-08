@@ -1,5 +1,6 @@
 package codesquard.app.api.oauth;
 
+import static codesquard.app.ImageTestSupport.*;
 import static codesquard.app.MemberTestSupport.*;
 import static org.mockito.BDDMockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -53,12 +54,12 @@ class OauthRestControllerTest extends ControllerTestSupport {
 	private OauthService oauthService;
 
 	@BeforeEach
-	public void setup() {
+	void setup() {
 		mockMvc = MockMvcBuilders.standaloneSetup(oauthRestController)
 			.setControllerAdvice(globalExceptionHandler)
 			.addFilters(
-				new JwtAuthorizationFilter(jwtProvider, authenticationContext, objectMapper, redisService),
-				new LogoutFilter(redisService, objectMapper)
+				new JwtAuthorizationFilter(jwtProvider, authenticationContext, objectMapper, oauthRedisService),
+				new LogoutFilter(oauthRedisService, objectMapper)
 			)
 			.addMappedInterceptors(new String[] {"/api/auth/logout"}, new LogoutInterceptor())
 			.setCustomArgumentResolvers(authPrincipalArgumentResolver)
@@ -68,7 +69,7 @@ class OauthRestControllerTest extends ControllerTestSupport {
 
 	@DisplayName("프로필 사진, 로그인 아이디, 동네를 전달하여 소셜 로그인 인증을 하고 회원가입을 한다")
 	@Test
-	public void signup() throws Exception {
+	void signup() throws Exception {
 		// given
 		Map<String, Object> responseBody = new HashMap<>();
 		responseBody.put("id", 1L);
@@ -77,7 +78,7 @@ class OauthRestControllerTest extends ControllerTestSupport {
 		responseBody.put("loginId", "23Yong");
 		OauthSignUpResponse response = objectMapper.readValue(objectMapper.writeValueAsString(responseBody),
 			OauthSignUpResponse.class);
-		given(oauthService.signUp(any(), any(OauthSignUpRequest.class), anyString(), anyString()))
+		given(oauthService.signUp(any(), any(OauthSignUpRequest.class), anyString(), anyString(), anyString()))
 			.willReturn(response);
 
 		Map<String, Object> requestBody = new HashMap<>();
@@ -88,9 +89,10 @@ class OauthRestControllerTest extends ControllerTestSupport {
 			requestJson.getBytes(StandardCharsets.UTF_8));
 		// when & then
 		mockMvc.perform(multipart("/api/auth/naver/signup")
-				.file(createProfile("cat.png"))
+				.file(createMultipartFile("cat.png"))
 				.file(mockSignupData)
-				.param("code", "1234"))
+				.param("code", "1234")
+				.param("redirectUrl", "http://localhost:5173/my-account/oauth"))
 			.andExpect(status().isCreated())
 			.andExpect(jsonPath("statusCode").value(Matchers.equalTo(201)));
 	}
@@ -98,7 +100,7 @@ class OauthRestControllerTest extends ControllerTestSupport {
 	@DisplayName("입력 형식에 맞지 않는 로그인 아이디를 전달하여 회원가입을 요청할때 에러를 응답한다")
 	@MethodSource(value = "provideInvalidLoginId")
 	@ParameterizedTest
-	public void signupWhenInvalidLoginId(String loginId) throws Exception {
+	void signupWhenInvalidLoginId(String loginId) throws Exception {
 		// given
 		Map<String, Object> requestBody = new HashMap<>();
 		requestBody.put("loginId", loginId);
@@ -109,9 +111,10 @@ class OauthRestControllerTest extends ControllerTestSupport {
 
 		// when & then
 		mockMvc.perform(multipart("/api/auth/naver/signup")
-				.file(createProfile("cat.png"))
+				.file(createMultipartFile("cat.png"))
 				.file(mockSignupData)
-				.param("code", "1234"))
+				.param("code", "1234")
+				.param("redirectUrl", "http://localhost:5173/my-account/oauth"))
 			.andExpect(status().isBadRequest())
 			.andExpect(jsonPath("statusCode").value(Matchers.equalTo(400)))
 			.andExpect(jsonPath("message").value(Matchers.equalTo("유효하지 않은 입력형식입니다.")))
@@ -123,7 +126,7 @@ class OauthRestControllerTest extends ControllerTestSupport {
 	@DisplayName("유효하지 않은 입력 형식의 주소 등록번호를 전달하여 회원가입을 요청할 때 에러를 응답한다")
 	@MethodSource(value = "provideInvalidAddressIds")
 	@ParameterizedTest
-	public void signupWhenInvalidAddrName(List<Long> addressIds) throws Exception {
+	void signupWhenInvalidAddrName(List<Long> addressIds) throws Exception {
 		// given
 		Map<String, Object> requestBody = new HashMap<>();
 		requestBody.put("loginId", "23Yong");
@@ -134,9 +137,10 @@ class OauthRestControllerTest extends ControllerTestSupport {
 
 		// when & then
 		mockMvc.perform(multipart("/api/auth/naver/signup")
-				.file(createProfile("cat.png"))
+				.file(createMultipartFile("cat.png"))
 				.file(mockSignupData)
-				.param("code", "1234"))
+				.param("code", "1234")
+				.param("redirectUrl", "http://localhost:5173/my-account/oauth"))
 			.andExpect(status().isBadRequest())
 			.andExpect(jsonPath("statusCode").value(Matchers.equalTo(400)))
 			.andExpect(jsonPath("message").value(Matchers.equalTo("유효하지 않은 입력형식입니다.")))
@@ -147,7 +151,7 @@ class OauthRestControllerTest extends ControllerTestSupport {
 
 	@DisplayName("로그아웃을 요청한다")
 	@Test
-	public void logout() throws Exception {
+	void logout() throws Exception {
 		// given
 		Map<String, String> requestBody = new HashMap<>();
 		requestBody.put("refreshToken", "refreshTokenValue");
@@ -167,7 +171,7 @@ class OauthRestControllerTest extends ControllerTestSupport {
 
 	@DisplayName("액세스 토큰 갱신을 요청한다")
 	@Test
-	public void refreshAccessToken() throws Exception {
+	void refreshAccessToken() throws Exception {
 		// given
 		given(authPrincipalArgumentResolver.supportsParameter(any())).willReturn(true);
 

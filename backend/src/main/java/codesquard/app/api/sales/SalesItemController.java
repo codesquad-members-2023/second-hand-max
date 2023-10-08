@@ -7,6 +7,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import codesquard.app.api.item.response.ItemResponses;
 import codesquard.app.api.response.ApiResponse;
+import codesquard.app.api.success.successcode.SalesSuccessCode;
+import codesquard.app.domain.oauth.support.AuthPrincipal;
+import codesquard.app.domain.oauth.support.Principal;
 import codesquard.app.domain.sales.SalesStatus;
 import lombok.RequiredArgsConstructor;
 
@@ -18,8 +21,12 @@ public class SalesItemController {
 	private final SalesItemService salesItemService;
 
 	@GetMapping
-	public ApiResponse<ItemResponses> findAll(@RequestParam(required = false, defaultValue = "all") SalesStatus status,
-		@RequestParam(required = false, defaultValue = "10") int size, @RequestParam(required = false) Long cursor) {
-		return ApiResponse.ok("판매 내역 조회에 성공하였습니다.", salesItemService.findAll(status, size, cursor));
+	public ApiResponse<ItemResponses> findAll(
+		@RequestParam(required = false, defaultValue = "all") SalesStatus status,
+		@RequestParam(required = false, defaultValue = "10") int size,
+		@RequestParam(required = false) Long cursor,
+		@AuthPrincipal Principal principal) {
+		return ApiResponse.success(SalesSuccessCode.OK_SALES,
+			salesItemService.findAll(status, size, cursor, principal));
 	}
 }

@@ -11,7 +11,8 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import codesquard.app.api.errors.errorcode.OauthErrorCode;
-import codesquard.app.api.errors.exception.RestApiException;
+import codesquard.app.api.errors.exception.BadRequestException;
+import codesquard.app.api.errors.exception.OauthException;
 import codesquard.app.api.oauth.response.OauthAccessTokenResponse;
 import codesquard.app.api.oauth.response.OauthUserProfileResponse;
 import codesquard.app.domain.oauth.properties.OauthProperties;
@@ -29,8 +30,11 @@ public class KakaoOauthClient extends OauthClient {
 	}
 
 	@Override
-	public OauthAccessTokenResponse exchangeAccessTokenByAuthorizationCode(String authorizationCode) {
-		MultiValueMap<String, String> formData = createFormData(authorizationCode);
+	public OauthAccessTokenResponse exchangeAccessTokenByAuthorizationCode(String authorizationCode,
+		String redirectUrl) {
+		MultiValueMap<String, String> formData = createFormData(authorizationCode, redirectUrl);
+
+		log.info("formData : {}", formData);
 
 		OauthAccessTokenResponse response = WebClient.create()
 			.post()
@@ -41,26 +45,36 @@ public class KakaoOauthClient extends OauthClient {
 				header.setAcceptCharset(List.of(StandardCharsets.UTF_8));
 			})
 			.bodyValue(formData)
-			.retrieve() // ResponseEntity를 받아 디코딩
-			.bodyToMono(OauthAccessTokenResponse.class) // 주어진 타입으로 디코딩
-			.block();
+			.exchangeToMono(clientResponse -> {
+				log.info("statusCode : {}", clientResponse.statusCode());
+				if (clientResponse.statusCode().is4xxClientError() || clientResponse.statusCode().is5xxServerError()) {
+					return clientResponse.bodyToMono(String.class).handle((body, sink) -> {
+						log.info("responseBody : {}", body);
+						sink.error(new OauthException(OauthErrorCode.FAIL_ACCESS_TOKEN));
+					});
+				}
+				return clientResponse.bodyToMono(OauthAccessTokenResponse.class);
+			}).block();
+		log.info("response : {}", response);
 
 		if (Objects.requireNonNull(response).getAccessToken() == null) {
-			throw new RestApiException(OauthErrorCode.WRONG_AUTHORIZATION_CODE);
+			throw new BadRequestException(OauthErrorCode.WRONG_AUTHORIZATION_CODE);
 		}
 
 		return response;
 	}
 
 	@Override
-	public MultiValueMap<String, String> createFormData(String authorizationCode) {
+	public MultiValueMap<String, String> createFormData(String authorizationCode, String redirectUrl) {
 		MultiValueMap<String, String> formData = new LinkedMultiValueMap<>();
+		if (redirectUrl == null) {
+			redirectUrl = getRedirectUri();
+		}
 		formData.add("code", authorizationCode);
 		formData.add("client_id", getClientId());
 		formData.add("client_secret", getClientSecret());
-		formData.add("redirect_uri", getRedirectUri());
+		formData.add("redirect_uri", redirectUrl);
 		formData.add("grant_type", "authorization_code");
-
 		return formData;
 	}
 

@@ -1,6 +1,7 @@
 package codesquard.app.api.membertown;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -8,10 +9,13 @@ import org.springframework.transaction.annotation.Transactional;
 import codesquard.app.api.errors.errorcode.MemberErrorCode;
 import codesquard.app.api.errors.errorcode.MemberTownErrorCode;
 import codesquard.app.api.errors.errorcode.RegionErrorCode;
-import codesquard.app.api.errors.exception.RestApiException;
+import codesquard.app.api.errors.exception.BadRequestException;
+import codesquard.app.api.errors.exception.NotFoundResourceException;
 import codesquard.app.api.membertown.request.MemberTownAddRequest;
 import codesquard.app.api.membertown.request.MemberTownRemoveRequest;
 import codesquard.app.api.membertown.response.MemberAddRegionResponse;
+import codesquard.app.api.membertown.response.MemberTownItemResponse;
+import codesquard.app.api.membertown.response.MemberTownListResponse;
 import codesquard.app.api.membertown.response.MemberTownRemoveResponse;
 import codesquard.app.api.region.request.RegionSelectionRequest;
 import codesquard.app.domain.member.Member;
@@ -25,7 +29,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-@Transactional
+@Transactional(readOnly = true)
 @RequiredArgsConstructor
 @Service
 public class MemberTownService {
@@ -35,6 +39,7 @@ public class MemberTownService {
 	private final RegionRepository regionRepository;
 	private final MemberTownValidator memberTownValidator;
 
+	@Transactional
 	public MemberAddRegionResponse addMemberTown(Principal principal, MemberTownAddRequest request) {
 		log.info("회원 동네 추가 서비스 요청 : 회원아이디={}, 추가할 동네 등록번호={}", principal.getLoginId(), request.getAddressId());
 
@@ -49,6 +54,7 @@ public class MemberTownService {
 		return MemberAddRegionResponse.from(town);
 	}
 
+	@Transactional
 	public MemberTownRemoveResponse removeMemberTown(Principal principal, MemberTownRemoveRequest request) {
 		log.info("회원 동네 삭제 서비스 요청 : 회원아이디={}, 삭제할 동네 등록번호={}", principal.getLoginId(), request.getAddressId());
 
@@ -59,17 +65,26 @@ public class MemberTownService {
 		Member member = findMemberBy(principal);
 		memberTownRepository.deleteMemberTownByMemberIdAndRegionId(member.getId(), region.getId());
 
+		changeIsSelectedWithRemainMemberTown(principal);
+
 		return MemberTownRemoveResponse.create(region.getName());
+	}
+
+	private void changeIsSelectedWithRemainMemberTown(Principal principal) {
+		MemberTown remainMemberTown = memberTownRepository.findAllByMemberId(principal.getMemberId()).stream()
+			.findAny()
+			.orElseThrow(() -> new NotFoundResourceException(MemberTownErrorCode.NOT_FOUND_MEMBER_TOWN));
+		remainMemberTown.changeIsSelected(true);
 	}
 
 	private Region getAddressIdBy(Long addressId) {
 		return regionRepository.findById(addressId)
-			.orElseThrow(() -> new RestApiException(RegionErrorCode.NOT_FOUND_REGION));
+			.orElseThrow(() -> new NotFoundResourceException(RegionErrorCode.NOT_FOUND_REGION));
 	}
 
 	private Member findMemberBy(Principal principal) {
 		return memberRepository.findById(principal.getMemberId())
-			.orElseThrow(() -> new RestApiException(MemberErrorCode.NOT_FOUND_MEMBER));
+			.orElseThrow(() -> new NotFoundResourceException(MemberErrorCode.NOT_FOUND_MEMBER));
 	}
 
 	@Transactional
@@ -77,24 +92,32 @@ public class MemberTownService {
 		validateExistRegion(request.getSelectedAddressId());
 		validateRegisteredMemberTown(request.getSelectedAddressId(), principal.getMemberId());
 
-		// 기존 선택된 회원 동네 선택을 false로 변경합니다.
-		int result = memberTownRepository.changeIsSelectToFalse(principal.getMemberId());
+		Long regionId = memberTownRepository.findRegionIdByMemberIdAndIsSelected(
+			principal.getMemberId(), true);
+		int result = memberTownRepository.changeIsSelect(false, regionId, principal.getMemberId());
 		log.debug("지역 선택 해제 결과 : result={}", result);
 
-		// 새로 선택한 회원 동네 지역을 true로 변경한다
-		result = memberTownRepository.changeIsSelectToTrue(request.getSelectedAddressId(), principal.getMemberId());
+		result = memberTownRepository.changeIsSelect(true, request.getSelectedAddressId(), principal.getMemberId());
 		log.debug("지역 선택 활성화 결과 : result={}", result);
 	}
 
 	private void validateRegisteredMemberTown(Long regionId, Long memberId) {
 		if (memberTownRepository.findMemberTownByMemberIdAndRegionId(memberId, regionId).isEmpty()) {
-			throw new RestApiException(MemberTownErrorCode.NOT_SELECT_UNREGISTERED_MEMBER_TOWN);
+			throw new BadRequestException(MemberTownErrorCode.NOT_SELECT_UNREGISTERED_MEMBER_TOWN);
 		}
 	}
 
 	private void validateExistRegion(Long regionId) {
 		if (regionRepository.findById(regionId).isEmpty()) {
-			throw new RestApiException(RegionErrorCode.NOT_FOUND_REGION);
+			throw new NotFoundResourceException(RegionErrorCode.NOT_FOUND_REGION);
 		}
+	}
+
+	public MemberTownListResponse readAll(Principal principal) {
+		List<MemberTownItemResponse> itemResponses = memberTownRepository.findAllByMemberId(principal.getMemberId())
+			.stream()
+			.map(MemberTownItemResponse::from)
+			.collect(Collectors.toUnmodifiableList());
+		return new MemberTownListResponse(itemResponses);
 	}
 }

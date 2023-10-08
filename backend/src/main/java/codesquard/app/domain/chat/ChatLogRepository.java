@@ -1,7 +1,10 @@
 package codesquard.app.domain.chat;
 
+import java.util.Optional;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface ChatLogRepository extends JpaRepository<ChatLog, Long> {
-	int countChatLogByChatRoomId(Long chatRoomId);
+
+	Optional<ChatLog> findFirstByChatRoomIdOrderByCreatedAtDesc(Long chatRoomId);
 }

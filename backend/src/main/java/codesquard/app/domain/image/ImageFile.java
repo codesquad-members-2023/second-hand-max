@@ -3,7 +3,9 @@ package codesquard.app.domain.image;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import org.slf4j.Logger;
@@ -12,7 +14,8 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import codesquard.app.api.errors.errorcode.ImageErrorCode;
-import codesquard.app.api.errors.exception.RestApiException;
+import codesquard.app.api.errors.exception.BadRequestException;
+import codesquard.app.api.errors.exception.ServerInternalException;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
@@ -39,6 +42,9 @@ public class ImageFile {
 	}
 
 	public static List<ImageFile> from(List<MultipartFile> files) {
+		files = Optional.ofNullable(files)
+			.orElseGet(Collections::emptyList);
+
 		List<ImageFile> imageFiles = new ArrayList<>();
 		for (MultipartFile multipartFile : files) {
 			if (!multipartFile.isEmpty()) {
@@ -71,7 +77,7 @@ public class ImageFile {
 		try {
 			return multipartFile.getInputStream();
 		} catch (IOException e) {
-			throw new RestApiException(ImageErrorCode.FILE_IO_EXCEPTION);
+			throw new ServerInternalException(ImageErrorCode.FILE_IO_EXCEPTION);
 		}
 	}
 
@@ -94,7 +100,7 @@ public class ImageFile {
 					return imageContentType.getContentType();
 				}
 			}
-			throw new RestApiException(ImageErrorCode.INVALID_FILE_EXTENSION);
+			throw new BadRequestException(ImageErrorCode.INVALID_FILE_EXTENSION);
 		}
 	}
 }

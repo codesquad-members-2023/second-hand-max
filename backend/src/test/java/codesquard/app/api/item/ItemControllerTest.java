@@ -1,8 +1,9 @@
 package codesquard.app.api.item;
 
+import static codesquard.app.CategoryTestSupport.*;
+import static codesquard.app.ItemTestSupport.*;
 import static codesquard.app.MemberTestSupport.*;
 import static codesquard.app.domain.item.ItemStatus.*;
-import static java.time.LocalDateTime.*;
 import static org.hamcrest.Matchers.*;
 import static org.mockito.BDDMockito.*;
 import static org.mockito.Mockito.any;
@@ -23,10 +24,9 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-import codesquard.app.CategoryTestSupport;
 import codesquard.app.ControllerTestSupport;
 import codesquard.app.api.errors.errorcode.ItemErrorCode;
-import codesquard.app.api.errors.exception.RestApiException;
+import codesquard.app.api.errors.exception.NotFoundResourceException;
 import codesquard.app.api.item.response.ItemDetailResponse;
 import codesquard.app.domain.category.Category;
 import codesquard.app.domain.item.Item;
@@ -46,7 +46,7 @@ class ItemControllerTest extends ControllerTestSupport {
 	private ItemService itemService;
 
 	@BeforeEach
-	public void setup() {
+	void setup() {
 		mockMvc = MockMvcBuilders.standaloneSetup(itemController)
 			.setControllerAdvice(globalExceptionHandler)
 			.setCustomArgumentResolvers(authPrincipalArgumentResolver)
@@ -61,27 +61,17 @@ class ItemControllerTest extends ControllerTestSupport {
 
 	@DisplayName("판매자가 자신이 판매하는 상품의 상세한 내용을 조회합니다.")
 	@Test
-	public void findDetailItemBySeller() throws Exception {
+	void findDetailItemBySeller() throws Exception {
 		// given
 		Member seller = createMember("avatarUrl", "23Yong@gmail.com", "23Yong");
-		Category category = CategoryTestSupport.findByName("스포츠/레저");
-		Item item = Item.builder()
-			.title("빈티지 롤러 블레이드")
-			.content("어린시절 추억의향수를 불러 일으키는 롤러 스케이트입니다.")
-			.price(200000L)
-			.status(ON_SALE)
-			.region("가락동")
-			.createdAt(now())
-			.wishCount(0L)
-			.viewCount(0L)
-			.chatCount(0L)
-			.member(seller)
-			.category(category)
-			.build();
+		Category sport = findByName("스포츠/레저");
+		Item item = createItem("빈티지 롤러 블레이드", "어린시절 추억의향수를 불러 일으키는 롤러 스케이트입니다.", 200000L, ON_SALE,
+			"가락동", "thumbnailUrl", seller, sport);
 		List<String> imageUrls = List.of("imageUrlValue1", "imageUrlValue2");
 
-		ItemDetailResponse response = ItemDetailResponse.of(item, seller, seller.getId(), imageUrls);
+		ItemDetailResponse response = ItemDetailResponse.toBuyer(item, seller.getId(), imageUrls, false, null);
 		given(itemService.findDetailItemBy(any(), any())).willReturn(response);
+
 		// when & then
 		mockMvc.perform(get("/api/items/1"))
 			.andExpect(status().isOk())
@@ -98,32 +88,22 @@ class ItemControllerTest extends ControllerTestSupport {
 			.andExpect(jsonPath("data.chatCount").value(equalTo(0)))
 			.andExpect(jsonPath("data.wishCount").value(equalTo(0)))
 			.andExpect(jsonPath("data.viewCount").value(equalTo(0)))
-			.andExpect(jsonPath("data.price").value(equalTo(200000)));
+			.andExpect(jsonPath("data.price").value(equalTo(200000)))
+			.andExpect(jsonPath("data.isInWishList").value(equalTo(false)));
 	}
 
 	@DisplayName("구매자가 상품의 상세한 내용을 조회합니다.")
 	@Test
-	public void findDetailItemByBuyer() throws Exception {
+	void findDetailItemByBuyer() throws Exception {
 		// given
 		Member seller = createMember("avatarUrl", "23Yong@gmail.com", "23Yong");
-		Category category = CategoryTestSupport.findByName("스포츠/레저");
-		Item item = Item.builder()
-			.title("빈티지 롤러 블레이드")
-			.content("어린시절 추억의향수를 불러 일으키는 롤러 스케이트입니다.")
-			.price(200000L)
-			.status(ON_SALE)
-			.region("가락동")
-			.createdAt(now())
-			.wishCount(0L)
-			.viewCount(0L)
-			.chatCount(0L)
-			.member(seller)
-			.category(category)
-			.build();
+		Category sport = findByName("스포츠/레저");
+		Item item = createItem("빈티지 롤러 블레이드", "어린시절 추억의향수를 불러 일으키는 롤러 스케이트입니다.", 200000L, ON_SALE,
+			"가락동", "thumbnailUrl", seller, sport);
 		Long loginMemberId = 9999L;
 		List<String> imageUrls = List.of("imageUrlValue1", "imageUrlValue2");
 
-		ItemDetailResponse response = ItemDetailResponse.of(item, seller, loginMemberId, imageUrls);
+		ItemDetailResponse response = ItemDetailResponse.toSeller(item, loginMemberId, imageUrls, false);
 		given(itemService.findDetailItemBy(any(), any())).willReturn(response);
 		// when & then
 		mockMvc.perform(get("/api/items/1"))
@@ -141,15 +121,16 @@ class ItemControllerTest extends ControllerTestSupport {
 			.andExpect(jsonPath("data.chatCount").value(equalTo(0)))
 			.andExpect(jsonPath("data.wishCount").value(equalTo(0)))
 			.andExpect(jsonPath("data.viewCount").value(equalTo(0)))
-			.andExpect(jsonPath("data.price").value(equalTo(200000)));
+			.andExpect(jsonPath("data.price").value(equalTo(200000)))
+			.andExpect(jsonPath("data.isInWishList").value(equalTo(false)));
 	}
 
 	@DisplayName("구매자가 상품의 상세한 내용을 조회합니다.")
 	@Test
-	public void findDetailItemWithNotExistItem() throws Exception {
+	void findDetailItemWithNotExistItem() throws Exception {
 		// given
 		given(itemService.findDetailItemBy(any(), any()))
-			.willThrow(new RestApiException(ItemErrorCode.ITEM_NOT_FOUND));
+			.willThrow(new NotFoundResourceException(ItemErrorCode.ITEM_NOT_FOUND));
 
 		// when & then
 		mockMvc.perform(get("/api/items/9999"))
@@ -161,7 +142,7 @@ class ItemControllerTest extends ControllerTestSupport {
 
 	@DisplayName("상품을 삭제합니다.")
 	@Test
-	public void deleteItem() throws Exception {
+	void deleteItem() throws Exception {
 		// given
 		willDoNothing().given(itemService).deleteItem(
 			ArgumentMatchers.anyLong(),
