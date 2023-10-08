@@ -14,12 +14,14 @@ import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import com.codesquad.secondhand.domain.chat.dto.request.ChatRequest;
 import com.codesquad.secondhand.domain.chat.dto.request.MessageRequest;
 import com.codesquad.secondhand.domain.chat.dto.response.ChatRoomDetailsResponse;
 import com.codesquad.secondhand.domain.chat.dto.response.ChatRoomListResponse;
+import com.codesquad.secondhand.domain.chat.dto.response.ChatSendMessageResponse;
 import com.codesquad.secondhand.domain.chat.service.ChatService;
 
 import lombok.RequiredArgsConstructor;
@@ -35,13 +37,13 @@ public class ChatController {
 
 	@MessageMapping("/message")
 	public void sendMessage(MessageRequest messageRequest) {
-		chatService.sendMessage(messageRequest);
+		ChatSendMessageResponse chatSendMessageResponse = chatService.sendMessage(messageRequest);
 		// 채널아이디 만들기
 		simpMessageSendingOperations.convertAndSend("/sub/room/" + messageRequest.getChatRoomId(),
-			messageRequest.getMessage());
+			chatSendMessageResponse);
 	}
 
-	@GetMapping("/api/chats/room-id")
+	@PostMapping("/api/chats/room-id")
 	public ResponseEntity<Map<String, Long>> getChatRoom(@RequestBody ChatRequest chatRequest,
 		HttpServletRequest request) {
 		Long participantId = extractMemberId(request);
