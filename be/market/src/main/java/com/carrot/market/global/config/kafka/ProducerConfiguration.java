@@ -11,6 +11,7 @@ import org.springframework.kafka.core.DefaultKafkaProducerFactory;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.core.ProducerFactory;
 import org.springframework.kafka.support.serializer.JsonSerializer;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import com.carrot.market.chat.presentation.dto.Entry;
 import com.carrot.market.chat.presentation.dto.Message;
@@ -18,11 +19,15 @@ import com.carrot.market.global.util.KafkaConstant;
 
 @EnableKafka
 @Configuration
+@EnableTransactionManagement
 public class ProducerConfiguration {
 
 	@Bean
 	public ProducerFactory<String, Message> messageProducerFactory() {
-		return new DefaultKafkaProducerFactory<>(messageProducerConfigurations());
+		DefaultKafkaProducerFactory<String, Message> factory = new DefaultKafkaProducerFactory<>(
+			messageProducerConfigurations());
+		factory.setTransactionIdPrefix("tx-");
+		return factory;
 	}
 
 	@Bean
@@ -39,6 +44,7 @@ public class ProducerConfiguration {
 			StringSerializer.class);
 		configurations.put(org.apache.kafka.clients.producer.ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG,
 			JsonSerializer.class);
+
 		return configurations;
 	}
 
@@ -55,7 +61,8 @@ public class ProducerConfiguration {
 	}
 
 	@Bean
-	public KafkaTemplate<String, Message> messageKafkaTemplate() {
+	public KafkaTemplate<String, Message> messageKafkaTemplate(
+	) {
 		return new KafkaTemplate<>(messageProducerFactory());
 	}
 

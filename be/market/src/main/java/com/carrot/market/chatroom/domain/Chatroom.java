@@ -1,5 +1,7 @@
 package com.carrot.market.chatroom.domain;
 
+import java.util.Objects;
+
 import com.carrot.market.global.domain.BaseEntity;
 import com.carrot.market.member.domain.Member;
 import com.carrot.market.product.domain.Product;
@@ -15,7 +17,9 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
@@ -36,5 +40,18 @@ public class Chatroom extends BaseEntity {
 	public Chatroom(Product product, Member purchaser) {
 		this.product = product;
 		this.purchaser = purchaser;
+	}
+
+	public Member getReceiver(Member sender) {
+		Member seller = product.getSeller();
+
+		if (Objects.equals(sender.getId(), seller.getId())) {
+			return purchaser;
+		}
+		return seller;
+	}
+
+	public String getProductTitle() {
+		return product.getProductDetails().getTitle();
 	}
 }

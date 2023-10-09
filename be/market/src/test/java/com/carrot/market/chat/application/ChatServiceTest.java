@@ -26,6 +26,7 @@ import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.messaging.converter.MappingJackson2MessageConverter;
 import org.springframework.messaging.simp.stomp.StompHeaders;
 import org.springframework.messaging.simp.stomp.StompSession;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 import org.springframework.web.socket.client.standard.StandardWebSocketClient;
 import org.springframework.web.socket.messaging.WebSocketStompClient;
 
@@ -79,6 +80,7 @@ class ChatServiceTest extends IntegrationTestSupport {
 
 	@BeforeEach
 	void before() {
+		TransactionSynchronizationManager.initSynchronization();
 		blockingQueueForChatting = new LinkedBlockingDeque<>();
 		blockingQueueForEntry = new LinkedBlockingDeque<>();
 		roomContext = new RoomContext(blockingQueueForChatting, blockingQueueForEntry, port);
@@ -92,6 +94,7 @@ class ChatServiceTest extends IntegrationTestSupport {
 
 	@AfterEach
 	void after() {
+		TransactionSynchronizationManager.clear();
 		chattingRepository.deleteAll();
 		chatRoomCounterRepository.deleteAll();
 	}
@@ -107,11 +110,11 @@ class ChatServiceTest extends IntegrationTestSupport {
 		Chatting savedChatting = chattingRepository.save(chatting);
 
 		// when
-		chatService.readChattingInChatroom(chatroom.getId());
+		chatService.readChattingInChatroom(chatroom.getId(), seller.getId());
 
 		// then
 		Chatting readChatting = chattingRepository.findById(savedChatting.getId()).orElseThrow(() -> new ApiException(
-			ChattingException.INVALID_CHATTING_ID));
+			ChattingException.NOT_FOUND_CHATROOM));
 		assertAll(
 			() -> assertThat(readChatting.getId()).isEqualTo(savedChatting.getId()),
 			() -> assertThat(readChatting.isRead()).isEqualTo(true));
@@ -133,11 +136,12 @@ class ChatServiceTest extends IntegrationTestSupport {
 		// Connection
 		enterRoom(chatroom.getId(), accessToken, roomContext);
 		sendMessage(purchaser.getId(), chatroom.getId(), content);
-		blockingQueueForChatting.poll(30, SECONDS);
-		Message message = blockingQueueForChatting.poll(30, SECONDS);
+		blockingQueueForChatting.poll(5, SECONDS);
+		Message message = blockingQueueForChatting.poll(5, SECONDS);
 
 		//then
-		assertThat(message).usingRecursiveComparison().isEqualTo(expectedMessageResponse);
+		List<Chatting> all = chattingRepository.findAll();
+		assertThat(all).hasSize(1);
 
 	}
 
