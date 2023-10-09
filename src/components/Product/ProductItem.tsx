@@ -1,10 +1,11 @@
 import dotsIcon from "@assets/icon/dots.svg";
 import heartIcon from "@assets/icon/heart.svg";
 import messageIcon from "@assets/icon/message.svg";
+import defaultProductThumbnail from "@assets/images/default-thumbnail.png";
 import DeleteAlert from "@components/DeleteAlert";
 import Button from "@components/common/Button";
 import { Dropdown, DropdownItem } from "@components/common/Dropdown";
-import { formatAsPrice, keepLastRegion } from "@utils/stringFormatters";
+import { formatAsPrice, parseNeighborhood } from "@utils/stringFormatters";
 import { convertPastTimestamp } from "@utils/time";
 import { ProductItemType } from "api/productItem";
 import useProductItemDeleteMutation from "api/queries/useProductItemDeleteMutation";
@@ -84,7 +85,9 @@ export default function ProductItem({ item }: Props) {
         onDelete={() => deleteProductItem(Number(item.id))}
       />
       <div>
-        <ProductItemThumbnail src={item.thumbnailUrl || defaultThumbnail} />
+        <ProductItemThumbnail
+          src={item.thumbnailUrl || defaultProductThumbnail}
+        />
       </div>
       <ProductItemContent>
         <Information>
@@ -92,6 +95,7 @@ export default function ProductItem({ item }: Props) {
             <span>{item.title}</span>
             {isUserSeller && (
               <Dropdown
+                leftOrRight="right"
                 buttonContent={
                   <Button variant="plain" style={{ padding: 0 }}>
                     <img src={dotsIcon} />
@@ -107,7 +111,7 @@ export default function ProductItem({ item }: Props) {
             )}
           </ContentHeader>
           <RegionAndTime>
-            {keepLastRegion(item.region)}・
+            {parseNeighborhood(item.region)}・
             {convertPastTimestamp(item.updatedAt)}
           </RegionAndTime>
           <BadgeAndPrice>
@@ -240,7 +244,3 @@ const ReactionDesc = styled.span`
   align-items: center;
   font: ${({ theme: { font } }) => font.displayDefault12};
 `;
-
-// ! FIXME: 임시로 사용중인 이미지
-export const defaultThumbnail =
-  "https://mblogthumb-phinf.pstatic.net/MjAyMDExMDFfMTgy/MDAxNjA0MjI4ODc1NDMw.Ex906Mv9nnPEZGCh4SREknadZvzMO8LyDzGOHMKPdwAg.ZAmE6pU5lhEdeOUsPdxg8-gOuZrq_ipJ5VhqaViubI4g.JPEG.gambasg/%EC%9C%A0%ED%8A%9C%EB%B8%8C_%EA%B8%B0%EB%B3%B8%ED%94%84%EB%A1%9C%ED%95%84_%ED%95%98%EB%8A%98%EC%83%89.jpg?type=w800";

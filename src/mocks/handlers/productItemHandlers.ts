@@ -6,19 +6,24 @@ import {
 import { rest } from "msw";
 
 export default [
-  rest.get(
-    "/api/items?region=1&category=1&page=0&size=10",
-    async (_, res, ctx) => {
+  rest.get("/api/items", async (req, res, ctx) => {
+    const region = req.url.searchParams.get("region");
+    const category = req.url.searchParams.get("category");
+    const page = req.url.searchParams.get("page");
+    const size = req.url.searchParams.get("size");
+
+    if (region && category && page && size) {
       return res(
         ctx.status(HTTPSTATUS.success),
         ctx.json(successfulProductItemsData)
       );
+    } else {
       return res(
         ctx.status(HTTPSTATUS.badRequest),
         ctx.json(unSuccessfulProductItemsData)
       );
     }
-  ),
+  }),
 
   rest.get("/api/items/:id", (req, res, ctx) => {
     const { id } = req.params;

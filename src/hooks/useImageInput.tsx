@@ -21,6 +21,12 @@ export default function useImageInput({ sizeLimit }: Props) {
       return;
     }
 
+    if (!newImageFile.type.startsWith("image/")) {
+      setError("이미지 파일만 업로드 가능합니다");
+      setImageFile(null);
+      return;
+    }
+
     setImageFile(newImageFile);
     setError("");
   };

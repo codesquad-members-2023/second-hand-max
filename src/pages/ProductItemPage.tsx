@@ -3,9 +3,9 @@ import chevronLeftIcon from "@assets/icon/chevron-left.svg";
 import dotsIcon from "@assets/icon/dots.svg";
 import filledHeartIcon from "@assets/icon/heart-filled.svg";
 import emptyHeartIcon from "@assets/icon/heart.svg";
+import defaultProductThumbnail from "@assets/images/default-thumbnail.png";
 import AppBar from "@components/AppBar";
 import DeleteAlert from "@components/DeleteAlert";
-import { defaultThumbnail } from "@components/Product/ProductItem";
 import Button from "@components/common/Button/Button";
 import DraggableImageSlider from "@components/common/DraggableImageSlider/DraggableImageSlider";
 import { Dropdown, DropdownItem } from "@components/common/Dropdown";
@@ -82,7 +82,6 @@ export default function ProductItemPage() {
       }
     } else {
       const res = await wishlistItemAddMutateAsync();
-      console.log(res);
       if (res.code === HTTPSTATUS.created) {
         setLikedData((prev) => ({
           isLiked: true,
@@ -136,6 +135,7 @@ export default function ProductItemPage() {
           <DropdownContainer>
             {user?.userId === productItemDetails?.seller.id && (
               <Dropdown
+                leftOrRight="right"
                 buttonContent={
                   <Button variant="plain">
                     <DotsImage src={dotsIcon} alt="dots" />
@@ -160,7 +160,7 @@ export default function ProductItemPage() {
             imageList={
               productItemDetails?.images
                 ? productItemDetails.images
-                : [{ id: 0, imageUrl: defaultThumbnail }]
+                : [{ id: 0, imageUrl: defaultProductThumbnail }]
             }
             description={productItemDetails?.title}
           />
@@ -173,6 +173,7 @@ export default function ProductItemPage() {
           {user?.userId === productItemDetails?.seller.id && (
             <StatusTab>
               <Dropdown
+                leftOrRight="left"
                 buttonContent={
                   <Button
                     variant="plain"
@@ -374,11 +375,16 @@ const TextInfoArea = styled.div`
   gap: 16px;
 
   > p {
+    width: inherit;
+    height: 200px;
     font: ${({ theme: { font } }) => font.displayDefault16};
     color: ${({ theme: { color } }) => color.neutral.text};
-    width: 100%;
-    height: 200px;
-    overflow: scroll;
+    white-space: normal;
+    word-break: break-all;
+    overflow-y: scroll;
+    &::-webkit-scrollbar {
+      display: none;
+    }
   }
 
   > span {

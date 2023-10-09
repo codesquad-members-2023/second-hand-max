@@ -8,6 +8,7 @@ import {
   successfulWishlistItemDelete,
   successfulWishlistItemsData,
   unSuccessfulUserInfoData,
+  unsuccessfulTransactionItemsData,
 } from "mocks/data/userData";
 import { RestRequest, rest } from "msw";
 
@@ -53,21 +54,40 @@ export default [
     return res(ctx.status(HTTPSTATUS.success), ctx.json(updatedRegions));
   }),
 
-  rest.get(
-    "/api/users/transactions?status=1,3&page=0&size=0",
-    (_, res, ctx) => {
+  rest.get("/api/users/transactions", (req, res, ctx) => {
+    const status = req.url.searchParams.get("status");
+    const page = req.url.searchParams.get("page");
+    const size = req.url.searchParams.get("size");
+
+    if (status && page && size) {
       return res(
         ctx.status(HTTPSTATUS.success),
         ctx.json(successfulTransactionItemsData)
       );
+    } else {
+      return res(
+        ctx.status(HTTPSTATUS.badRequest),
+        ctx.json(unsuccessfulTransactionItemsData)
+      );
     }
-  ),
+  }),
 
-  rest.get("/api/users/wishlist?category=1&page=0&size=0", (_, res, ctx) => {
-    return res(
-      ctx.status(HTTPSTATUS.success),
-      ctx.json(successfulWishlistItemsData)
-    );
+  rest.get("/api/users/wishlist", (req, res, ctx) => {
+    const category = req.url.searchParams.get("category");
+    const page = req.url.searchParams.get("page");
+    const size = req.url.searchParams.get("size");
+
+    if (category && page && size) {
+      return res(
+        ctx.status(HTTPSTATUS.success),
+        ctx.json(successfulWishlistItemsData)
+      );
+    } else {
+      return res(
+        ctx.status(HTTPSTATUS.badRequest),
+        ctx.json(unsuccessfulTransactionItemsData)
+      );
+    }
   }),
 
   rest.post("/api/users/wishlist/:itemId", (_, res, ctx) => {

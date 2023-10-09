@@ -17,7 +17,8 @@ export default function useText(options?: Props) {
       return;
     }
 
-    validators.forEach((validator) => {
+    // Reverse the order of validators to show the first error.
+    validators.reverse().forEach((validator) => {
       try {
         validator(newVal);
         setError("");

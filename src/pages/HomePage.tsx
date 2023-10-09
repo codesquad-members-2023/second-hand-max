@@ -8,7 +8,7 @@ import Button from "@components/common/Button/Button";
 import InfiniteScrollList from "@components/common/InfiniteScroll/InfiniteScrollList";
 import { SelectInput, SelectItem } from "@components/common/SelectInput";
 import { ProductItemsFiltersContext } from "@context/ProductItemsFiltersContext";
-import { keepLastRegion } from "@utils/stringFormatters";
+import { parseNeighborhood } from "@utils/stringFormatters";
 import useProductItemsInfiniteQuery from "api/queries/useProductItemsInfiniteQuery";
 import useUserRegionsQuery from "api/queries/useUserRegionsQuery";
 import { RegionType } from "api/region";
@@ -68,14 +68,12 @@ export default function HomePage() {
         <div style={{ flexGrow: 1 }}>
           <SelectInput
             name="선택된 동네"
-            value={
-              selectedRegion.title ? keepLastRegion(selectedRegion.title) : ""
-            }
+            value={parseNeighborhood(selectedRegion.title) ?? ""}
             onChange={onChangeSelectedRegion}>
             {userRegions &&
               userRegions.regions.map((region: RegionType) => (
                 <SelectItem key={region.id} item={region}>
-                  {keepLastRegion(region.title)}
+                  {parseNeighborhood(region.title)}
                 </SelectItem>
               ))}
             <SelectItem

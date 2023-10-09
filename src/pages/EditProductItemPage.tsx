@@ -1,10 +1,10 @@
-import cameraIcon from "@assets/icon/camera.svg";
 import chevronRightIcon from "@assets/icon/chevron-right.svg";
 import circleXIcon from "@assets/icon/circle-x-filled.svg";
 import mapIcon from "@assets/icon/map-pin-filled.svg";
 import AppBar from "@components/AppBar";
 import CategoryModal from "@components/Category/CategoryModal";
 import Button from "@components/common/Button/Button";
+import ImageInputButton from "@components/common/ImageInputButton/ImageInputButton";
 import { Tag } from "@components/common/Tag/Tag";
 import { ProductItemsFiltersContext } from "@context/ProductItemsFiltersContext";
 import useDraggable from "@hooks/useDraggable";
@@ -15,7 +15,7 @@ import { areDifferent } from "@utils/objectDifferences";
 import {
   formatAsNumber,
   formatAsPrice,
-  keepLastRegion,
+  parseNeighborhood,
 } from "@utils/stringFormatters";
 import { ProductItemDetails } from "api/productItem";
 import useCategoriesQuery from "api/queries/useCategoriesQuery";
@@ -150,11 +150,11 @@ export default function EditProductItemPage() {
     });
 
   if (isLoadingProductItemDetails) {
-    return <StyledNewProductPage>Loading...</StyledNewProductPage>;
+    return <StyledEditProductItemPage>Loading...</StyledEditProductItemPage>;
   }
 
   return (
-    <StyledNewProductPage>
+    <StyledEditProductItemPage>
       {isCategoryOpen ? (
         <CategoryModal
           categoryList={categories ?? []}
@@ -189,24 +189,11 @@ export default function EditProductItemPage() {
             onMouseLeave={onDragSlideEnd}
             onMouseEnter={onShowScrollBar}
             $isPictureHover={isPictureHover}>
-            <AddButton>
-              <label
-                style={{
-                  width: "100%",
-                  height: "100%",
-                  cursor: "pointer",
-                  position: "absolute",
-                }}>
-                <input
-                  type="file"
-                  accept="image/*"
-                  style={{ display: "none" }}
-                  onChange={onImageUpload}
-                />
-                <img src={cameraIcon} alt="camera" />
-                <PictureCount>{uploadedImagesList.length}/10</PictureCount>
-              </label>
-            </AddButton>
+            <ImageInputButton
+              numUploadedImages={uploadedImagesList.length}
+              maxNumImages={10}
+              onChange={onImageUpload}
+            />
             {uploadedImagesList &&
               uploadedImagesList.map((picture) => {
                 const imageUrl = picture.imageUrl;
@@ -284,12 +271,37 @@ export default function EditProductItemPage() {
             gap: "8px",
           }}>
           <img src={mapIcon} alt="map" />
-          <RegionText>{keepLastRegion(selectedRegion.title)}</RegionText>
+          <RegionText>{parseNeighborhood(selectedRegion.title)}</RegionText>
         </Button>
       </AppBar>
-    </StyledNewProductPage>
+    </StyledEditProductItemPage>
   );
 }
+
+const StyledEditProductItemPage = styled.div`
+  width: 393px;
+  height: 852px;
+  display: flex;
+  position: relative;
+  flex-direction: column;
+  justify-content: space-between;
+  background: ${({ theme: { color } }) => color.neutral.background};
+`;
+
+const Main = styled.div`
+  width: 100%;
+  height: 100%;
+  padding: 72px 16px 0px 16px;
+`;
+
+const Container = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 361px;
+  height: 100%;
+  background: ${({ theme: { color } }) => color.neutral.background};
+`;
 
 const CategoryArea = styled.div`
   width: 100%;
@@ -320,17 +332,15 @@ const PictureArea = styled.div<{ $isPictureHover: boolean }>`
   flex-shrink: 0;
 
   &::-webkit-scrollbar {
-    display: ${({ $isPictureHover }) => ($isPictureHover ? "auto" : "none")};
-
     height: 8px;
+    display: ${({ $isPictureHover }) => ($isPictureHover ? "auto" : "none")};
     border-radius: 16px;
   }
 
   &::-webkit-scrollbar-thumb {
-    background: ${({ theme: { color } }) => color.neutral.backgroundBold};
-
     width: 20px;
     height: 6px;
+    background: ${({ theme: { color } }) => color.neutral.backgroundBold};
     border-radius: 16px;
   }
 `;
@@ -352,30 +362,19 @@ const WonSymbol = styled.span`
 `;
 
 const ContentArea = styled.textarea`
-  font: ${({ theme: { font } }) => font.availableDefault16};
   height: calc(100% - 64px);
-  overflow: overlay;
-  word-wrap: break-word;
-
   max-height: 100%;
+  padding-bottom: 80px;
+  font: ${({ theme: { font } }) => font.availableDefault16};
+  word-wrap: break-word;
+  overflow: scroll;
   &::-webkit-scrollbar {
     display: none;
   }
-
   &::placeholder {
     color: ${({ theme: { color } }) => color.neutral.textWeak};
   }
 `;
-
-// const ImageInputError = styled.p`
-//   top: 60px;
-//   height: 18px;
-//   position: absolute;
-//   margin-bottom: 2px;
-//   font: ${({ theme: { font } }) => font.availableDefault12};
-//   font-size: 10px;
-//   color: ${({ theme: { color } }) => color.system.warning};
-// `;
 
 const PriceInput = styled.input`
   height: 24px;
@@ -407,46 +406,11 @@ const InputArea = styled.div`
   border-bottom: 0.8px solid ${({ theme: { color } }) => color.neutral.border};
 `;
 
-const AddButton = styled.button`
-  position: relative;
-  width: 80px;
-  height: 80px;
-  padding: 16px;
-  display: flex;
-  flex-direction: column;
-  flex-shrink: 0;
-  justify-content: center;
-  align-items: center;
-  gap: 4px;
-  border: 0.8px solid ${({ theme: { color } }) => color.neutral.border};
-  border-radius: 16px;
-`;
-
-const PictureCount = styled.div`
-  font: ${({ theme: { font } }) => font.displayDefault12};
-  color: ${({ theme: { color } }) => color.neutral.textStrong};
-`;
-
 const Picture = styled.img`
   width: 80px;
   height: 80px;
   border: 0.8px solid ${({ theme: { color } }) => color.neutral.border};
   border-radius: 16px;
-`;
-const StyledNewProductPage = styled.div`
-  width: 393px;
-  height: 852px;
-  display: flex;
-  position: relative;
-  flex-direction: column;
-  justify-content: space-between;
-  background: ${({ theme: { color } }) => color.neutral.background};
-`;
-
-const Main = styled.div`
-  width: 100%;
-  height: 100%;
-  padding: 72px 16px 0px 16px;
 `;
 
 const CloseButtonText = styled.div`
@@ -478,14 +442,4 @@ const CompleteButtonText = styled.div<{ $isValid: boolean }>`
   font: ${({ theme: { font } }) => font.availableStrong16};
   color: ${({ theme: { color }, $isValid }) =>
     $isValid ? color.accent.backgroundPrimary : color.neutral.borderStrong};
-`;
-
-const Container = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-  width: 361px;
-  height: 100%;
-  background: ${({ theme: { color } }) => color.neutral.background};
-  // box-sizing: border-box;
 `;

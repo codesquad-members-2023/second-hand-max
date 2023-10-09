@@ -5,10 +5,12 @@ const weekInMs = dayInMs * 7;
 const monthInMs = weekInMs * 4;
 const yearInMs = monthInMs * 12;
 
-// 1 - 6 Days
-// 1 - 3 weeks
-// If over 1 month, `Month Date`
-// If over 1 year, `Month Date, Year`
+// 0 <= X < 60 (seconds): "방금 전"
+// 1 <= X < 60 (minutes): "X분 전"
+// 1 <= X < 6 (days): "X일 전"
+// 1 <= X < 4 (weeks): "X주 전"
+// 1 <= X < 12 (months): `MM/DD`
+// 1 <= X (years): `YYYY/MM/DD`
 // Ex: `timestamp === "2023-07-27 10:42:40"`
 export const convertPastTimestamp = (timestamp: string) => {
   const startDate = new Date(timestamp);
@@ -19,7 +21,7 @@ export const convertPastTimestamp = (timestamp: string) => {
   const currDate = new Date();
 
   const diffMs = currDate.getTime() - startDate.getTime();
-  if (diffMs < 0) throw Error("timestamp cannot be in the future");
+  if (diffMs < 0) throw Error("Timestamp cannot be in the future");
 
   if (diffMs < minuteInMs) {
     return "방금 전";

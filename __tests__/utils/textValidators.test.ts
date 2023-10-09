@@ -2,7 +2,7 @@ import {
   validateEmail,
   validateNickname,
   validatePassword,
-} from "./textValidators";
+} from "../../src/utils/textValidators";
 
 describe("validates nickname", () => {
   it("should not throw an error for a valid nickname", () => {
@@ -27,7 +27,7 @@ describe("validates email", () => {
 
 describe("validates password", () => {
   it("should not throw an error for a valid email", () => {
-    expect(validatePassword("iampassword$")).toBe(undefined);
+    expect(validatePassword("iampassword7$")).toBe(undefined);
   });
   it("should throw an error for an invalid email (too short)", () => {
     expect(() => validatePassword("pass$")).toThrowError();

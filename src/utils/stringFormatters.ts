@@ -8,10 +8,11 @@ export function formatAsPrice(input: string) {
   return formattedPrice;
 }
 
-export function keepLastRegion(address: string): string {
-  const parts = address.split(" ");
+export function parseNeighborhood(address: string): string | null {
+  const regex = /(\S*동|\S*읍|\S*면)/;
+  const match = address.match(regex);
 
-  return parts[parts.length - 1];
+  return match ? match[1] : null;
 }
 
 export function formatAsNumber(input: string) {

@@ -5,7 +5,7 @@ import Button from "@components/common/Button/Button";
 import Modal from "@components/common/Modal/Modal";
 import { ModalHeader, ModalTitle } from "@components/common/Modal/ModalStyles";
 import { ProductItemsFiltersContext } from "@context/ProductItemsFiltersContext";
-import { keepLastRegion } from "@utils/stringFormatters";
+import { parseNeighborhood } from "@utils/stringFormatters";
 import useUserRegionDeleteMutation from "api/queries/useUserRegionDeleteMutation";
 import { RegionType } from "api/region";
 import { useContext } from "react";
@@ -78,7 +78,9 @@ export default function RegionSelectModal({
               }}
               key={index}
               onClick={() => onRegionSelect(item)}>
-              <RegionButtonText>{keepLastRegion(item.title)}</RegionButtonText>
+              <RegionButtonText>
+                {parseNeighborhood(item.title)}
+              </RegionButtonText>
               <CircleXFilled
                 src={circleXFilled}
                 alt="close"

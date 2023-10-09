@@ -104,6 +104,13 @@ export const successfulTransactionItemsData = {
   },
 };
 
+export const unsuccessfulTransactionItemsData = {
+  code: HTTPSTATUS.badRequest,
+  status: "Bad Request",
+  message: "판매내역 조회를 실패하였습니다",
+  data: null,
+};
+
 export const successfulWishlistItemsData = {
   code: HTTPSTATUS.success,
   status: "OK",
@@ -164,6 +171,13 @@ export const successfulWishlistItemsData = {
       },
     ],
   },
+};
+
+export const unsuccessfulWishlistItemsData = {
+  code: HTTPSTATUS.badRequest,
+  status: "Bad Request",
+  message: "관심목록 조회를 실패하였습니다",
+  data: null,
 };
 
 export const successfulWishlistItemAdd = {

@@ -1,10 +1,10 @@
-import cameraIcon from "@assets/icon/camera.svg";
 import chevronRightIcon from "@assets/icon/chevron-right.svg";
 import circleXIcon from "@assets/icon/circle-x-filled.svg";
 import mapIcon from "@assets/icon/map-pin-filled.svg";
 import AppBar from "@components/AppBar";
 import CategoryModal from "@components/Category/CategoryModal";
 import Button from "@components/common/Button/Button";
+import ImageInputButton from "@components/common/ImageInputButton/ImageInputButton";
 import { Tag } from "@components/common/Tag/Tag";
 import { ProductItemsFiltersContext } from "@context/ProductItemsFiltersContext";
 import useDraggable from "@hooks/useDraggable";
@@ -14,7 +14,7 @@ import useUploadedImagesList from "@hooks/useUploadedImagesList";
 import {
   formatAsNumber,
   formatAsPrice,
-  keepLastRegion,
+  parseNeighborhood,
 } from "@utils/stringFormatters";
 import { PictureType } from "api/productItem";
 import useCategoriesQuery from "api/queries/useCategoriesQuery";
@@ -111,7 +111,7 @@ export default function NewProductItemPage() {
   if (isLoading) return <div>로딩중</div>;
 
   return (
-    <StyledNewProductPage>
+    <StyledNewProductItemPage>
       {isCategoryOpen ? (
         <CategoryModal
           categoryList={categoryList ?? []}
@@ -144,29 +144,11 @@ export default function NewProductItemPage() {
             onMouseLeave={onDragSlideEnd}
             onMouseEnter={onShowScrollBar}
             $isPictureHover={isPictureHover}>
-            <AddButton>
-              <label
-                style={{
-                  width: "100%",
-                  height: "100%",
-                  cursor: "pointer",
-                  position: "absolute",
-                }}>
-                <input
-                  type="file"
-                  accept="image/*"
-                  style={{
-                    visibility: "hidden",
-                    width: "inherit",
-                    height: "inherit",
-                    zIndex: "999",
-                  }}
-                  onChange={onImageUpload}
-                />
-              </label>
-              <img src={cameraIcon} alt="camera" />
-              <PictureCount>{uploadedImagesList.length}/10</PictureCount>
-            </AddButton>
+            <ImageInputButton
+              numUploadedImages={uploadedImagesList.length}
+              maxNumImages={10}
+              onChange={onImageUpload}
+            />
             {uploadedImagesList &&
               uploadedImagesList.map((picture: PictureType) => {
                 return (
@@ -241,12 +223,37 @@ export default function NewProductItemPage() {
             gap: "8px",
           }}>
           <img src={mapIcon} alt="map" />
-          <RegionText>{keepLastRegion(selectedRegion.title)}</RegionText>
+          <RegionText>{parseNeighborhood(selectedRegion.title)}</RegionText>
         </Button>
       </AppBar>
-    </StyledNewProductPage>
+    </StyledNewProductItemPage>
   );
 }
+
+const StyledNewProductItemPage = styled.div`
+  width: 393px;
+  height: 852px;
+  display: flex;
+  position: relative;
+  flex-direction: column;
+  justify-content: space-between;
+  background: ${({ theme: { color } }) => color.neutral.background};
+`;
+
+const Main = styled.div`
+  width: 100%;
+  height: 100%;
+  padding: 72px 16px 0px 16px;
+`;
+
+const Container = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 361px;
+  height: 100%;
+  background: ${({ theme: { color } }) => color.neutral.background};
+`;
 
 const CategoryArea = styled.div`
   width: 100%;
@@ -358,47 +365,12 @@ const PriceInputArea = styled(InputArea)`
   flex-direction: row;
 `;
 
-const AddButton = styled.button`
-  position: relative;
-  width: 80px;
-  height: 80px;
-  padding: 16px;
-  display: flex;
-  flex-direction: column;
-  flex-shrink: 0;
-  justify-content: center;
-  align-items: center;
-  gap: 4px;
-  border: 0.8px solid ${({ theme: { color } }) => color.neutral.border};
-  border-radius: 16px;
-`;
-
-const PictureCount = styled.div`
-  font: ${({ theme: { font } }) => font.displayDefault12};
-  color: ${({ theme: { color } }) => color.neutral.textStrong};
-`;
-
 const Picture = styled.img`
   width: 80px;
   height: 80px;
   border: 0.8px solid ${({ theme: { color } }) => color.neutral.border};
   border-radius: 16px;
   cursor: grab;
-`;
-const StyledNewProductPage = styled.div`
-  width: 393px;
-  height: 852px;
-  display: flex;
-  position: relative;
-  flex-direction: column;
-  justify-content: space-between;
-  background: ${({ theme: { color } }) => color.neutral.background};
-`;
-
-const Main = styled.div`
-  width: 100%;
-  height: 100%;
-  padding: 72px 16px 0px 16px;
 `;
 
 const CloseButtonText = styled.div`
@@ -430,14 +402,4 @@ const CompleteButtonText = styled.div<{ $isValid: boolean }>`
   font: ${({ theme: { font } }) => font.availableStrong16};
   color: ${({ theme: { color }, $isValid }) =>
     $isValid ? color.accent.backgroundPrimary : color.neutral.borderStrong};
-`;
-
-const Container = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-  width: 361px;
-  height: 100%;
-  background: ${({ theme: { color } }) => color.neutral.background};
-  // box-sizing: border-box;
 `;
