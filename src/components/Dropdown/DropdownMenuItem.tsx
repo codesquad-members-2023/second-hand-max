@@ -4,32 +4,32 @@ import { css, styled } from 'styled-components';
 type Props = {
   children: React.ReactNode;
   onClick: () => void;
-  $isSelected: boolean;
 };
 
-export const DropdownMenuItem: React.FC<Props> = ({
-  children,
-  onClick,
-  $isSelected,
-}) => {
+export const DropdownMenuItem: React.FC<Props> = ({ children, onClick }) => {
   return (
-    <StyledDropdownMenuItem onClick={onClick} $isSelected={$isSelected}>
+    <StyledDropdownMenuItem onClick={onClick}>
       {children}
     </StyledDropdownMenuItem>
   );
 };
 
-export const StyledDropdownMenuItem = styled(Button)<{ $isSelected: boolean }>`
-  ${({ theme: { colors, fonts }, $isSelected }) => css`
+export const StyledDropdownMenuItem = styled(Button)`
+  ${({ theme: { colors, fonts } }) => css`
     width: 208px;
     padding: 16px;
-    ${$isSelected ? fonts.enabled.strong16 : fonts.available.default16};
-
     justify-content: start;
     border-radius: 0;
+    ${fonts.available.default16};
 
     &:not(:last-child) {
       border-bottom: 0.8px solid ${colors.neutral.border};
+    }
+
+    &:hover {
+      ${({ theme: { colors } }) => css`
+        background-color: ${colors.neutral.backgroundBold};
+      `};
     }
   `};
 `;

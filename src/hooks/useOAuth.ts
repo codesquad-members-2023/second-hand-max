@@ -2,10 +2,16 @@ import { useNavigate } from 'react-router-dom';
 import PATH from '@constants/PATH';
 import { signInUser, signUpUser } from 'apis/auth';
 import { useUserStore } from 'stores/useUserStore';
+import { useEffect, useRef, useState } from 'react';
 import { ERROR_MESSAGE } from '@constants/ERROR_MESSAGE';
-import { useRef } from 'react';
 
 type Action = 'sign-up' | 'sign-in';
+
+type MessageData = {
+  status: string;
+  action: Action;
+  code: string;
+};
 
 type InitOAuthParams = {
   action: Action;
@@ -16,7 +22,14 @@ type InitOAuthParams = {
 
 export type InitOAuthType = (params: InitOAuthParams) => void;
 
+type AuthState = {
+  id: string;
+  file?: File;
+  addressIds?: number[];
+};
+
 const useOAuth = () => {
+  const [authState, setAuthState] = useState<AuthState>();
   const navigate = useNavigate();
   const setUserAuth = useUserStore(({ setUserAuth }) => setUserAuth);
   const setCurrentRegion = useUserStore(
@@ -24,8 +37,25 @@ const useOAuth = () => {
   );
   const oauthWindowRef = useRef<Window | null>(null);
 
-  const onSignIn = async ({ code, id }: { code: string; id: string }) => {
-    const userData = await signInUser({ code, id });
+  useEffect(() => {
+    const onMessageReceive = ({ origin, data }: MessageEvent<MessageData>) => {
+      const isSameOrigin = origin === window.location.origin;
+      const { action, code } = data;
+
+      if (isSameOrigin && action && code) {
+        actionHandlerMap[action](code);
+      }
+    };
+
+    window.addEventListener('message', onMessageReceive, { once: true });
+
+    return () => {
+      window.removeEventListener('message', onMessageReceive);
+    };
+  }, [authState]);
+
+  const onSignIn = async (code: string) => {
+    const userData = await signInUser({ code, id: authState!.id });
     const isSuccess = userData.statusCode === 200;
 
     if (isSuccess) {
@@ -42,22 +72,17 @@ const useOAuth = () => {
     alert(userData.message);
   };
 
-  const onSignUp = async ({
-    code,
-    id,
-    file,
-    addressIds,
-  }: {
-    code: string;
-    id: string;
-    file?: File;
-    addressIds?: number[];
-  }) => {
+  const onSignUp = async (code: string) => {
+    if (!authState?.addressIds) {
+      alert(ERROR_MESSAGE.REQUEST_REFRESH);
+      return;
+    }
+
     const userData = await signUpUser({
       code,
-      id,
-      file,
-      addressIds: addressIds!,
+      id: authState.id,
+      file: authState.file,
+      addressIds: authState.addressIds,
     });
     const isSuccess = userData.statusCode === 201;
 
@@ -68,47 +93,19 @@ const useOAuth = () => {
     alert(userData.message);
   };
 
-  const actionHandlerMap: Record<
-    Action,
-    (params: {
-      code: string;
-      id: string;
-      file?: File;
-      addressIds?: number[];
-    }) => void
-  > = {
-    'sign-up': (params) => onSignUp(params),
-    'sign-in': ({ code, id }) => onSignIn({ code, id }),
+  const actionHandlerMap: Record<Action, (code: string) => Promise<void>> = {
+    'sign-up': onSignUp,
+    'sign-in': onSignIn,
   };
 
   const initOAuth = ({ action, id, file, addressIds }: InitOAuthParams) => {
-    const onMessageReceive = ({ origin, data }: MessageEvent) => {
-      try {
-        const isSameOrigin = origin === window.location.origin;
-        const { status, code } = data;
-
-        if (!isSameOrigin || status === 'error' || !id) {
-          throw new Error(ERROR_MESSAGE.INVALID_ACCESS);
-        }
-
-        actionHandlerMap[action]({ code, id, file, addressIds });
-      } catch (error) {
-        console.error(error);
-
-        if (error instanceof Error) {
-          alert(error.message);
-        }
-      }
-    };
+    setAuthState({ id, file, addressIds });
 
     // 이미 oauth 팝업이 떠 있는 경우
     if (oauthWindowRef.current && !oauthWindowRef.current.closed) {
       oauthWindowRef.current.focus();
       return;
     }
-
-    window.removeEventListener('message', onMessageReceive);
-    window.addEventListener('message', onMessageReceive, { once: true });
 
     const oauthUrl = `${import.meta.env.VITE_APP_OAUTH_URL}&state=${action}`;
     oauthWindowRef.current = window.open(oauthUrl, '_blank', 'popup');

@@ -6,10 +6,10 @@ import defaultProfileImage from '@assets/default-profile-image.png';
 
 type Props = {
   imageSrc?: string;
-  onImageChange: (file: File) => void;
+  onImageAdd: (file: File) => void;
 };
 
-const ProfileImageUploader: React.FC<Props> = ({ imageSrc, onImageChange }) => {
+const ProfileImageUploader: React.FC<Props> = ({ imageSrc, onImageAdd }) => {
   return (
     <CircularProfileImage>
       <Icons.Camera />
@@ -21,7 +21,7 @@ const ProfileImageUploader: React.FC<Props> = ({ imageSrc, onImageChange }) => {
           const file = target.files?.[0];
 
           if (file) {
-            onImageChange(file);
+            onImageAdd(file);
           }
         }}
       />

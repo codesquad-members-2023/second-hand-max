@@ -3,19 +3,15 @@ import { Modal } from '../ModalSheet';
 import { CategoryListModalHeader } from './CategoryListModalHeader';
 import { Loader } from '@components/Loader';
 import { CategoryList } from './CategoryList';
-import { Category } from 'types/category';
+import { usePostProductModalStore } from '../PostProductModal/usePostProductModalStore';
 
-type Props = {
-  closeCategoryListModalOpen: () => void;
-  categoryListSelect: (category: Category) => void;
-};
-
-export const CategoryListModal: React.FC<Props> = ({
-  closeCategoryListModalOpen,
-  categoryListSelect,
-}) => {
+export const CategoryListModal: React.FC = () => {
   const { isLoading, withoutPopularCategories: categories } =
     useCategoryQuery();
+
+  const closeCategoryListModal = usePostProductModalStore(
+    ({ closeCategoryListModal }) => closeCategoryListModal,
+  );
 
   return (
     <Modal
@@ -24,15 +20,11 @@ export const CategoryListModal: React.FC<Props> = ({
         flexDirection: 'column',
       }}
     >
-      <CategoryListModalHeader
-        {...{ onModalClose: closeCategoryListModalOpen }}
-      />
+      <CategoryListModalHeader onModalClose={closeCategoryListModal} />
       {isLoading ? (
         <Loader />
       ) : (
-        categories && (
-          <CategoryList {...{ categories, onClick: categoryListSelect }} />
-        )
+        categories && <CategoryList categories={categories} />
       )}
     </Modal>
   );

@@ -10,7 +10,6 @@ export const fetchData = async (path: string, options?: RequestInit) => {
 export const fetchDataWithToken = async (
   path: string,
   options?: RequestInit,
-  retryCount: number = 3,
 ): Promise<Response> => {
   const { accessToken } = useUserStore.getState().getTokens();
   const response = await fetch(BASE_URL + path, {
@@ -21,21 +20,17 @@ export const fetchDataWithToken = async (
     },
   });
 
-  if (response.status === 401 && retryCount > 0) {
+  if (response.status === 401) {
     await useUserStore.getState().handleTokenExpiry();
     const { accessToken } = useUserStore.getState().getTokens();
 
-    const response = await fetchDataWithToken(
-      path,
-      {
-        ...options,
-        headers: {
-          ...options?.headers,
-          Authorization: 'Bearer ' + accessToken,
-        },
+    const response = await fetchDataWithToken(path, {
+      ...options,
+      headers: {
+        ...options?.headers,
+        Authorization: 'Bearer ' + accessToken,
       },
-      retryCount - 1,
-    );
+    });
 
     return response;
   }

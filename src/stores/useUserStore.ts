@@ -1,5 +1,6 @@
 import { ERROR_MESSAGE } from '@constants/ERROR_MESSAGE';
 import { LOCAL_STORAGE_KEY } from '@constants/LOCAL_STORAGE_KEY';
+import PATH from '@constants/PATH';
 import { updateAccessToken } from 'apis/auth';
 import { Tokens, User } from 'types';
 import { Address } from 'types/region';
@@ -18,7 +19,6 @@ type UserStore = {
   setTokens: (tokens: Tokens) => void;
   handleTokenExpiry: () => Promise<void>;
   setUserAuth: ({ user, tokens }: { user: User; tokens: Tokens }) => void;
-  setAddAddress: (address: Address) => void;
   setCurrentRegion: (address: Address) => void;
   reset: () => void;
 };
@@ -56,7 +56,6 @@ export const useUserStore = create<UserStore>()(
           }
 
           return {
-            ...prevState,
             user: {
               ...prevState.user,
               profileUrl,
@@ -71,8 +70,15 @@ export const useUserStore = create<UserStore>()(
             return { ...prevState };
           }
 
+          if (
+            prevState.user.addresses.some(
+              ({ addressId }) => addressId === address.addressId,
+            )
+          ) {
+            throw new Error(ERROR_MESSAGE.DUPLICATE_REGION);
+          }
+
           return {
-            ...prevState,
             user: {
               ...prevState.user,
               addresses: prevState.user.addresses
@@ -90,12 +96,11 @@ export const useUserStore = create<UserStore>()(
           }
 
           if (prevState.user.addresses.length === 1) {
-            alert('동네는 최소 1개는 설정해야 합니다.');
+            alert(ERROR_MESSAGE.MINIMUM_REGION);
             return { ...prevState };
           }
 
           return {
-            ...prevState,
             user: {
               ...prevState.user,
               addresses: prevState.user.addresses.filter(
@@ -109,6 +114,8 @@ export const useUserStore = create<UserStore>()(
         const tokens = get().tokens;
 
         if (!tokens) {
+          alert('로그인 정보가 없습니다. 로그인 하여주시기 바랍니다.');
+          location.href = `/${PATH.MY_ACCOUNT}`;
           throw new Error(ERROR_MESSAGE.TOKEN_NOT_FOUND);
         }
 
@@ -133,27 +140,13 @@ export const useUserStore = create<UserStore>()(
             throw new Error(ERROR_MESSAGE.TOKEN_REFRESH_FAILED);
           }
         } catch (error) {
-          console.error(error);
+          get().reset();
+          location.href = `/${PATH.MY_ACCOUNT}`;
+          alert(ERROR_MESSAGE.REQUEST_SIGN_IN);
         }
       },
 
       setUserAuth: ({ user, tokens }) => set({ user, tokens }),
-
-      setAddAddress: (address) =>
-        set(({ user }) => {
-          if (!user) {
-            return { user: null };
-          }
-
-          return {
-            user: {
-              ...user,
-              addresses: user.addresses
-                ? [...user.addresses, address]
-                : [address],
-            },
-          };
-        }),
 
       setCurrentRegion: (address) => set({ currentRegion: address }),
 
