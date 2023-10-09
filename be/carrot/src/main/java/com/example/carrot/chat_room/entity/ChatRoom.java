@@ -1,5 +1,6 @@
 package com.example.carrot.chat_room.entity;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,11 +23,13 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Entity
+@Slf4j
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
-public class ChatRoom extends BaseCreatedTimeEntity {
+public class ChatRoom extends BaseCreatedTimeEntity implements Serializable {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -47,5 +50,26 @@ public class ChatRoom extends BaseCreatedTimeEntity {
 	public ChatRoom(User user, Product product) {
 		this.user = user;
 		this.product = product;
+	}
+
+	public static ChatRoom create(User user, Product product) {
+		return ChatRoom.builder()
+			.user(user)
+			.product(product)
+			.build();
+	}
+
+	public User getReceiver(User sender) {
+		User seller = product.getUser();
+		if (seller.getUserId().equals(sender.getUserId())) {
+			log.info("getReceiver -> receiver 들어옴!");
+			return this.user;
+		}
+
+		return seller;
+	}
+
+	public void addChatMessages(ChatMessage chatMessage) {
+		this.chatMessages.add(chatMessage);
 	}
 }
