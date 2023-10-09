@@ -18,7 +18,6 @@ import { Category } from '@components/home/Category';
 import { PATH } from '@constants/path';
 import { Theme, css } from '@emotion/react';
 import { useAuth } from '@hooks/useAuth';
-import { useFcmToken } from '@hooks/useFcmToken';
 import { useIntersectionObserver } from '@hooks/useObserver';
 import { useAlert, useModal } from '@hooks/usePopups';
 import { useCategories } from '@queries/category';
@@ -31,8 +30,6 @@ import { useNavigate } from 'react-router-dom';
 
 export const Home: React.FC = () => {
   const navigate = useNavigate();
-  const { fcmToken } = useFcmToken();
-  console.log('fcmToken >>', fcmToken);
 
   const { isLogin } = useAuth();
   const { setShouldSlideLeft } = useLayoutStore();
@@ -48,7 +45,6 @@ export const Home: React.FC = () => {
   const [selectProduct, setSelectProduct] = useState<ProductType | null>(null);
   const serverLocationsFetchedRef = useRef(false);
 
-  // selectedLocationId 초기값 설정
   const mainLocation = serverLocations?.find(
     (location) => location.isMainLocation,
   );
@@ -70,19 +66,17 @@ export const Home: React.FC = () => {
 
   const { observeTarget } = useIntersectionObserver({
     inviewCallback: () => {
-      fetchNextPage();
+      if (hasNextPage) fetchNextPage();
     },
-    condition: hasNextPage,
   });
 
   useEffect(() => {
-    // serverLocations 데이터가 처음 로드되었을 때만 실행
     if (serverLocations && !serverLocationsFetchedRef.current) {
       const mainLocId = serverLocations.find(
         (location) => location.isMainLocation,
       )?.id;
       mainLocId && setSelectedLocationId(mainLocId);
-      refetchProductList(); // 초기 데이터 로드 시에만 refetch
+      refetchProductList();
       serverLocationsFetchedRef.current = true;
     }
   }, [serverLocations]);

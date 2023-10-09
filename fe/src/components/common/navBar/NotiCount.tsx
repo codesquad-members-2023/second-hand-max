@@ -1,34 +1,39 @@
-import { Theme, css } from '@emotion/react';
+import { css } from '@emotion/react';
 import { Message } from '@components/common/icons';
 import { CountBadge } from '../countBadge/CountBadge';
+import { useNotificationStore } from '@stores/notificationStore';
 
-export const NotiCount: React.FC = () => {
-  // TOOD count 받아오기
+type Props = {
+  count?: number;
+};
+
+export const NotiCount: React.FC<Props> = ({ count }) => {
+  const { shouldNotify } = useNotificationStore();
+
   return (
     <div css={notiCountStyle}>
-      <CountBadge size="s" count={1} className="count-box" />
+      {shouldNotify && count !== 0 && (
+        <CountBadge size="s" count={count} className="count-box" />
+      )}
       <Message />
     </div>
   );
 };
 
-const notiCountStyle = (theme: Theme) => {
+const notiCountStyle = () => {
   return css`
     position: relative;
     box-sizing: border-box;
-    width: 40px;
-    height: 40px;
+
     display: flex;
     align-items: center;
     justify-content: center;
 
-    border: 1px solid ${theme.color.neutral.border};
-
     .count-box {
       position: absolute;
 
-      top: -20px;
-      right: 0px;
+      top: -5px;
+      right: -5px;
     }
   `;
 };

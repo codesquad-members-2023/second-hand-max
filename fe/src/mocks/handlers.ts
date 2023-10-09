@@ -11,7 +11,6 @@ let locations: LocationType[] = [
 ];
 
 export const handlers = [
-  //내동네
   rest.get(`/api/users/locations`, (_, res, ctx) => {
     return res(
       ctx.delay(300),
@@ -22,6 +21,7 @@ export const handlers = [
       }),
     );
   }),
+
   rest.delete(`/api/users/locations/:id`, (req, res, ctx) => {
     const { id } = req.params;
 
@@ -41,7 +41,7 @@ export const handlers = [
 
     return res(ctx.status(200), ctx.json(data));
   }),
-  // 내동네 변경
+
   rest.patch(`/api/users/locations`, (req, res, ctx) => {
     const { locationId } = req.body as { locationId: number };
 

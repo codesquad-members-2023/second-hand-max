@@ -1,13 +1,13 @@
 import { css, Theme } from '@emotion/react';
 
 type Props = {
-  count: number;
+  count?: number;
   size?: 's' | 'l';
 } & React.HTMLAttributes<HTMLDivElement>;
 
-export const CountBadge: React.FC<Props> = ({ count, size = 'l' }) => {
+export const CountBadge: React.FC<Props> = ({ count, size = 'l', ...rest }) => {
   return (
-    <div css={(theme) => countBadgeStyle(theme, size)}>
+    <div css={(theme) => countBadgeStyle(theme, size)} {...rest}>
       <span>{count}</span>
     </div>
   );

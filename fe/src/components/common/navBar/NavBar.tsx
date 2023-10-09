@@ -1,24 +1,30 @@
-import {
-  Heart,
-  Home,
-  Message,
-  News,
-  UserCircle,
-} from '@components/common/icons';
+import { Heart, Home, News, UserCircle } from '@components/common/icons';
 import { PATH } from '@constants/path';
 import { Theme, css } from '@emotion/react';
+import { useAuth } from '@hooks/useAuth';
+import { useNotification } from '@hooks/useNotification';
+import { useUnreadTotalCount } from '@queries/chat';
+import { useUnreadTotalCountStore } from '@stores/notificationStore';
+import { useEffect } from 'react';
 import { NavLink, matchRoutes, useLocation } from 'react-router-dom';
 import { NotiCount } from './NotiCount';
 
 export const NavBar: React.FC = () => {
+  const { isLogin } = useAuth();
+  useNotification(isLogin);
   const currentLocation = useLocation();
+  const { data: count, isFetching: isCountFetching } = useUnreadTotalCount(
+    isLogin,
+    currentLocation.pathname,
+  );
 
-  const isMessageNoti = true; //TODO 추후 교체합니다
-  // TODO CountBadge 가져다가 noti에 붙여야함
-  // TODO 개수 어떤 주기로 갱신? 전역 저장?
+  const { unreadTotalCount, setUnreadTotalCount } = useUnreadTotalCountStore();
 
-  // const messageTabIcon = isMessageNoti ? <MessageNoti /> : <Message />;
-  const messageTabIcon = isMessageNoti ? <NotiCount /> : <Message />;
+  useEffect(() => {
+    if (typeof count === 'number') {
+      setUnreadTotalCount(count);
+    }
+  }, [count]);
 
   const tabs = [
     {
@@ -39,7 +45,7 @@ export const NavBar: React.FC = () => {
     {
       label: '채팅',
       path: PATH.chat,
-      icon: messageTabIcon,
+      icon: <NotiCount count={isCountFetching ? 0 : unreadTotalCount} />,
     },
     {
       label: '내 계정',
